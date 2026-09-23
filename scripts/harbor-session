@@ -1,0 +1,48 @@
+#!/usr/bin/python3
+"""Own one KWin session and its children, never another desktop's processes."""
+import argparse,os,pathlib,shutil,signal,subprocess,sys,tempfile,threading
+p=argparse.ArgumentParser(); p.add_argument('--nested',action='store_true'); p.add_argument('--headless',action='store_true'); args=p.parse_args()
+kwin=shutil.which('kwin_wayland')
+if not kwin:
+ sys.exit('Harbor: kwin_wayland is missing; install kwin-wayland.')
+shell=shutil.which('harbor-shell')
+if not shell: sys.exit('Harbor: harbor-shell is missing from PATH.')
+if not os.getenv('DBUS_SESSION_BUS_ADDRESS') or ((args.nested or args.headless) and not os.getenv('HARBOR_PRIVATE_BUS')):
+ os.environ['HARBOR_PRIVATE_BUS']='1'
+ os.execvp('dbus-run-session',['dbus-run-session','--',sys.executable,__file__,*sys.argv[1:]])
+env=os.environ.copy(); env['XDG_CURRENT_DESKTOP']='Harbor'; env['XDG_SESSION_DESKTOP']='harbor'; env['XDG_SESSION_TYPE']='wayland'
+# KWin reads kwinrc directly. Isolate compositor configuration, then restore
+# the normal application config directory in harbor-session-client.
+base_config=pathlib.Path(env.get('XDG_CONFIG_HOME',str(pathlib.Path.home()/'.config')))
+sandbox=tempfile.TemporaryDirectory(prefix='harbor-session-') if (args.nested or args.headless) else None
+if sandbox:
+ base_config=pathlib.Path(sandbox.name)/'config'
+ for key,sub in [('XDG_DATA_HOME','data'),('XDG_CACHE_HOME','cache'),('XDG_STATE_HOME','state')]:env[key]=sandbox.name+'/'+sub
+env['HARBOR_USER_CONFIG']=str(base_config)
+config=base_config/'harbor'/'session'
+config.mkdir(parents=True,exist_ok=True)
+env['XDG_CONFIG_HOME']=str(config)
+kwin_config=config/'kwinrc'
+if not kwin_config.exists():
+ kwin_config.write_text('[Plugins]\nblurEnabled=true\ncontrastEnabled=true\nharbor-shortcutsEnabled=true\n[org.kde.kdecoration2]\nlibrary=org.kde.breeze\nBorderSize=Tiny\nButtonsOnLeft=XIA\nButtonsOnRight=\n[Windows]\nFocusPolicy=ClickToFocus\n')
+command=[kwin,'--xwayland','--no-kactivities','--exit-with-session',shutil.which('harbor-session-client') or shell]
+if args.nested: command[1:1]=['--width','1280','--height','800']
+if args.headless: command[1:1]=['--virtual','--width','1280','--height','800']
+child=subprocess.Popen(command,env=env,start_new_session=True)
+def stop(signum,frame):
+ if child.poll() is None:
+  os.killpg(child.pid,signal.SIGTERM)
+  def force_stop():
+   if child.poll() is None:
+    try:os.killpg(child.pid,signal.SIGKILL)
+    except ProcessLookupError:pass
+  timer=threading.Timer(5,force_stop);timer.daemon=True;timer.start()
+for sig in (signal.SIGTERM,signal.SIGINT): signal.signal(sig,stop)
+try: code=child.wait()
+finally:
+ if child.poll() is None:
+  stop(None,None)
+  try: child.wait(timeout=5)
+  except subprocess.TimeoutExpired: os.killpg(child.pid,signal.SIGKILL)
+if sandbox:sandbox.cleanup()
+sys.exit(code)

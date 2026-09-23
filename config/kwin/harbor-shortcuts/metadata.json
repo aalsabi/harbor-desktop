@@ -1,0 +1,6 @@
+{
+ "KPlugin": {"Id":"harbor-shortcuts","Name":"Harbor shortcuts","Description":"Open Harbor desktop surfaces","Version":"0.1.0","License":"GPL-3.0-or-later"},
+ "KPackageStructure":"KWin/Script",
+ "X-Plasma-API":"javascript",
+ "X-Plasma-MainScript":"code/main.js"
+}

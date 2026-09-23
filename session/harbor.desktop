@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Harbor
+Comment=Independent Qt desktop on KWin Wayland
+Exec=harbor-session
+TryExec=harbor-session
+Type=Application
+DesktopNames=Harbor

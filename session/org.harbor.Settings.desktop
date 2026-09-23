@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Harbor Settings
+Name[ar]=إعدادات هاربور
+Comment=Configure the Harbor desktop
+Exec=harbor-settings
+Icon=harbor
+Categories=Settings;DesktopSettings;
+StartupNotify=true

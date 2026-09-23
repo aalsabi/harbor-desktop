@@ -1,0 +1,28 @@
+#!/usr/bin/python3
+"""Run Harbor without the Plasma workspace startup. Own only spawned children."""
+import os,shutil,signal,subprocess,sys,time
+if os.getenv('HARBOR_USER_CONFIG'): os.environ['XDG_CONFIG_HOME']=os.environ['HARBOR_USER_CONFIG']
+children=[]; stopping=False
+def stop(signum,frame):
+ global stopping
+ stopping=True
+ for child in children:
+  if child.poll() is None: child.terminate()
+for sig in (signal.SIGTERM,signal.SIGINT):signal.signal(sig,stop)
+# Authentication is supplied by a packaged agent, not an elevated shell.
+for candidate in ['/usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1','/usr/lib/polkit-kde-authentication-agent-1','/usr/libexec/polkit-gnome-authentication-agent-1']:
+ if os.path.isfile(candidate):
+  children.append(subprocess.Popen([candidate]));break
+code=1
+try:
+ for attempt in range(3):
+  if stopping:break
+  shell=subprocess.Popen(['harbor-shell']);children.append(shell);code=shell.wait()
+  if code==0 or stopping:break
+  time.sleep(1)
+finally:
+ stop(None,None)
+ for child in children:
+  try:child.wait(timeout=4)
+  except subprocess.TimeoutExpired:child.kill();child.wait()
+sys.exit(code)

@@ -1,0 +1,4 @@
+#!/usr/bin/python3
+import json,os,shutil,platform
+names=['kwin_wayland','harbor-shell','harbor-settings','wpctl','nmcli','bluetoothctl','brightnessctl','loginctl','kscreen-doctor','xdg-desktop-portal','swaylock']
+print(json.dumps({'executables':{n:shutil.which(n) for n in names},'platform':platform.platform(),'wayland':bool(os.getenv('WAYLAND_DISPLAY')),'hardwareValidated':False},indent=2))

@@ -1,0 +1,64 @@
+Failed to gain real time thread priority (See CAP_SYS_NICE in the capabilities(7) man page). error: Operation not permitted
+kwin_scene_opengl: eglInitialize failed
+kwin_scene_opengl: Error during eglInitialize  "EGL_NOT_INITIALIZED"
+kwin_scene_opengl: eglInitialize failed
+kwin_scene_opengl: Error during eglInitialize  "EGL_NOT_INITIALIZED"
+Accepting client connections on sockets: QList("wayland-0")
+kf.service.services: The desktop file "/usr/share/applications/xfreerdp-file.desktop" references the action "Edit" but doesn't define it
+kwin_decorations: Could not locate decoration plugin "org.kde.breeze"
+kwin_decorations: Could not locate decoration plugin "org.kde.kwin.aurorae"
+kwin_xkbcommon: XKB: [XKB-107] inet:442:58: unrecognized keysym "XF86ElectronicPrivacyScreenOn"
+kwin_xkbcommon: XKB: [XKB-107] inet:443:58: unrecognized keysym "XF86ElectronicPrivacyScreenOff"
+kwin_xkbcommon: XKB: [XKB-107] inet:444:58: unrecognized keysym "XF86ActionOnSelection"
+kwin_xkbcommon: XKB: [XKB-107] inet:445:58: unrecognized keysym "XF86ContextualInsert"
+kwin_xkbcommon: XKB: [XKB-107] inet:446:58: unrecognized keysym "XF86ContextualQuery"
+kwin_screencast: Failed to connect PipeWire context
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Activating service name='org.freedesktop.portal.Desktop' requested by ':1.3' (uid=1000 pid=1321032 comm="/home/abdullahsa/Documents/Codex/2026-09-23/refere" label="chatgpt (unconfined)")
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Activating service name='org.freedesktop.impl.portal.PermissionStore' requested by ':1.4' (uid=1000 pid=1321039 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Activating service name='org.gtk.vfs.Daemon' requested by ':1.5' (uid=1000 pid=1321032 comm="/home/abdullahsa/Documents/Codex/2026-09-23/refere" label="chatgpt (unconfined)")
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Successfully activated service 'org.freedesktop.impl.portal.PermissionStore'
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Activating service name='org.freedesktop.portal.Documents' requested by ':1.4' (uid=1000 pid=1321039 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Successfully activated service 'org.gtk.vfs.Daemon'
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Successfully activated service 'org.freedesktop.portal.Documents'
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gnome' requested by ':1.4' (uid=1000 pid=1321039 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+
+** (xdg-desktop-portal-gnome:1321075): WARNING **: 08:36:57.997: GDK backend forced via env var, portal dialogs will not work properly.
+Non-compatible display server, exposing settings only.
+MESA-EGL: warning: failed to get driver name for fd -1
+MESA-EGL: warning: MESA-LOADER: failed to retrieve device information
+MESA-EGL: warning: failed to get driver name for fd -1
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Successfully activated service 'org.freedesktop.impl.portal.desktop.gnome'
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Activating service name='org.freedesktop.impl.portal.desktop.gtk' requested by ':1.4' (uid=1000 pid=1321039 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+Gtk-Message: 08:36:58.056: Failed to load module "appmenu-gtk-module"
+Gtk-Message: 08:36:58.056: Failed to load module "appmenu-gtk-module"
+Gtk-Message: 08:36:58.056: Failed to load module "appmenu-gtk-module"
+Gtk-Message: 08:36:58.056: Failed to load module "appmenu-gtk-module"
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Activating service name='org.a11y.Bus' requested by ':1.10' (uid=1000 pid=1321092 comm="/usr/libexec/xdg-desktop-portal-gtk" label="chatgpt (unconfined)")
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Successfully activated service 'org.a11y.Bus'
+dbus-daemon[1321104]: Activating service name='org.a11y.atspi.Registry' requested by ':1.1' (uid=1000 pid=1321092 comm="/usr/libexec/xdg-desktop-portal-gtk" label="chatgpt (unconfined)")
+dbus-daemon[1321104]: Successfully activated service 'org.a11y.atspi.Registry'
+SpiRegistry daemon is running with well-known name - org.a11y.atspi.Registry
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Successfully activated service 'org.freedesktop.impl.portal.desktop.gtk'
+
+(/usr/libexec/xdg-desktop-portal:1321039): xdg-desktop-portal-WARNING **: 08:36:58.216: Failed to connect to PipeWire: Couldn't connect to PipeWire
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Activating service name='org.freedesktop.secrets' requested by ':1.4' (uid=1000 pid=1321039 comm="/usr/libexec/xdg-desktop-portal" label="chatgpt (unconfined)")
+** Message: 08:36:58.232: couldn't access control socket: /tmp/harbor-kwin-MbN0xB/keyring/control: No such file or directory
+discover_other_daemon: 0dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Successfully activated service 'org.freedesktop.secrets'
+dbus-daemon[1320982]: [session uid=1000 pid=1320982 pidfd=5] Successfully activated service 'org.freedesktop.portal.Desktop'
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Connection already associated with an application ID")
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Connection already associated with an application ID")
+MESA-EGL: warning: failed to get driver name for fd -1
+MESA-EGL: warning: failed to get driver name for fd -1
+MESA-EGL: warning: MESA-LOADER: failed to retrieve device information
+MESA-EGL: warning: failed to get driver name for fd -1
+MESA-EGL: warning: MESA-LOADER: failed to retrieve device information
+MESA-EGL: warning: failed to get driver name for fd -1
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Connection already associated with an application ID")
+qt.qpa.services: Failed to register with host portal QDBusError("org.freedesktop.portal.Error.Failed", "Could not register app ID: Connection already associated with an application ID")
+Traceback (most recent call last):
+  File "/home/abdullahsa/Documents/Codex/2026-09-23/referenced-chatgpt-conversation-this-is-an/work/kwin-integration-client.py", line 22, in <module>
+    assert next(r for r in windows() if r['id']==ids[0])['active']
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+AssertionError
+Session process exited with code 1
+A connection to the bus can't be made
