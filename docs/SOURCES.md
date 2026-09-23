@@ -22,3 +22,11 @@
 - WirePlumber wpctl: https://pipewire.pages.freedesktop.org/wireplumber/tools/wpctl.html
 
 استنتاج التصميم: استخدام KWin مع shell مستقل يحقق تفضيل المستخدم لـKDE دون تشغيل Plasma Shell. البروتوكولات وبعض المكتبات تقع ضمن مشاريع KDE Plasma، لكن لا تُستعمل واجهة plasmashell. لا يوجد إثبات لتطابق بصري أو وظيفي100%، ولا يُدّعى ذلك.
+
+## Language & Region (0.6.0)
+
+User-supplied six screenshots define the requested layout, language chooser and General/Dates/Times sheets; they are references only and are not redistributed. The implementation uses original Qt controls.
+
+- Debian locale categories, LANGUAGE ordering and UTF-8: https://www.debian.org/doc/manuals/debian-reference/ch08.en.html
+- Debian generated locales: https://www.debian.org/doc/manuals/debian-handbook/basic-configuration.en.html
+- Qt 6.8 locale and calendar formatting: https://doc.qt.io/qt-6.8/qlocale.html

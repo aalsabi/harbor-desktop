@@ -38,6 +38,6 @@ Rectangle {
   PanelButton { text: Prefs.language==="ar" ? "النوافذ" : "Windows"; onClicked: UI.open("windows") }
   PanelButton {text:"● "+Notifications.items.length;onClicked:UI.open("notifications");Accessible.name:"Notifications"}
   PanelButton { text: "☷"; onClicked: UI.open("control"); Accessible.name: "Control center" }
-  Text { id: clock; color: Prefs.dark ? "#eef4ff" : "#163047"; font.pixelSize: 12; text: Qt.formatDateTime(new Date(),"ddd d MMM   hh:mm"); Timer { interval: 1000; running: true; repeat: true; onTriggered: clock.text=Qt.formatDateTime(new Date(),"ddd d MMM   hh:mm") } }
+  Text { id: clock; width:Math.min(implicitWidth,240);elide:Text.ElideRight;Accessible.name:text; color: Prefs.dark ? "#eef4ff" : "#163047"; font.pixelSize: 12; text: typeof Region!=="undefined"?Region.clockText():Qt.formatDateTime(new Date(),"ddd d MMM   hh:mm"); Timer { interval: 1000; running: true; repeat: true; onTriggered: clock.text=typeof Region!=="undefined"?Region.clockText():Qt.formatDateTime(new Date(),"ddd d MMM   hh:mm") } }
  }
 }

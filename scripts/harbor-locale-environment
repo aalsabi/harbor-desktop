@@ -1,0 +1,109 @@
+#!/usr/bin/python3
+"""Apply Harbor region preferences to this session only; never generate locales."""
+import json
+import os
+import pathlib
+import re
+import subprocess
+import sys
+
+TAG = re.compile(r'[a-zA-Z]{2,3}(?:[-_][a-zA-Z0-9]{2,8}){0,3}\Z')
+REGION = re.compile(r'[a-z]{2,3}_(?:[A-Z][a-z]{3}_)?(?:[A-Z]{2}|[0-9]{3})\Z')
+CATEGORIES = ('LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MEASUREMENT')
+
+
+def warn(message):
+    print('Harbor: region preferences: ' + message, file=sys.stderr)
+
+
+def normalized(locale):
+    return locale.replace('-', '').replace('_', '').replace('.', '').lower()
+
+
+def apply_locale_environment(env, available_locales=None):
+    """Mutate env only after validating settings and reading generated locales."""
+    config = pathlib.Path(env.get('XDG_CONFIG_HOME') or pathlib.Path(env.get('HOME', str(pathlib.Path.home()))) / '.config')
+    try:
+        path = config / 'harbor' / 'region.json'
+        if path.stat().st_size > 65536:
+            raise ValueError('settings file is too large')
+        settings = json.loads(path.read_text(encoding='utf-8'))
+        if not isinstance(settings, dict) or type(settings.get('schema')) is not int or settings['schema'] != 1:
+            raise ValueError('unsupported settings schema')
+        languages = settings.get('languages')
+        if not isinstance(languages, list) or not 1 <= len(languages) <= 32 or not all(isinstance(tag, str) and TAG.fullmatch(tag) for tag in languages):
+            raise ValueError('invalid language tags')
+        region = settings.get('region')
+        if not isinstance(region, str) or not REGION.fullmatch(region):
+            raise ValueError('invalid region')
+        if not isinstance(settings.get('formatLanguage'), str) or not TAG.fullmatch(settings['formatLanguage']):
+            raise ValueError('invalid format language')
+        if settings.get('measurement') not in ('metric', 'us', 'uk'):
+            raise ValueError('invalid measurement system')
+    except FileNotFoundError:
+        return False
+    except (OSError, ValueError, UnicodeError) as error:
+        warn(f'not applied ({error}).')
+        return False
+    if available_locales is None:
+        try:
+            result = subprocess.run(['locale', '-a'], capture_output=True, text=True,
+                                    check=True, timeout=3, env={**env, 'LC_ALL': 'C'})
+            available_locales = result.stdout.splitlines()
+        except (OSError, subprocess.SubprocessError, UnicodeError) as error:
+            warn(f'could not inspect generated locales; existing settings retained ({error}).')
+            return False
+    available = {normalized(value): value for value in available_locales if value}
+    # POSIX guarantees C, including on systems with no generated UTF-8 locales.
+    available.setdefault('c', 'C')
+    fallback = next((available[normalized(env[key])] for key in ('LC_ALL', 'LANG')
+                     if env.get(key) and 'utf8' in normalized(env[key]) and normalized(env[key]) in available),
+                    available.get('cutf8', available['c']))
+
+    def choose(requested, language=None):
+        match = available.get(normalized(requested + '.UTF-8'))
+        if match:
+            return match
+        same_language = sorted(value for value in available.values()
+                               if language and value.lower().startswith(language.lower() + '_') and 'utf8' in normalized(value))
+        selected = same_language[0] if same_language else fallback
+        warn(f'{requested}.UTF-8 is not generated; applications will use {selected} instead.')
+        return selected
+
+    primary = languages[0].replace('-', '_').split('_')[0].lower()
+    territory = region.rsplit('_', 1)[-1]
+    language_locale = choose(primary + '_' + territory, primary)
+    region_locale = choose(region)
+    measurement = settings['measurement']
+    if measurement in ('us', 'uk'):
+        requested_measurement = 'en_US' if measurement == 'us' else 'en_GB'
+        measurement_locale = available.get(normalized(requested_measurement + '.UTF-8'))
+    else:
+        def is_metric(value):
+            match = re.match(r'^[a-z]{2,3}_(?:[A-Z][a-z]{3}_)?([A-Z]{2}|[0-9]{3})\.', value)
+            return bool(match and match[1] not in ('US', 'GB', 'LR', 'MM') and 'utf8' in normalized(value))
+        metric_locales = sorted(value for value in available.values() if is_metric(value))
+        measurement_locale = region_locale if is_metric(region_locale) else next(iter(metric_locales), None)
+        requested_measurement = 'a metric region'
+    if not measurement_locale:
+        measurement_locale = region_locale
+        warn(f'{requested_measurement} locale for {measurement} measurement is not generated; '
+             f'applications will use {measurement_locale} measurement instead.')
+    env['LANG'] = language_locale
+    env['LANGUAGE'] = ':'.join(tag.replace('-', '_') for tag in languages)
+    env['LC_MESSAGES'] = language_locale
+    env['LC_CTYPE'] = language_locale
+    env['LC_COLLATE'] = language_locale
+    for category in CATEGORIES:
+        env[category] = region_locale
+    env['LC_MEASUREMENT'] = measurement_locale
+    env.pop('LC_ALL', None)
+    return True
+
+
+if __name__ == '__main__':
+    # Machine-readable output only; callers must not shell-evaluate preferences.
+    session = os.environ.copy()
+    applied = apply_locale_environment(session)
+    print(json.dumps({'applied': applied, 'environment': {key: session[key] for key in
+          ('LANG', 'LANGUAGE', 'LC_MESSAGES', 'LC_CTYPE', 'LC_COLLATE', *CATEGORIES) if key in session}}))

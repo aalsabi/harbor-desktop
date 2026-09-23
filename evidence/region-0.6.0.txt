@@ -1,0 +1,117 @@
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Configuring done (0.8s)
+-- Generating done (0.6s)
+-- Build files have been written to: /build
+[1/30] Automatic MOC for target harbor-core
+[2/30] Building CXX object CMakeFiles/harbor-core.dir/harbor-core_autogen/mocs_compilation.cpp.o
+[3/30] Building CXX object CMakeFiles/harbor-core.dir/src/core/Region.cpp.o
+[4/30] Linking CXX static library libharbor-core.a
+[5/30] Linking CXX executable core-test
+[6/30] Linking CXX executable notifications-test
+[7/30] Automatic MOC for target region-test
+[8/29] Linking CXX executable apps-test
+[9/29] Automatic MOC for target region-ui-test
+[10/28] Linking CXX executable menu-test
+[11/28] Linking CXX executable files-test
+[12/28] Linking CXX executable files-ui-test
+[13/28] Linking CXX executable files-menu-test
+[14/28] Linking CXX executable settings-ui-test
+[15/28] Linking CXX executable system-state-test
+[16/28] Linking CXX executable system-actions-test
+[17/28] Linking CXX executable control-ui-test
+[18/28] Linking CXX executable keyboard-notify-test
+[19/28] Linking CXX executable keyboard-indicator-test
+[20/28] Linking CXX executable input-menu-test
+[21/28] Linking CXX executable launch-test
+[22/28] Linking CXX executable dock-launch-test
+[23/28] Building CXX object CMakeFiles/harbor-shell.dir/src/shell/main.cpp.o
+[24/28] Linking CXX executable harbor-shell
+[25/28] Building CXX object CMakeFiles/region-test.dir/tests/region_test.cpp.o
+[26/28] Linking CXX executable region-test
+[27/28] Building CXX object CMakeFiles/region-ui-test.dir/tests/region_ui_test.cpp.o
+[28/28] Linking CXX executable region-ui-test
+Test project /build
+      Start  1: core
+ 1/19 Test  #1: core .............................   Passed    0.12 sec
+      Start  2: notifications
+ 2/19 Test  #2: notifications ....................   Passed    0.07 sec
+      Start  3: apps
+ 3/19 Test  #3: apps .............................   Passed    0.03 sec
+      Start  4: global-menu
+ 4/19 Test  #4: global-menu ......................   Passed    0.10 sec
+      Start  5: files
+ 5/19 Test  #5: files ............................   Passed    0.03 sec
+      Start  6: files-ui
+ 6/19 Test  #6: files-ui .........................   Passed    0.47 sec
+      Start  7: files-menu
+ 7/19 Test  #7: files-menu .......................   Passed    0.18 sec
+      Start  8: settings-ui
+ 8/19 Test  #8: settings-ui ......................   Passed    0.85 sec
+      Start  9: system-state
+ 9/19 Test  #9: system-state .....................   Passed    0.01 sec
+      Start 10: system-actions
+10/19 Test #10: system-actions ...................   Passed    0.48 sec
+      Start 11: control-ui
+11/19 Test #11: control-ui .......................   Passed    0.46 sec
+      Start 12: keyboard-notify
+12/19 Test #12: keyboard-notify ..................   Passed    0.14 sec
+      Start 13: keyboard-indicator
+13/19 Test #13: keyboard-indicator ...............   Passed    0.29 sec
+      Start 14: input-menu
+14/19 Test #14: input-menu .......................   Passed    0.18 sec
+      Start 15: icons
+15/19 Test #15: icons ............................   Passed    0.12 sec
+      Start 16: launch
+16/19 Test #16: launch ...........................   Passed    0.60 sec
+      Start 17: dock-launch
+17/19 Test #17: dock-launch ......................   Passed    0.16 sec
+      Start 18: region
+18/19 Test #18: region ...........................   Passed    0.53 sec
+      Start 19: region-ui
+19/19 Test #19: region-ui ........................   Passed    1.34 sec
+
+100% tests passed, 0 tests failed out of 19
+
+Total Test time (real) =   6.18 sec
+............................
+----------------------------------------------------------------------
+Ran 28 tests in 7.683s
+
+OK
+CPack: Create package using DEB
+CPack: Install projects
+CPack: - Install project: HarborDesktop []
+CPack: Create package
+CPackDeb: - Generating dependency list
+CPack: - package: /build/harbor-desktop-0.6.0-Linux.deb generated.
+File 'setcap' has no capablity to remove
+.
+----------------------------------------------------------------------
+Ran 1 test in 2.221s
+
+OK
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"kwinWindowEnumeration": true, "activate": true, "close": true, "panelsOpened": 6, "notificationDelivered": true, "initialWindowCount": 2, "filesMenuExported": true}
+QThreadStorage: Thread 0x5617cf20b4c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"twoScreenRouting": {"desktop": ["20", "22"], "menubar": ["20", "22"], "dock": ["20", "22"]}, "passed": true}
+QThreadStorage: Thread 0x5619d23ae4c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"keyboardLayoutsLoaded": true, "keyboardSwitch": true, "keyboardReload": true}
+QThreadStorage: Thread 0x55788316e4c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+kwin_xwl: /tmp/.X11-unix does not exist. Please check your installation
+kwin_xwl: Failed to establish X11 socket
+QThreadStorage: Thread 0x559373f334c0 exited after QThreadStorage 7 destroyed
+{"installedSessionStartup": true, "settingsWindowManaged": true, "gracefulLogout": true}
+PACKAGE_INSTALL_RUNTIME_REMOVE_PASS

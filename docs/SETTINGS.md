@@ -4,7 +4,7 @@ Open the Settings icon in the Dock. The redesigned window uses a searchable side
 
 ## Available pages
 
-- General: interface language, About/Software Update links and confirmed logout/restart/shutdown.
+- General: Language & Region, About/Software Update links and confirmed logout/restart/shutdown.
 - Wi-Fi / Network: radio control, saved-connection connect/disconnect, nearby SSIDs with signal/security and connection-editor link.
 - Bluetooth: power, paired-device names and connect/disconnect; new pairing uses the external manager.
 - Sound: default output/input selection, separate volume/mute controls; per-application routing uses the external mixer.
@@ -73,3 +73,7 @@ Application icons use Harbor’s explicit `iconTheme` preference (when set), oth
 An already-installed theme such as `MacTahoe` can be selected with `iconTheme=MacTahoe` in Harbor settings.ini. The package does not redistribute that third-party theme.
 
 Icon discovery explicitly includes standard XDG data icon directories, ~/.icons and pixmaps fallbacks so it works without Plasma’s platform-theme plugin.
+
+## Language & Region — 0.6.0
+
+Dedicated page with ordered language preferences, locale selection and General/Dates/Times advanced sheets. See LANGUAGE-REGION.md for persistence, Debian session integration and exact scope limits.

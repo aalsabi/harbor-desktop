@@ -6,7 +6,7 @@
 
 على Debian 13 amd64، من المجلد الذي يحوي الحزمة:
 
-    sudo apt install ./harbor-desktop_0.5.5_amd64.deb
+    sudo apt install ./harbor-desktop_0.6.0_amd64.deb
 
 لا تستخدم dpkg وحده لتجاوز الاعتماديات. تسجيل الخروج ثم اختيار **Harbor** من مدير الدخول يبدأ الجلسة الجديدة. لا يتغير اختيار الجلسة الافتراضي تلقائياً.
 

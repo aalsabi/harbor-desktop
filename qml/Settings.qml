@@ -17,6 +17,7 @@ Rectangle {
   {key:"Network",ar:"الشبكة",icon:"◎",color:"#2488d8",id:"network",group:0,tags:"internet ethernet"},
   {key:"Sound",ar:"الصوت",icon:"♪",color:"#ed4b66",id:"sound",group:1,tags:"volume audio صوت"},
   {key:"General",ar:"عام",icon:"⚙",color:"#8a8b90",id:"general",group:2,tags:"about updates language تحديث لغة"},
+  {key:"Language & Region",ar:"اللغة والمنطقة",icon:"◎",color:"#348dda",id:"region",group:2,tags:"locale dates time currency languages لغة منطقة تاريخ عملة"},
   {key:"Appearance",ar:"المظهر",icon:"◐",color:"#77777e",id:"appearance",group:2,tags:"light dark theme مظهر"},
   {key:"Accessibility",ar:"تسهيلات الاستخدام",icon:"◎",color:"#258de9",id:"accessibility",group:2,tags:"motion movement حركة"},
   {key:"Desktop & Dock",ar:"سطح المكتب وDock",icon:"▣",color:"#437ee9",id:"desktop",group:3,tags:"panel glass transparency شفافية"},
@@ -105,10 +106,11 @@ Rectangle {
        Label{text:root.t("General","عام");font.pixelSize:24;font.bold:true;horizontalAlignment:Text.AlignHCenter}
        Note{text:root.t("Manage your desktop, language and system information.","إدارة سطح المكتب واللغة ومعلومات النظام.");horizontalAlignment:Text.AlignHCenter}
        Group{LinkRow{destination:"About";text:root.t("About","حول")}Divider{}LinkRow{destination:"Software Update";text:root.t("Software Update","تحديث البرامج")}}
-       Group{SettingRow{label:root.t("Interface language","لغة الواجهة");hint:root.t("Harbor interface language","لغة واجهة Harbor");Select{model:["English","العربية"];currentIndex:Prefs.language==="ar"?1:0;onActivated:Prefs.language=currentIndex===1?"ar":"en"}}
+       Group{LinkRow{destination:"Language & Region";text:root.t("Language & Region","اللغة والمنطقة")}
         Divider{}LinkRow{destination:"Keyboard";text:root.t("Keyboard input sources","لغات الكتابة")}}
        Group{Label{text:root.t("Session","الجلسة");font.bold:true}SessionActions{}Note{text:root.t("Save your work before signing out or powering off.","احفظ عملك قبل تسجيل الخروج أو إيقاف التشغيل.")}}
       }
+      Loader{Layout.fillWidth:true;active:root.section==="Language & Region";visible:active;source:active?"LanguageRegion.qml":"";onLoaded:item.keyboardRequested.connect(function(){root.section="Keyboard"})}
       ColumnLayout{visible:root.section==="Appearance";Layout.fillWidth:true;spacing:18
        Group{Label{text:root.t("Appearance","المظهر");font.bold:true}RowLayout{Layout.alignment:Qt.AlignHCenter;spacing:22
         ColumnLayout{ThemeChoice{night:false;objectName:"appearance-light"}Label{text:root.t("Light","فاتح");horizontalAlignment:Text.AlignHCenter}}

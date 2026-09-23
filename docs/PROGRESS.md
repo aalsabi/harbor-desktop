@@ -86,3 +86,11 @@ Review regressions reproduced hidden terminal-preferences selection and a launch
 ## 0.5.5 — remove hover tooltips
 
 Removed hover tooltips throughout Harbor: dock, panel tray and Control Center button, Files toolbar/window controls and unavailable lock action. Accessible names remain available, with names added for tray/running-window buttons. Launch progress indicators and actionable error messages remain. Third-party application tooltips are outside Harbor control.
+
+## 0.6.0 — Language & Region
+
+Added a dedicated Language & Region page following the supplied references: ordered language preferences, add/remove/reorder, region/calendar/weekday/12–24h controls and General/Dates/Times advanced sheets. Draft and modal cancellation preserve saved settings. Original themed controls work in English/light and Arabic/dark at the minimum window size. Custom patterns offer insertion buttons and live previews rather than Apple drag-and-drop tokens; unsupported date components and language-script variants are documented explicitly.
+
+Region saves validated per-user JSON atomically, watches cross-process changes and formats the panel clock from the saved short patterns. Clock text is bounded to protect panel controls from very long custom formats. Debian session integration exports generated UTF-8 locale selections before application activation, clears stale LC_ALL, sets language categories and chooses measurement locales with explicit fallbacks. It never edits system locale files or runs privileged generation. Locale availability warnings and scope notes distinguish standard app locale behavior from Harbor-only custom formats.
+
+Local checks: nineteen Qt suites and twenty-eight Python cases passed, including draft/apply/cancel UI interactions, language order, 12/24-hour format changes, all Qt region defaults, atomic failure, invalid JSON/schema recovery, clock formats and session environment import. Release-container evidence is recorded in evidence/region-0.6.0.txt. Rendered the page, language chooser and three advanced tabs; verified dark Arabic dialog contrast and footer bounds at740×560. No new hardware performance measurement.

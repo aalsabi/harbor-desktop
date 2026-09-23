@@ -1,5 +1,9 @@
 # Evidence index
 
+- region-0.6.0.txt: final Debian13/Qt6.8 build, nineteen Qt suites, twenty-eight Python cases, UI rendering, KWin menu/multiscreen/keyboard/session integrations and package lifecycle; container exit0.
+- region-local-0.6.0.txt / region-python-0.6.0.txt: final local suites. UI tests cover drafts, cancellation, ordering, 12/24-hour changes, persistence and Arabic dialog footer bounds.
+- region-measurement-red.txt: intentional pre-fix reproduction of a missing visible measurement-locale fallback warning.
+
 - no-tooltips-0.5.5.txt: Debian13 build, seventeen Qt suites, seventeen Python cases, UI rendering, virtual KWin integrations and package lifecycle passed (exit0). All Harbor QML tooltip declarations removed; existing pointer-interaction tests pass.
 
 - launch-0.5.4.txt: Debian13 release build; seventeen Qt suites, seventeen Python cases, virtual KWin integrations, installed session/logout and package install/remove passed (exit0).
