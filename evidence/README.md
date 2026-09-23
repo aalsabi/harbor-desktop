@@ -1,5 +1,8 @@
 # Evidence index
 
+- settings-0.4.0.txt: final Debian13 Settings release checks, including eight CTest suites, fourteen Python cases and real virtual-KWin keyboard load/switch/reload.
+- settings-local-0.4.0.txt: local Qt6.11 UI/regression checks.
+
 - menus-0.3.2.txt: seven CTest suites, ten Python tests, Files menu export through KWin, two-output routing, installed-session and package install/remove checks.
 
 - multiscreen-0.3.1.txt: two-output Wayland routing regression, full unit/UI checks and package install/runtime/remove verification.

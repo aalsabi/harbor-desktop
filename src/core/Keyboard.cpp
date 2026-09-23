@@ -1,0 +1,30 @@
+#include "Keyboard.h"
+#include "Command.h"
+#include <QTimer>
+#include <QDBusConnection>
+#include <QDBusMessage>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
+#include <QJsonDocument>
+#include <QJsonObject>
+Keyboard::Keyboard(QObject* parent):QObject(parent){QTimer::singleShot(0,this,&Keyboard::refresh);}
+void Keyboard::refresh(){run({},false);}
+void Keyboard::apply(QStringList layouts,QString shortcut){if(layouts.isEmpty()||layouts.size()>4)return;run({"--layouts",layouts.join(','),"--shortcut",shortcut},true);}
+void Keyboard::run(QStringList args,bool applying){
+ if(working)return;working=true;status.clear();emit changed();auto command=new Command(this);
+ connect(command,&Command::finished,this,[this,command,applying](bool ok,QString output){
+  working=false;command->deleteLater();
+  QJsonParseError error;auto document=QJsonDocument::fromJson(output.toUtf8(),&error);
+  if(!ok||error.error!=QJsonParseError::NoError){status=ok?tr("Cannot read keyboard settings"):output;emit changed();return;}
+  values=document.object().toVariantMap();
+  if(applying){
+   if(qEnvironmentVariable("XDG_SESSION_DESKTOP").compare("harbor",Qt::CaseInsensitive)==0||qEnvironmentVariableIsSet("HARBOR_USER_CONFIG")){
+    auto signal=QDBusMessage::createSignal("/Layouts","org.kde.keyboard","reloadConfig");QDBusConnection::sessionBus().send(signal);status=tr("Saved. Keyboard configuration reload requested.");
+   }else status=tr("Saved for your next Harbor session.");
+  }emit changed();
+ });command->run("harbor-keyboard",args,5000);
+}
+void Keyboard::switchNext(){
+ auto msg=QDBusMessage::createMethodCall("org.kde.keyboard","/Layouts","org.kde.KeyboardLayouts","switchToNextLayout");auto watcher=new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(msg,2000),this);
+ connect(watcher,&QDBusPendingCallWatcher::finished,this,[this,watcher]{QDBusPendingReply<> reply=*watcher;status=reply.isError()?tr("Keyboard switching is available inside the Harbor session."):tr("Switched input source.");watcher->deleteLater();emit changed();});
+}

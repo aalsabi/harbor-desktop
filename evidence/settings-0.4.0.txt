@@ -1,0 +1,89 @@
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Configuring done (0.6s)
+-- Generating done (0.2s)
+-- Build files have been written to: /build
+[1/24] Automatic MOC for target harbor-desktop-core
+[2/23] Automatic MOC for target settings-ui-test
+[3/22] Automatic RCC for resources.qrc
+[4/22] Building CXX object CMakeFiles/settings-ui-test.dir/settings-ui-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[5/22] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/SystemServices.cpp.o
+[6/22] Linking CXX static library libharbor-desktop-core.a
+[7/22] Automatic MOC for target harbor-shell
+[8/21] Automatic RCC for resources.qrc
+[9/21] Automatic RCC for resources.qrc
+[10/21] Building CXX object CMakeFiles/files-ui-test.dir/files-ui-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[11/21] Building CXX object CMakeFiles/harbor-shell.dir/harbor-shell_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[12/21] Linking CXX executable notifications-test
+[13/21] Linking CXX executable apps-test
+[14/21] Linking CXX executable menu-test
+[15/21] Linking CXX executable files-test
+[16/21] Linking CXX executable files-menu-test
+[17/21] Linking CXX executable files-ui-test
+[18/21] Building CXX object CMakeFiles/settings-ui-test.dir/tests/settings_ui_test.cpp.o
+[19/21] Linking CXX executable settings-ui-test
+[20/21] Building CXX object CMakeFiles/harbor-shell.dir/src/shell/main.cpp.o
+[21/21] Linking CXX executable harbor-shell
+Test project /build
+    Start 1: core
+1/8 Test #1: core .............................   Passed    0.08 sec
+    Start 2: notifications
+2/8 Test #2: notifications ....................   Passed    0.07 sec
+    Start 3: apps
+3/8 Test #3: apps .............................   Passed    0.03 sec
+    Start 4: global-menu
+4/8 Test #4: global-menu ......................   Passed    0.11 sec
+    Start 5: files
+5/8 Test #5: files ............................   Passed    0.06 sec
+    Start 6: files-ui
+6/8 Test #6: files-ui .........................   Passed    0.60 sec
+    Start 7: files-menu
+7/8 Test #7: files-menu .......................   Passed    0.21 sec
+    Start 8: settings-ui
+8/8 Test #8: settings-ui ......................   Passed    0.64 sec
+
+100% tests passed, 0 tests failed out of 8
+
+Total Test time (real) =   1.81 sec
+..............
+----------------------------------------------------------------------
+Ran 14 tests in 3.271s
+
+OK
+CPack: Create package using DEB
+CPack: Install projects
+CPack: - Install project: HarborDesktop []
+CPack: Create package
+CPackDeb: - Generating dependency list
+CPack: - package: /build/harbor-desktop-0.4.0-Linux.deb generated.
+File 'setcap' has no capablity to remove
+.
+----------------------------------------------------------------------
+Ran 1 test in 2.242s
+
+OK
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"kwinWindowEnumeration": true, "activate": true, "close": true, "panelsOpened": 5, "notificationDelivered": true, "initialWindowCount": 2, "filesMenuExported": true}
+QThreadStorage: Thread 0x561b98d974c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"twoScreenRouting": {"desktop": ["20", "22"], "menubar": ["20", "22"], "dock": ["20", "22"]}, "passed": true}
+QThreadStorage: Thread 0x55cf0d28a4c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"keyboardLayoutsLoaded": true, "keyboardSwitch": true, "keyboardReload": true}
+QThreadStorage: Thread 0x5580633174c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+kwin_xwl: /tmp/.X11-unix does not exist. Please check your installation
+kwin_xwl: Failed to establish X11 socket
+{"installedSessionStartup": true, "settingsWindowManaged": true}
+QProcess: Destroyed while process ("/usr/bin/harbor-session-client") is still running.
+QThreadStorage: Thread 0x559d8fb574c0 exited after QThreadStorage 7 destroyed
+PACKAGE_INSTALL_RUNTIME_REMOVE_PASS

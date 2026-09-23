@@ -29,6 +29,7 @@
 #include "kwin/WindowModel.h"
 #include "Controller.h"
 #include "core/FilesMenu.h"
+#include "core/Keyboard.h"
 #include "kwin/WindowMenu.h"
 #include <QQuickItem>
 class Icons:public QQuickImageProvider{public:Icons():QQuickImageProvider(Pixmap){}QPixmap requestPixmap(const QString& id,QSize* size,const QSize& requested)override{QSize s=requested.isValid()?requested:QSize(64,64);QString own=":/assets/icons/"+id+".svg";QIcon icon=QFile::exists(own)?QIcon(own):QIcon::fromTheme(id,QIcon(":/assets/icons/app.svg"));auto p=icon.pixmap(s);if(size)*size=p.size();return p;}};
@@ -38,14 +39,14 @@ int main(int argc,char** argv){
  QGuiApplication app(argc,argv);app.setApplicationName("Harbor");app.setOrganizationName("Harbor");app.setFont(QFont("Noto Sans",10));app.setDesktopFileName("org.harbor.Shell");app.setQuitOnLastWindowClosed(false);
  const auto args=app.arguments();bool preview=args.contains("--preview"),settings=args.contains("--settings"),filesMode=args.contains("--files");
  Files browser; if(filesMode)app.setDesktopFileName("org.harbor.Files");if(filesMode||preview){int n=args.indexOf(filesMode?"--files":"--preview");if(n+1<args.size()&&!args[n+1].startsWith("--"))browser.navigate(args[n+1]);}
- Preferences preferences;
+ Preferences preferences;Keyboard keyboard;
  auto updatePalette=[&]{QPalette p;bool d=preferences.dark();p.setColor(QPalette::Window,d?QColor("#252528"):QColor("#f6f6f8"));p.setColor(QPalette::WindowText,d?QColor("#eeeeef"):QColor("#26262a"));p.setColor(QPalette::Text,p.color(QPalette::WindowText));p.setColor(QPalette::ButtonText,p.color(QPalette::WindowText));p.setColor(QPalette::Base,d?QColor("#333337"):Qt::white);p.setColor(QPalette::Button,d?QColor("#3d3d43"):QColor("#ededf1"));p.setColor(QPalette::Highlight,QColor("#1684f8"));app.setPalette(p);};updatePalette();QObject::connect(&preferences,&Preferences::changed,&app,updatePalette);
  Applications applications;SystemServices services;WindowModel windows;Controller controller;Notifications notifications(!preview&&!settings&&!filesMode);Tray tray(!preview&&!settings&&!filesMode);Accounts accounts;QTimer::singleShot(0,&accounts,&Accounts::refresh);
  GlobalMenu menu;QObject::connect(&menu,&GlobalMenu::activated,&controller,&Controller::dismiss);QObject::connect(&windows,&WindowModel::changed,&menu,[&]{if(!preview)menu.setSource(windows.menuService(),windows.menuPath());});
  Translation translation;translation.arabic=preferences.language()=="ar";app.installTranslator(&translation);app.setLayoutDirection(translation.arabic?Qt::RightToLeft:Qt::LeftToRight);
  QQmlEngine engine;QObject::connect(&preferences,&Preferences::changed,&engine,[&]{bool ar=preferences.language()=="ar";if(ar!=translation.arabic){translation.arabic=ar;app.setLayoutDirection(ar?Qt::RightToLeft:Qt::LeftToRight);engine.retranslate();}});
  engine.addImageProvider("icons",new Icons);
- auto ctx=engine.rootContext();ctx->setContextProperty("Browser",&browser);ctx->setContextProperty("Notifications",&notifications);ctx->setContextProperty("GlobalMenu",&menu);ctx->setContextProperty("Tray",&tray);ctx->setContextProperty("Accounts",&accounts);ctx->setContextProperty("Prefs",&preferences);ctx->setContextProperty("Apps",&applications);ctx->setContextProperty("System",&services);ctx->setContextProperty("Windows",&windows);ctx->setContextProperty("UI",&controller);
+ auto ctx=engine.rootContext();ctx->setContextProperty("Keyboard",&keyboard);ctx->setContextProperty("HarborVersion",QStringLiteral(HARBOR_VERSION));ctx->setContextProperty("Browser",&browser);ctx->setContextProperty("Notifications",&notifications);ctx->setContextProperty("GlobalMenu",&menu);ctx->setContextProperty("Tray",&tray);ctx->setContextProperty("Accounts",&accounts);ctx->setContextProperty("Prefs",&preferences);ctx->setContextProperty("Apps",&applications);ctx->setContextProperty("System",&services);ctx->setContextProperty("Windows",&windows);ctx->setContextProperty("UI",&controller);
 controller.onList=[&]{return QString::fromUtf8(QJsonDocument(QJsonArray::fromVariantList(windows.windows())).toJson(QJsonDocument::Compact));};controller.onActivate=[&](QString id){windows.activate(id);};controller.onWindowClose=[&](QString id){windows.close(id);};
  if(!preview&&!settings&&!filesMode){auto bus=QDBusConnection::sessionBus();if(!bus.registerService("org.harbor.Shell"))return 4;bus.registerObject("/Shell",&controller,QDBusConnection::ExportAllSlots);}
  QList<QQuickView*> surfaces;QQuickView* popup=nullptr;
@@ -72,6 +73,7 @@ controller.onList=[&]{return QString::fromUtf8(QJsonDocument(QJsonArray::fromVar
  controller.onClose=[&]{if(popup){popup->hide();popup->deleteLater();popup=nullptr;}};
  controller.onOpen=[&](QString page){controller.dismiss();QString name=page=="menu"?"AppMenu":page=="notifications"?"NotificationCenter":page=="launcher"?"Launcher":page=="settings"?"Settings":page=="windows"?"WindowList":"ControlCenter";popup=make(name,app.primaryScreen(),name=="Settings"?960:name=="Launcher"?680:390,name=="Settings"?680:name=="Launcher"?560:560,name=="Settings"?-1:3);if(popup)popup->requestActivate();};
  if(preview||settings||filesMode){auto v=make(filesMode?"Files":settings?"Settings":"Preview",app.primaryScreen(),filesMode?1200:settings?960:1440,filesMode?760:settings?680:900,-1);if(!v)return 2;surfaces<<v;
+  if(settings){int pageIndex=args.indexOf("--settings")+1;if(pageIndex<args.size()&&!args[pageIndex].startsWith("--")){const QStringList pages{"General","Wi-Fi","Bluetooth","Network","Sound","Appearance","Accessibility","Desktop & Dock","Displays","Keyboard","Battery","Users & Groups","About","Software Update"};if(pages.contains(args[pageIndex]))v->rootObject()->setProperty("section",args[pageIndex]);}}
   if(filesMode||preview){auto fileRoot=filesMode?v->rootObject():v->rootObject()->findChild<QQuickItem*>("filesView");if(fileRoot){auto exporter=new FilesMenu(v);fileRoot->setProperty("menuExporter",QVariant::fromValue(static_cast<QObject*>(exporter)));if(filesMode)attachWindowMenu(v,exporter->objectPath());else menu.setSource(QDBusConnection::sessionBus().baseService(),exporter->objectPath());}}
   QObject::connect(v,&QWindow::visibleChanged,&app,[&app,v]{if(!v->isVisible())app.quit();});
   int i=args.indexOf("--screenshot");if(i>=0&&i+1<args.size()){auto path=args[i+1];QTimer::singleShot(1800,&app,[&app,v,path]{bool ok=v->grabWindow().save(path);app.exit(ok?0:3);});}

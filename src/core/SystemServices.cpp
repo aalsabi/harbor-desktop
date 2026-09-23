@@ -1,5 +1,6 @@
 #include "SystemServices.h"
 #include <QStandardPaths>
+#include <QSysInfo>
 #include <QProcess>
 #include <QTimer>
 #include <QDBusMessage>
@@ -14,7 +15,7 @@
 #include <QDir>
 #include <QUuid>
 #include <memory>
-SystemServices::SystemServices(QObject* p):QObject(p){values["displayOutputs"]=QVariantList{};values["displayPending"]=false;values["displayChanging"]=false;for(auto key:{"wifi","network","networks","volume","audio","bluetooth","devices","brightness","power","displays"})values[QString(key)+"Available"]=false;QTimer::singleShot(0,this,&SystemServices::refresh);auto t=new QTimer(this);connect(t,&QTimer::timeout,this,&SystemServices::refresh);t->start(15000);}
+SystemServices::SystemServices(QObject* p):QObject(p){values["userName"]=qEnvironmentVariable("USER");values["osName"]=QSysInfo::prettyProductName();values["architecture"]=QSysInfo::currentCpuArchitecture();values["kernel"]=QSysInfo::kernelVersion();values["displayOutputs"]=QVariantList{};values["displayPending"]=false;values["displayChanging"]=false;for(auto key:{"wifi","network","networks","volume","audio","bluetooth","devices","brightness","power","displays"})values[QString(key)+"Available"]=false;QTimer::singleShot(0,this,&SystemServices::refresh);auto t=new QTimer(this);connect(t,&QTimer::timeout,this,&SystemServices::refresh);t->start(15000);}
 void SystemServices::query(QString key,QString program,QStringList args){if(QStandardPaths::findExecutable(program).isEmpty()){values[key+"Available"]=false;emit changed();return;}auto c=new Command(this);connect(c,&Command::finished,this,[this,c,key](bool ok,QString out){values[key+"Available"]=ok;values[key]=ok?out:QString();if(key=="displays"&&ok)values["displayOutputs"]=QJsonDocument::fromJson(out.toUtf8()).object()["outputs"].toArray().toVariantList();c->deleteLater();emit changed();});c->run(program,args);}
 void SystemServices::refresh(){query("wifi","nmcli",{"radio","wifi"});query("network","nmcli",{"-t","-f","NAME,TYPE,DEVICE","connection","show","--active"});query("networks","nmcli",{"-t","-f","SSID,SIGNAL,SECURITY","device","wifi","list","--rescan","no"});query("volume","wpctl",{"get-volume","@DEFAULT_AUDIO_SINK@"});query("audio","wpctl",{"status"});query("bluetooth","bluetoothctl",{"show"});query("devices","bluetoothctl",{"devices"});query("brightness","brightnessctl",{"-m"});query("power","powerprofilesctl",{"get"});query("displays","kscreen-doctor",{"-j"});}
 void SystemServices::execute(QString program,QStringList args){if(busy())return;auto c=new Command(this);++active;status.clear();emit changed();connect(c,&Command::finished,this,[this,c](bool ok,QString out){--active;status=ok?tr("Applied; refreshing device state"):out;c->deleteLater();refresh();emit changed();});c->run(program,args,10000);}

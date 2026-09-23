@@ -18,3 +18,5 @@
 المكونات: shell، خلفية، شريط، dock، مشغل تطبيقات، مركز تحكم، قوائم DBusMenu، StatusNotifier، إشعارات، إعدادات، محول نوافذ KWin، حارس رجوع إعدادات العرض، تسجيل جلسة، وحزمة Debian.
 
 المراجعة المرجعية لـGolden Gate موثقة بتاريخ 2026-09-23. لا شعارات أو خطوط أو خلفيات Apple ضمن المشروع.
+
+System Settings and keyboard guide: [SETTINGS.md](docs/SETTINGS.md).

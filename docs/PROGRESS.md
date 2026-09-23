@@ -40,3 +40,9 @@ The regression test checks actual Wayland get_layer_surface output IDs, not only
 Implemented a DBusMenu exporter for Harbor Files with File/Edit/View/Go/Window. Each Files process registers its endpoint on its unique session-bus connection and associates it with its own Wayland surface through KWayland AppMenuManager. The shell reads the active window's exported address. File actions use the existing Files model and dialogs; unavailable selection/busy/modal actions are disabled and checked again at dispatch. Text editing commands target the last focused text control while the panel owns focus. Menu view states are rendered with check/radio markers.
 
 Added a menu export/activation test, real-QML New Tab/view/text-paste/select-all interaction coverage, and a KWin integration assertion that the Files window advertises the endpoint and exports all five menu groups. The existing two-output routing regression remains in release validation. A composed preview was visually checked for panel labels; it is not a physical-display screenshot. Third-party applications still require their own DBusMenu export support.
+
+## 0.4.0 — System Settings redesign and keyboard configuration
+
+Replaced the sparse Settings page with a searchable category sidebar, grouped controls, original icon tiles, rounded selectors, real version/system information and Arabic labels/layout. Preserved existing hardware integrations and explicitly identified external-manager operations. Added an isolated XKB input-source helper and asynchronous Settings backend, with KWin reload/switch integration. See SETTINGS.md for the supported scope and gaps.
+
+Validation includes eight CTest suites, fourteen Python cases, menu/window integration, two-output routing, a real virtual-KWin keyboard load/switch/reload test and package lifecycle checks. Hardware key-event/shortcut behavior is not inferred from the D-Bus test. No performance benchmark was added for this release.

@@ -1,0 +1,39 @@
+#!/usr/bin/python3
+"""Read/write only Harbor's isolated KWin keyboard configuration."""
+import argparse,configparser,json,os,pathlib,tempfile,xml.etree.ElementTree as ET
+SHORTCUTS={'','grp:alt_shift_toggle','grp:ctrl_shift_toggle','grp:win_space_toggle','grp:ctrl_space_toggle'}
+def config(path):
+ c=configparser.ConfigParser(interpolation=None,strict=False);c.optionxform=str;c.read(path);return c
+def read(path):
+ c=config(path);g=c['Layout'] if c.has_section('Layout') else {}
+ layouts=g.get('LayoutList','us').split(',');variants=g.get('VariantList','').split(',')
+ return {'layouts':layouts,'variants':(variants+['']*len(layouts))[:len(layouts)],'shortcut':next((x for x in g.get('Options','').split(',') if x.startswith('grp:')),'')}
+def catalog():
+ root=ET.parse('/usr/share/X11/xkb/rules/evdev.xml').getroot()
+ return [{'id':x.findtext('configItem/name'),'name':x.findtext('configItem/description')} for x in root.findall('layoutList/layout')]
+def save(path,layouts,shortcut,valid):
+ if not 1<=len(layouts)<=4 or len(set(layouts))!=len(layouts) or not all(x in valid for x in layouts) or shortcut not in SHORTCUTS:raise ValueError('Choose one to four distinct input sources and a supported shortcut.')
+ old=read(path)
+ if len(set(old['layouts']))!=len(old['layouts']):raise ValueError('This configuration uses multiple variants of the same layout. Editing it here is not supported; no changes were saved.')
+ variants=dict(zip(old['layouts'],old['variants']));c=config(path)
+ if not c.has_section('Layout'):c.add_section('Layout')
+ g=c['Layout'];options=[x for x in g.get('Options','').split(',') if x and not x.startswith('grp:')]
+ if shortcut:options.append(shortcut)
+ g.update({'Use':'true','LayoutList':','.join(layouts),'VariantList':','.join(variants.get(x,'') for x in layouts),'Options':','.join(options),'ResetOldOptions':'true'})
+ path.parent.mkdir(parents=True,exist_ok=True)
+ fd,tmp=tempfile.mkstemp(prefix='.kxkbrc-',dir=path.parent)
+ try:
+  with os.fdopen(fd,'w') as f:c.write(f);f.flush();os.fsync(f.fileno())
+  os.replace(tmp,path)
+ finally:
+  if os.path.exists(tmp):os.unlink(tmp)
+def main():
+ p=argparse.ArgumentParser();p.add_argument('--layouts');p.add_argument('--shortcut',default='');args=p.parse_args()
+ path=pathlib.Path(os.environ.get('XDG_CONFIG_HOME',str(pathlib.Path.home()/'.config')))/'harbor/session/kxkbrc'
+ try:
+  choices=catalog()
+  if args.layouts is not None:save(path,args.layouts.split(',') if args.layouts else [],args.shortcut,{x['id'] for x in choices})
+  print(json.dumps({**read(path),'catalog':choices}))
+ except (OSError,ValueError,configparser.Error,ET.ParseError) as e:print(str(e));return 1
+ return 0
+if __name__=='__main__':raise SystemExit(main())
