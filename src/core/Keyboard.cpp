@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QDBusConnection>
 #include <QDBusMessage>
+#include <QDBusMetaType>
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
 #include <QJsonDocument>
@@ -19,7 +20,15 @@ void Keyboard::run(QStringList args,bool applying){
   values=document.object().toVariantMap();
   if(applying){
    if(qEnvironmentVariable("XDG_SESSION_DESKTOP").compare("harbor",Qt::CaseInsensitive)==0||qEnvironmentVariableIsSet("HARBOR_USER_CONFIG")){
-    auto signal=QDBusMessage::createSignal("/Layouts","org.kde.keyboard","reloadConfig");QDBusConnection::sessionBus().send(signal);status=tr("Saved. Keyboard configuration reload requested.");
+    // Older KWin listens to reloadConfig; newer KWin uses KConfigWatcher.
+    auto bus=QDBusConnection::sessionBus();
+    auto signal=QDBusMessage::createSignal("/Layouts","org.kde.keyboard","reloadConfig");bus.send(signal);
+    qDBusRegisterMetaType<QByteArrayList>();
+    qDBusRegisterMetaType<QHash<QString,QByteArrayList>>();
+    auto notification=QDBusMessage::createSignal("/kxkbrc","org.kde.kconfig.notify","ConfigChanged");
+    QHash<QString,QByteArrayList> changes{{"Layout",{"Use","LayoutList","VariantList","Options","ResetOldOptions"}}};
+    notification<<QVariant::fromValue(changes);bus.send(notification);
+    status=tr("Saved. Keyboard configuration reload requested.");
    }else status=tr("Saved for your next Harbor session.");
   }emit changed();
  });command->run("harbor-keyboard",args,5000);

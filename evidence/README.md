@@ -1,5 +1,9 @@
 # Evidence index
 
+- keyboard-fix-0.5.1.txt: Debian13/KWin6.3 full release checks, twelve Qt suites and package lifecycle.
+- keyboard-local-0.5.1.txt: twelve local regression suites, including production reload notifications.
+- keyboard-kwin67-0.5.1.txt: isolated local KWin6.7 keyboard load/switch/reload; virtual compositor warnings are preserved.
+
 - control-0.5.0.txt: Debian13 final build, eleven Qt suites, fourteen Python cases, virtual KWin/menu/multiscreen/keyboard/session logout and package lifecycle.
 - control-local-0.5.0.txt: eleven local Qt suites including the slider debounce regression.
 

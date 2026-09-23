@@ -1,0 +1,19 @@
+Failed to gain real time thread priority (See CAP_SYS_NICE in the capabilities(7) man page). error: Operation not permitted
+kwin_scene_opengl: eglInitialize failed
+kwin_scene_opengl: Error during eglInitialize  "EGL_NOT_INITIALIZED"
+kwin_scene_opengl: eglInitialize failed
+kwin_scene_opengl: Error during eglInitialize  "EGL_NOT_INITIALIZED"
+Accepting client connections on sockets: QList("wayland-0")
+kf.service.services: The desktop file "/usr/share/applications/xfreerdp-file.desktop" references the action "Edit" but doesn't define it
+kwin_xkbcommon: XKB: [XKB-107] inet:442:58: unrecognized keysym "XF86ElectronicPrivacyScreenOn"
+kwin_xkbcommon: XKB: [XKB-107] inet:443:58: unrecognized keysym "XF86ElectronicPrivacyScreenOff"
+kwin_xkbcommon: XKB: [XKB-107] inet:444:58: unrecognized keysym "XF86ActionOnSelection"
+kwin_xkbcommon: XKB: [XKB-107] inet:445:58: unrecognized keysym "XF86ContextualInsert"
+kwin_xkbcommon: XKB: [XKB-107] inet:446:58: unrecognized keysym "XF86ContextualQuery"
+kwin_screencast: Failed to connect PipeWire context
+kwin_xkbcommon: XKB: [XKB-107] inet:442:58: unrecognized keysym "XF86ElectronicPrivacyScreenOn"
+kwin_xkbcommon: XKB: [XKB-107] inet:443:58: unrecognized keysym "XF86ElectronicPrivacyScreenOff"
+kwin_xkbcommon: XKB: [XKB-107] inet:444:58: unrecognized keysym "XF86ActionOnSelection"
+kwin_xkbcommon: XKB: [XKB-107] inet:445:58: unrecognized keysym "XF86ContextualInsert"
+kwin_xkbcommon: XKB: [XKB-107] inet:446:58: unrecognized keysym "XF86ContextualQuery"
+{"keyboardLayoutsLoaded": true, "keyboardSwitch": true, "keyboardReload": true}

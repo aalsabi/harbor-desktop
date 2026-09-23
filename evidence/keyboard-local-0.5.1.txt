@@ -1,0 +1,29 @@
+Test project /home/abdullahsa/Documents/Codex/2026-09-23/referenced-chatgpt-conversation-this-is-an/work/build
+      Start  1: core
+ 1/12 Test  #1: core .............................   Passed    0.09 sec
+      Start  2: notifications
+ 2/12 Test  #2: notifications ....................   Passed    0.07 sec
+      Start  3: apps
+ 3/12 Test  #3: apps .............................   Passed    0.07 sec
+      Start  4: global-menu
+ 4/12 Test  #4: global-menu ......................   Passed    0.08 sec
+      Start  5: files
+ 5/12 Test  #5: files ............................   Passed    0.07 sec
+      Start  6: files-ui
+ 6/12 Test  #6: files-ui .........................   Passed    0.65 sec
+      Start  7: files-menu
+ 7/12 Test  #7: files-menu .......................   Passed    0.18 sec
+      Start  8: settings-ui
+ 8/12 Test  #8: settings-ui ......................   Passed    0.73 sec
+      Start  9: system-state
+ 9/12 Test  #9: system-state .....................   Passed    0.01 sec
+      Start 10: system-actions
+10/12 Test #10: system-actions ...................   Passed    0.47 sec
+      Start 11: control-ui
+11/12 Test #11: control-ui .......................   Passed    0.74 sec
+      Start 12: keyboard-notify
+12/12 Test #12: keyboard-notify ..................   Passed    0.14 sec
+
+100% tests passed, 0 tests failed out of 12
+
+Total Test time (real) =   3.31 sec

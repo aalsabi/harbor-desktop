@@ -19,6 +19,7 @@ if '--client' in sys.argv:
  env={**os.environ,'XDG_CONFIG_HOME':os.environ['HARBOR_KEYBOARD_TEST_BASE']}
  subprocess.run(['harbor-keyboard','--layouts','us,de','--shortcut','grp:alt_shift_toggle'],env=env,check=True,stdout=subprocess.DEVNULL)
  subprocess.run(['gdbus','emit','--session','--object-path','/Layouts','--signal','org.kde.keyboard.reloadConfig'],check=True)
+ subprocess.run(['gdbus','emit','--session','--object-path','/kxkbrc','--signal','org.kde.kconfig.notify.ConfigChanged',"@a{saay} {'Layout': [b'LayoutList', b'VariantList', b'Options', b'Use', b'ResetOldOptions']}"],check=True)
  for _ in range(50):
   layouts=call('getLayoutsList')
   if "'de'" in layouts:break

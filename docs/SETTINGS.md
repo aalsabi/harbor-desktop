@@ -25,7 +25,7 @@ Choose one to four distinct base layouts from the installed XKB catalogue. Engli
 
 Only `~/.config/harbor/session/kxkbrc` is written, through an atomic replacement. Existing variants of retained layouts and unrelated keyboard options are preserved. Configurations containing multiple variants of the same base layout cannot be edited here yet: the helper refuses them without changing the file. This UI does not configure compose-key options, repeat rate or input-method engines such as Fcitx/IBus.
 
-Inside Harbor, Apply requests KWin's `org.kde.keyboard` reloadConfig signal. Outside Harbor, it saves for the next Harbor session. The message distinguishes a saved/requested change from a verified physical keyboard result. The session-specific configuration does not change GDM or other desktops' input settings. Custom shortcuts may conflict with application shortcuts.
+Inside Harbor, Apply requests both the older `org.kde.keyboard.reloadConfig` signal and the newer `org.kde.kconfig.notify.ConfigChanged` notification for `/kxkbrc`. KWin 6.7 uses KConfigWatcher and no longer listens to the old reload signal. Outside Harbor, it saves for the next Harbor session. The message distinguishes a saved/requested change from a verified physical keyboard result. The session-specific configuration does not change GDM or other desktops' input settings. Custom shortcuts may conflict with application shortcuts.
 
 Direct page launch: `harbor-settings Keyboard` or `harbor-settings Appearance`.
 
@@ -53,3 +53,9 @@ Network credentials and new Bluetooth pairing still require external managers. U
 Validation: 11 Qt suites, including normalized service output, queued slider writes, state-refresh/debounce regression and logout confirmation. Session integration verifies graceful logout in a private virtual KWin session. Real wireless, Bluetooth, audio routing, battery hardware, restart/shutdown authorization and physical monitor backlights still require testing on the target machine. Tests never reboot or power off the host.
 
 Service contracts: [wpctl](https://pipewire.pages.freedesktop.org/wireplumber/man/wpctl.html), [pw-dump](https://docs.pipewire.org/page_man_pw-dump_1.html), [nmcli](https://networkmanager.pages.freedesktop.org/NetworkManager/NetworkManager/nmcli.html), [BlueZ](https://hadess.github.io/bluez/bluetoothctl.html), [UPower](https://upower.pages.freedesktop.org/upower.freedesktop.org/docs/UPower.html).
+
+## Keyboard reload fix (0.5.1)
+
+A real KWin 6.7 session retained US only despite a saved US/Arabic configuration. Sending the old reload signal did not change the live layout list. Sending the KConfig notification immediately loaded both sources, and activating Arabic returned success. The application now emits both protocols to support older and newer KWin. A private-bus regression exercises the production Keyboard.apply path and checks notification payloads.
+
+References: [KWin 6.7 keyboard watcher](https://github.com/KDE/kwin/blob/Plasma/6.7/src/keyboard_layout.cpp), [KConfig notification contract](https://github.com/KDE/kconfig/blob/master/src/core/kconfigwatcher.cpp).

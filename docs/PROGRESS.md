@@ -54,3 +54,9 @@ Added normalized service state, saved-network and paired-Bluetooth actions, Pipe
 Review identified a debounce race: an unrelated state update replaced a pending brightness value (73) with the previous reading (37). A failing UI regression reproduced it; all five device sliders now capture the requested value before the debounce timer. A separate fake-command test verifies queued writes retain the final request. Hardware-service and Apple-specific scope limits are recorded in SETTINGS.md.
 
 Final release validation on Debian 13 / Qt 6.8 passed 11 CTest suites, 14 Python cases, offscreen rendering, virtual KWin menus/windows, two-output routing, keyboard load/switch/reload and installed-session graceful logout. Package install/remove passed. All 14 Settings pages rendered locally without QML errors; Arabic dark Desktop & Dock and the Control Center were visually inspected. No new hardware performance measurement was made. See evidence/control-0.5.0.txt.
+
+## 0.5.1 — Arabic input reload on KWin 6.7
+
+Diagnosed saved US/Arabic layouts while the running compositor exposed only US. KWin 6.7 replaced the legacy reload signal with KConfigWatcher. Added the typed ConfigChanged notification while retaining the old signal for Debian13/KWin6.3. The live session loaded Arabic after notification and accepted Arabic activation. Added a failing-then-passing private-bus regression for production apply notifications.
+
+Verification: twelve local and Debian13 CTest suites pass; fourteen Python cases and package install/runtime/remove pass. Separate KWin6.7 virtual integration verifies loading, switching and reloading. The live user session also reported both US/Arabic and successful Arabic activation after the modern notification. Physical typing confirmation remains with the user.
