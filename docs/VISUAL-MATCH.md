@@ -1,4 +1,4 @@
-# المقارنة البصرية — 0.3.0
+# المقارنة البصرية — 0.3.2
 
 مراجعة2026-09-23 اعتماداً على دليل Finder الرسمي لـmacOS27:
 https://support.apple.com/guide/mac-help/organize-your-files-in-the-finder-mchle9f0a1b2/27/mac/27
@@ -13,7 +13,7 @@ https://support.apple.com/guide/mac-help/organize-your-files-in-the-finder-mchle
 | الملفات | مجلدات زرقاء أصلية وأيقونة مستند، صور مصغرة للصور المدعومة | لا معاينات PDF/Office مطابقة للنظام الأصلي |
 | الخط | Noto Sans المثبت بالنظام | ليس San Francisco؛ تختلف القياسات والتنعيم |
 | dock | أيقونات48px، خلفية شفافة بعرض المحتوى، تدرجات أيقونات أصلية | لا أيقونة Finder أو أيقونات Apple المنسوخة ولا magnification مطابق |
-| الشريط | خفيف شبه شفاف، قوائم DBusMenu الفعلية | Harbor Files لا يصدر File/Edit كقائمة عالمية بعد؛ لا قوائم شكلية مزيفة |
+| الشريط | خفيف شبه شفاف، قوائم DBusMenu الفعلية | Harbor Files يصدر File/Edit/View/Go/Window؛ تطبيقات الطرف الثالث تحتاج دعم تصدير DBusMenu |
 | الإعدادات والمركز | ألوان محايدة وأزرار أصغر وتحديد أزرق | تنظيم بعض صفحات Linux ووظائفها مختلف |
 | تطبيقات Linux الأخرى | يستمر استخدام Breeze وإعدادات KWin | لم يُعد تصميم كل تطبيق GTK/Qt، ولا يمكن ادعاء تطابق كامل لسطح المكتب |
 

@@ -17,6 +17,14 @@ try:
   if len(rows)>=2:break
   time.sleep(.1)
  assert len(rows)>=2,rows
+ for _ in range(50):
+  file_row=next((r for r in windows() if r['appId']=='org.harbor.Files' and r.get('menuService')),None)
+  if file_row:break
+  time.sleep(.1)
+ assert file_row,windows()
+ result=subprocess.run(['gdbus','call','--session','--dest',file_row['menuService'],'--object-path',file_row['menuPath'],'--method','com.canonical.dbusmenu.GetLayout','--','0','-1','[]'],capture_output=True,text=True)
+ assert result.returncode==0,result.stderr
+ assert all(label in result.stdout for label in ['File','Edit','View','Go','Window']),result.stdout
  ids=[r['id'] for r in rows]
  call('Activate',ids[0])
  for _ in range(80):
@@ -30,7 +38,7 @@ try:
   call('Show',panel);time.sleep(.2)
  r=subprocess.run(['gdbus','call','--session','--dest','org.freedesktop.Notifications','--object-path','/org/freedesktop/Notifications','--method','org.freedesktop.Notifications.Notify','Harbor test','0','','Integration test','Notification delivered','[]','{}','1000'],capture_output=True,text=True)
  assert r.returncode==0,r.stderr
- print(json.dumps({'kwinWindowEnumeration':True,'activate':True,'close':True,'panelsOpened':5,'notificationDelivered':True,'initialWindowCount':len(rows)}),flush=True)
+ print(json.dumps({'kwinWindowEnumeration':True,'activate':True,'close':True,'panelsOpened':5,'notificationDelivered':True,'initialWindowCount':len(rows),'filesMenuExported':True}),flush=True)
 finally:
  for c in children+[shell]:
   if c.poll() is None:c.terminate()

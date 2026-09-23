@@ -27,7 +27,7 @@ WindowModel::WindowModel(QObject* parent):QObject(parent){
  });
  registry->create(connection);registry->setup();
 }
-QVariantList WindowModel::windows()const{QVariantList result;if(manager)for(auto w:manager->windows())if(!w->skipTaskbar())result.append(QVariantMap{{"id",QString::fromUtf8(w->uuid())},{"title",w->title()},{"appId",w->appId()},{"active",w->isActive()}});return result;}
+QVariantList WindowModel::windows()const{QVariantList result;if(manager)for(auto w:manager->windows())if(!w->skipTaskbar())result.append(QVariantMap{{"id",QString::fromUtf8(w->uuid())},{"title",w->title()},{"appId",w->appId()},{"active",w->isActive()},{"menuService",w->applicationMenuServiceName()},{"menuPath",w->applicationMenuObjectPath()}});return result;}
 QString WindowModel::activeTitle()const{auto w=manager?manager->activeWindow():nullptr;return w?w->title():QStringLiteral("Harbor");}
 void WindowModel::activate(QString id){if(manager)for(auto w:manager->windows())if(w->uuid()==id.toUtf8())w->requestActivate();}
 void WindowModel::close(QString id){if(manager)for(auto w:manager->windows())if(w->uuid()==id.toUtf8())w->requestClose();}

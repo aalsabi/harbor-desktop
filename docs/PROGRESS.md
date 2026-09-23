@@ -34,3 +34,9 @@
 A two-output KWin Wayland reproduction confirmed that both copies of each desktop, menu bar and dock were sent to the first output. QWindow::setScreen alone did not preserve the intended output through native window creation with the initial geometry at the origin. Set each window's initial position to the target screen's geometry origin before mapping it.
 
 The regression test checks actual Wayland get_layer_surface output IDs, not only the stored intended QScreen. Before the fix: desktop/menu/dock each routed to [20,20]. After the fix: each routes to [20,22]. Tested with Debian 13 Qt 6.8 / KWin virtual two-output session; physical HDMI and hot-plug behavior still require device validation.
+
+## 0.3.2 — functional Files menus in the panel
+
+Implemented a DBusMenu exporter for Harbor Files with File/Edit/View/Go/Window. Each Files process registers its endpoint on its unique session-bus connection and associates it with its own Wayland surface through KWayland AppMenuManager. The shell reads the active window's exported address. File actions use the existing Files model and dialogs; unavailable selection/busy/modal actions are disabled and checked again at dispatch. Text editing commands target the last focused text control while the panel owns focus. Menu view states are rendered with check/radio markers.
+
+Added a menu export/activation test, real-QML New Tab/view/text-paste/select-all interaction coverage, and a KWin integration assertion that the Files window advertises the endpoint and exports all five menu groups. The existing two-output routing regression remains in release validation. A composed preview was visually checked for panel labels; it is not a physical-display screenshot. Third-party applications still require their own DBusMenu export support.

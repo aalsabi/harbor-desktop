@@ -30,3 +30,9 @@
 اختبارات Python تستخدم ملفات مؤقتة لا بيانات المستخدم: نسخ شجرة وروابط رمزية، عدم استبدال ملف موجود عند النقل، إعادة تسمية ومنع مسار خارج الاسم، ومنع نسخ المجلد داخل نفسه. اختبارات Qt تتحقق من سجل التنقل والتبويبات والترشيح والمخفي ومعاينة النص. اختبار Qt Quick ينقر عنصراً ويغير طرق العرض ويفتح مجلداً بالنقر المزدوج. الرسم برمجي offscreen؛ السحب والإفلات عبر التطبيقات والأقراص الفعلية لم يُعتمدا بعد.
 
 الإصدار0.3 يستخدم شريط أدوات موحداً وزخرفة نافذة خاصة. النقاط يساراً تغلق وتصغر وتكبّر النافذة، ويمكن الوصول إليها بلوحة المفاتيح. اسحب الشريط لتحريك النافذة، والزاوية السفلى اليمنى لتغيير الحجم. الزر ◧ يظهر المعاينة، و••• يحتوي عمليات الملفات التي كانت ظاهرة كأزرار مستقلة.
+
+## Panel menus (0.3.2)
+
+With a Harbor Files window active in the Harbor Wayland session, the panel displays File, Edit, View, Go and Window. These menus act on that window and respect its selection and busy state. Rename, new-folder and trash actions use the existing dialogs. Edit operations target the focused text editor when editing text, otherwise the file selection. View options show their selected states.
+
+Each Files process exports its own DBusMenu endpoint, associated with its Wayland surface through KWin's appmenu protocol. Other applications still need their own DBusMenu support; this update does not invent menus for unsupported apps. The local toolbar actions remain available outside Harbor.

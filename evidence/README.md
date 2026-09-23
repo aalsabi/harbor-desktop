@@ -1,5 +1,7 @@
 # Evidence index
 
+- menus-0.3.2.txt: seven CTest suites, ten Python tests, Files menu export through KWin, two-output routing, installed-session and package install/remove checks.
+
 - multiscreen-0.3.1.txt: two-output Wayland routing regression, full unit/UI checks and package install/runtime/remove verification.
 
 - visual-0.3.0.txt: release0.3 final build, UI interaction, packaging, KWin integration, install and remove checks.

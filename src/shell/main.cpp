@@ -28,6 +28,9 @@
 #include "core/SystemServices.h"
 #include "kwin/WindowModel.h"
 #include "Controller.h"
+#include "core/FilesMenu.h"
+#include "kwin/WindowMenu.h"
+#include <QQuickItem>
 class Icons:public QQuickImageProvider{public:Icons():QQuickImageProvider(Pixmap){}QPixmap requestPixmap(const QString& id,QSize* size,const QSize& requested)override{QSize s=requested.isValid()?requested:QSize(64,64);QString own=":/assets/icons/"+id+".svg";QIcon icon=QFile::exists(own)?QIcon(own):QIcon::fromTheme(id,QIcon(":/assets/icons/app.svg"));auto p=icon.pixmap(s);if(size)*size=p.size();return p;}};
 int main(int argc,char** argv){
  QQuickStyle::setStyle("Basic");
@@ -38,7 +41,7 @@ int main(int argc,char** argv){
  Preferences preferences;
  auto updatePalette=[&]{QPalette p;bool d=preferences.dark();p.setColor(QPalette::Window,d?QColor("#252528"):QColor("#f6f6f8"));p.setColor(QPalette::WindowText,d?QColor("#eeeeef"):QColor("#26262a"));p.setColor(QPalette::Text,p.color(QPalette::WindowText));p.setColor(QPalette::ButtonText,p.color(QPalette::WindowText));p.setColor(QPalette::Base,d?QColor("#333337"):Qt::white);p.setColor(QPalette::Button,d?QColor("#3d3d43"):QColor("#ededf1"));p.setColor(QPalette::Highlight,QColor("#1684f8"));app.setPalette(p);};updatePalette();QObject::connect(&preferences,&Preferences::changed,&app,updatePalette);
  Applications applications;SystemServices services;WindowModel windows;Controller controller;Notifications notifications(!preview&&!settings&&!filesMode);Tray tray(!preview&&!settings&&!filesMode);Accounts accounts;QTimer::singleShot(0,&accounts,&Accounts::refresh);
- GlobalMenu menu;QObject::connect(&windows,&WindowModel::changed,&menu,[&]{menu.setSource(windows.menuService(),windows.menuPath());});
+ GlobalMenu menu;QObject::connect(&menu,&GlobalMenu::activated,&controller,&Controller::dismiss);QObject::connect(&windows,&WindowModel::changed,&menu,[&]{if(!preview)menu.setSource(windows.menuService(),windows.menuPath());});
  Translation translation;translation.arabic=preferences.language()=="ar";app.installTranslator(&translation);app.setLayoutDirection(translation.arabic?Qt::RightToLeft:Qt::LeftToRight);
  QQmlEngine engine;QObject::connect(&preferences,&Preferences::changed,&engine,[&]{bool ar=preferences.language()=="ar";if(ar!=translation.arabic){translation.arabic=ar;app.setLayoutDirection(ar?Qt::RightToLeft:Qt::LeftToRight);engine.retranslate();}});
  engine.addImageProvider("icons",new Icons);
@@ -68,7 +71,9 @@ controller.onList=[&]{return QString::fromUtf8(QJsonDocument(QJsonArray::fromVar
  controller.onWindowAction=[&](QString name){QQuickView* v=popup?popup:((settings||filesMode)&&!surfaces.isEmpty()?surfaces[0]:nullptr);if(!v)return;if(name=="move")v->startSystemMove();else if(name=="resize")v->startSystemResize(Qt::RightEdge|Qt::BottomEdge);else if(name=="close")v->close();else if(name=="minimize")v->showMinimized();else if(name=="maximize"){if(v->visibility()==QWindow::Maximized)v->showNormal();else v->showMaximized();}};
  controller.onClose=[&]{if(popup){popup->hide();popup->deleteLater();popup=nullptr;}};
  controller.onOpen=[&](QString page){controller.dismiss();QString name=page=="menu"?"AppMenu":page=="notifications"?"NotificationCenter":page=="launcher"?"Launcher":page=="settings"?"Settings":page=="windows"?"WindowList":"ControlCenter";popup=make(name,app.primaryScreen(),name=="Settings"?960:name=="Launcher"?680:390,name=="Settings"?680:name=="Launcher"?560:560,name=="Settings"?-1:3);if(popup)popup->requestActivate();};
- if(preview||settings||filesMode){auto v=make(filesMode?"Files":settings?"Settings":"Preview",app.primaryScreen(),filesMode?1200:settings?960:1440,filesMode?760:settings?680:900,-1);if(!v)return 2;surfaces<<v;QObject::connect(v,&QWindow::visibleChanged,&app,[&app,v]{if(!v->isVisible())app.quit();});
+ if(preview||settings||filesMode){auto v=make(filesMode?"Files":settings?"Settings":"Preview",app.primaryScreen(),filesMode?1200:settings?960:1440,filesMode?760:settings?680:900,-1);if(!v)return 2;surfaces<<v;
+  if(filesMode||preview){auto fileRoot=filesMode?v->rootObject():v->rootObject()->findChild<QQuickItem*>("filesView");if(fileRoot){auto exporter=new FilesMenu(v);fileRoot->setProperty("menuExporter",QVariant::fromValue(static_cast<QObject*>(exporter)));if(filesMode)attachWindowMenu(v,exporter->objectPath());else menu.setSource(QDBusConnection::sessionBus().baseService(),exporter->objectPath());}}
+  QObject::connect(v,&QWindow::visibleChanged,&app,[&app,v]{if(!v->isVisible())app.quit();});
   int i=args.indexOf("--screenshot");if(i>=0&&i+1<args.size()){auto path=args[i+1];QTimer::singleShot(1800,&app,[&app,v,path]{bool ok=v->grabWindow().save(path);app.exit(ok?0:3);});}
  }else{
   auto addScreen=[&](QScreen* screen){auto geo=screen->geometry();for(auto spec:QList<QPair<QString,int>>{{"Desktop",0},{"MenuBar",1},{"Dock",2}}){auto v=make(spec.first,screen,spec.second==2?720:geo.width(),spec.second==0?geo.height():spec.second==1?38:78,spec.second);if(v){surfaces<<v;QObject::connect(screen,&QScreen::geometryChanged,v,[v,spec](QRect r){if(spec.second!=2)v->setWidth(r.width());if(spec.second==0)v->setHeight(r.height());});}}};

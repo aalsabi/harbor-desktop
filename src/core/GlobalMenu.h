@@ -14,6 +14,7 @@ class GlobalMenu:public QObject {
 public:explicit GlobalMenu(QObject* p=nullptr);QVariantList roots()const{return top;}QVariantList items()const{return current;}
  void setSource(QString service,QString path);
  Q_INVOKABLE void select(int id);Q_INVOKABLE void trigger(int id);Q_INVOKABLE void back();
-signals:void changed();
+signals:void changed();void activated();
+private slots:void reload(){load();}
 private:void load();void flatten(const MenuLayout&,int depth=0);QString service,path;QVariantList top,current,all;int selected=0;uint generation=0;
 };

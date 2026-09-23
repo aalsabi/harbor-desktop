@@ -20,6 +20,7 @@ public:
  bool hidden()const{return showHidden;}QString search()const{return filter;}QString error()const{return message;}bool busy()const{return working;}
  void setHidden(bool);void setSearch(QString);
  Q_INVOKABLE void navigate(QString);
+ Q_INVOKABLE void goHome();
  Q_INVOKABLE void back();Q_INVOKABLE void forward();Q_INVOKABLE void up();
  Q_INVOKABLE void addTab();Q_INVOKABLE void selectTab(int);Q_INVOKABLE void closeTab(int);
  Q_INVOKABLE QVariantMap preview(QString);

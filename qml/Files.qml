@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 Rectangle {
- id:root;color:Prefs.dark?"#242426":"#ffffff";radius:16;clip:true
+ id:root;objectName:"filesView";color:Prefs.dark?"#242426":"#ffffff";radius:16;clip:true
  property color ink:Prefs.dark?"#eeeeef":"#262628"
  property color muted:Prefs.dark?"#a8a8ae":"#77777e"
  property color sidebar:Prefs.dark?"#303034":"#ededf0"
@@ -13,6 +13,49 @@ Rectangle {
  property int viewMode:0
  property string pendingAction:"mkdir"
  property bool previewVisible:false
+ property QtObject menuExporter:null
+ // Retain the editor when another window (the panel menu) takes focus.
+ property var textEditor:null
+ Connections{target:root.Window.window;function onActiveFocusItemChanged(){let w=root.Window.window;let i=w?w.activeFocusItem:null;if(i)root.textEditor=(i instanceof TextInput||i instanceof TextEdit)?i:null}}
+
+ property var menuState:({selectionCount:selected.length,busy:Browser.busy,modal:nameDialog.visible||trashDialog.visible,tabs:Browser.tabs.length,viewMode:viewMode,preview:previewVisible,hidden:Browser.hidden,textFocus:textEditor!==null,textSelected:textEditor?textEditor.selectedText.length>0:false,textReadOnly:textEditor?textEditor.readOnly:false})
+ onMenuStateChanged:if(menuExporter)menuExporter.setState(menuState)
+ onMenuExporterChanged:if(menuExporter)menuExporter.setState(menuState)
+ Connections{target:root.menuExporter;function onAction(action){root.menuAction(action)}}
+ function menuAction(action){
+  if(nameDialog.visible||trashDialog.visible)return
+  if(textEditor&&["copy","cut","paste","selectAll"].includes(action)){
+   if(action==="copy")textEditor.copy()
+   else if(action==="cut"&&!textEditor.readOnly)textEditor.cut()
+   else if(action==="paste"&&!textEditor.readOnly)textEditor.paste()
+   else if(action==="selectAll")textEditor.selectAll()
+   return
+  }
+  switch(action){
+   case "newTab":Browser.addTab();break
+   case "closeTab":Browser.closeTab(Browser.tab);break
+   case "newFolder":if(!Browser.busy)ask("mkdir");break
+   case "open":if(selected.length===1)Browser.open(selected[0]);break
+   case "rename":if(selected.length===1&&!Browser.busy)ask("rename");break
+   case "trash":if(selected.length&&!Browser.busy)trashDialog.open();break
+   case "copy":Browser.copy(selected,false);break
+   case "cut":Browser.copy(selected,true);break
+   case "paste":if(!Browser.busy)Browser.paste();break
+   case "selectAll":selected=Browser.entries.map(e=>e.path);break
+   case "icons":viewMode=0;break
+   case "list":viewMode=1;break
+   case "columns":viewMode=2;break
+   case "preview":previewVisible=!previewVisible;break
+   case "hidden":Browser.hidden=!Browser.hidden;break
+   case "refresh":Browser.refresh();break
+   case "back":Browser.back();break
+   case "forward":Browser.forward();break
+   case "up":Browser.up();break
+   case "home":Browser.goHome();break
+   case "location":location.forceActiveFocus();location.selectAll();break
+   case "close":case "minimize":case "maximize":UI.windowAction(action);break
+  }
+ }
  function choose(p,modifiers){if(modifiers&Qt.ControlModifier)selected=selected.includes(p)?selected.filter(x=>x!==p):selected.concat([p]);else selected=[p];detail=Browser.preview(p)}
  function ask(action){pendingAction=action;nameField.text=action==="rename"&&selected.length===1?selected[0].split("/").pop():"";nameDialog.open();nameField.forceActiveFocus()}
  Connections{target:Browser;function onChanged(){if(root.lastPath!==Browser.path){root.detail={};root.lastPath=Browser.path;location.text=Browser.path;}selected=selected.filter(p=>Browser.entries.some(e=>e.path===p));}}
