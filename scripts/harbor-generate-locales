@@ -1,0 +1,150 @@
+#!/usr/bin/python3 -I
+"""Privileged, allowlisted locale generation. Invoke only through pkexec."""
+import contextlib
+import fcntl
+import json
+import os
+import pathlib
+import re
+import stat
+import subprocess
+import sys
+import tempfile
+import time
+
+SUPPORTED = '/usr/share/i18n/SUPPORTED'
+LOCK = '/run/lock/harbor-locales.lock'
+LOCALE_GEN = '/etc/locale.gen'
+ENVIRONMENT = {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LANG': 'C', 'LC_ALL': 'C'}
+NAME = re.compile(r'[a-z]{2,3}_[A-Z]{2}(?:\.UTF-8)?(?:@[a-z0-9]+)?\Z')
+
+
+def trusted_file(info):
+    if info.st_uid != 0 or not stat.S_ISREG(info.st_mode) or info.st_mode & 0o022:
+        raise ValueError('System locale configuration must be a root-owned regular file without group or other write access.')
+
+
+def read_supported(path=SUPPORTED):
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    with os.fdopen(fd, encoding='utf-8') as source:
+        trusted_file(os.fstat(source.fileno()))
+        return {parts[0] for line in source for parts in [line.split()]
+                if len(parts) == 2 and parts[1] == 'UTF-8' and NAME.fullmatch(parts[0])}
+
+
+def validate_requests(names, supported):
+    if not 1 <= len(names) <= 32:
+        raise ValueError('Request between 1 and 32 supported UTF-8 locales.')
+    if any(not NAME.fullmatch(name) or name not in supported for name in names):
+        raise ValueError('Every locale must exactly match a supported UTF-8 entry.')
+    return list(dict.fromkeys(names))
+
+
+@contextlib.contextmanager
+def generation_lock():
+    fd = os.open(LOCK, os.O_RDWR | os.O_CREAT | os.O_NOFOLLOW | os.O_CLOEXEC, 0o600)
+    try:
+        trusted_file(os.fstat(fd))
+        deadline = time.monotonic() + 10
+        while True:
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                break
+            except BlockingIOError:
+                if time.monotonic() >= deadline:
+                    raise TimeoutError('Another locale generation operation is running. Try again later.')
+                time.sleep(0.1)
+        yield
+    finally:
+        os.close(fd)
+
+
+def command(arguments, timeout):
+    return subprocess.run(arguments, env=ENVIRONMENT, cwd="/", stdin=subprocess.DEVNULL,
+                          capture_output=True, text=True, check=True, timeout=timeout)
+
+
+def normalized(name):
+    return name.lower().replace('-', '')
+
+
+def installed_locales():
+    return {normalized(name.strip()) for name in command(['/usr/bin/locale', '-a'], 10).stdout.splitlines()}
+
+
+def persist_requests(names, path=LOCALE_GEN):
+    """Append enabled entries atomically, retaining all administrator content."""
+    path = pathlib.Path(path)
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    with os.fdopen(fd, encoding='utf-8') as source:
+        info = os.fstat(source.fileno())
+        trusted_file(info)
+        content = source.read(1048577)
+    if len(content) > 1048576:
+        raise ValueError('System locale configuration is unexpectedly large.')
+    enabled = {parts[0] for line in content.splitlines() for parts in [line.split()]
+               if len(parts) >= 2 and not line.lstrip().startswith('#') and parts[1] == 'UTF-8'}
+    missing = [name for name in names if name not in enabled]
+    if not missing:
+        return
+    content += ('' if not content or content.endswith('\n') else '\n')
+    content += '# Locales enabled by Harbor\n' + ''.join(name + ' UTF-8\n' for name in missing)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode='w', encoding='utf-8', dir=path.parent,
+                                         prefix='.harbor-locale-gen-', delete=False) as output:
+            temporary = output.name
+            os.fchmod(output.fileno(), stat.S_IMODE(info.st_mode))
+            os.fchown(output.fileno(), info.st_uid, info.st_gid)
+            output.write(content)
+            output.flush()
+            os.fsync(output.fileno())
+        current = os.stat(path, follow_symlinks=False)
+        signature = lambda value: (value.st_dev, value.st_ino, value.st_size, value.st_mtime_ns)
+        if signature(current) != signature(info):
+            raise RuntimeError("System locale configuration changed during generation. Retry after other configuration tools have finished.")
+        os.replace(temporary, path)
+        temporary = None
+    finally:
+        if temporary:
+            os.unlink(temporary)
+
+
+def generate(names):
+    if os.geteuid() != 0:
+        raise PermissionError('Administrator authentication is required; invoke this helper through pkexec.')
+    names = validate_requests(names, read_supported())
+    generated, skipped = [], []
+    with generation_lock():
+        installed = installed_locales()
+        for name in names:
+            if normalized(name) in installed:
+                skipped.append(name)
+                continue
+            source = name.replace('.UTF-8', '')
+            command(['/usr/bin/localedef', '--inputfile=' + source, '--charmap=UTF-8', '--', name], 120)
+            generated.append(name)
+        installed = installed_locales()
+        missing = [name for name in names if normalized(name) not in installed]
+        if missing:
+            raise RuntimeError('Locale generation could not be verified: ' + ', '.join(missing))
+        persist_requests(names)
+    return {'ok': True, 'requested': names, 'generated': generated, 'skipped': skipped}
+
+
+def main():
+    try:
+        result = generate(sys.argv[1:])
+    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as error:
+        detail = str(error)
+        if isinstance(error, subprocess.CalledProcessError) and error.stderr:
+            detail += ': ' + error.stderr.strip()[:2000]
+        print(json.dumps({'ok': False, 'error': detail,
+                          'note': 'Some locales may already have been generated. Harbor preferences have not been applied by this helper.'}))
+        return 1
+    print(json.dumps(result))
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

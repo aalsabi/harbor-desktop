@@ -41,10 +41,7 @@ QString period(QString value, const QLocale &locale, const QVariantMap &s) {
 Region::Region(QString root, QObject *parent) : QObject(parent) {
     if (root.isEmpty()) root = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
     m_path = root + "/harbor/region.json";
-    QProcess process; process.start("/usr/bin/locale", {"-a"});
-    if(process.waitForFinished(1500)){
-        for(auto name:QString::fromUtf8(process.readAllStandardOutput()).split('\n')) { name=name.trimmed().toLower(); name.remove('-'); m_availableLocales << name; }
-    } else { process.kill(); process.waitForFinished(200); }
+    refreshLocales();
     QSet<QString> seenLanguages, seenRegions, seenCurrencies;
     for (const auto &locale : QLocale::matchingLocales(QLocale::AnyLanguage, QLocale::AnyScript, QLocale::AnyTerritory)) {
         if (locale.language() == QLocale::C) continue;
@@ -184,4 +181,106 @@ QString Region::availabilityNotice(const QVariantMap &state,const QStringList &a
     if(!measurementAvailable)notices << "A UTF-8 locale for the selected measurement system is not generated. Other applications use regional measurement defaults.";
     if(!notices.isEmpty())notices << "Harbor keeps your preferences. See the Language & Region guide to generate locales.";
     return notices.join(' ');
+}
+
+QString Region::refreshLocales() {
+    QProcess process; process.start("/usr/bin/locale", {"-a"});
+    if(!process.waitForFinished(1500)) {
+        process.kill(); process.waitForFinished(200);
+        return "Could not inspect installed locales. Try again before applying these settings.";
+    }
+    if(process.exitStatus()!=QProcess::NormalExit || process.exitCode()!=0)
+        return "Could not inspect installed locales.";
+    QStringList found;
+    for(auto name:QString::fromUtf8(process.readAllStandardOutput()).split('\n')) {
+        name=name.trimmed().toLower();name.remove('-');if(!name.isEmpty())found<<name;
+    }
+    if(found.isEmpty())return "The installed locale list was empty.";
+    m_availableLocales=found;return {};
+}
+QVariantMap Region::planLocales(const QVariantMap &draft,const QStringList &supported,const QStringList &available) {
+    auto normalized=[](QString name){name=name.toLower();name.remove('-');return name;};
+    QSet<QString> existing;for(const auto &name:available)existing.insert(normalized(name));
+    QStringList missing;
+    auto supportedName=[&](QString base){
+        for(const auto &name:supported)if(normalized(name)==normalized(base+".UTF-8"))return name;
+        return QString();
+    };
+    auto ensure=[&](const QString &name){if(!existing.contains(normalized(name))&&!missing.contains(name))missing<<name;};
+    const QString region=draft.value("region").toString();
+    auto regional=supportedName(region);
+    if(regional.isEmpty())return {{"locales",QStringList{}},{"error","This region has no supported Debian UTF-8 locale. Choose another region."}};
+    ensure(regional);
+    const auto languages=strings(draft.value("languages"));
+    if(languages.isEmpty())return {{"locales",QStringList{}},{"error","Choose a preferred language."}};
+    const auto primary=languages.first();
+    const auto territory=region.section('_',-1);
+    auto primaryLocale=supportedName(primary+"_"+territory);
+    bool hasLanguage=false;
+    for(const auto &name:existing)if(name.startsWith(primary.toLower()+"_")&&name.endsWith(".utf8")){hasLanguage=true;break;}
+    if(!primaryLocale.isEmpty())ensure(primaryLocale);
+    else if(!hasLanguage) {
+        primaryLocale=supportedName(QLocale(primary).name());
+        if(primaryLocale.isEmpty())for(const auto &name:supported)
+            if(name.startsWith(primary+"_")&&name.endsWith(".UTF-8")){primaryLocale=name;break;}
+        if(primaryLocale.isEmpty())return {{"locales",QStringList{}},{"error","The preferred language has no supported Debian UTF-8 locale."}};
+        ensure(primaryLocale);
+    }
+    const auto measurement=draft.value("measurement").toString();
+    QString measurementLocale;
+    if(measurement=="us"||measurement=="uk")measurementLocale=supportedName(measurement=="us"?"en_US":"en_GB");
+    else {
+        auto metric=[](const QString &name){auto territory=name.section('.',0,0).section('_',-1).toLower();return name.contains('_')&&!QStringList{"us","gb","lr","mm"}.contains(territory);};
+        bool haveMetric=metric(regional);
+        if(!haveMetric)for(const auto &name:existing)if(name.endsWith(".utf8")&&metric(name)){haveMetric=true;break;}
+        if(!haveMetric)for(const auto &name:missing)if(metric(name)){haveMetric=true;break;}
+        if(!haveMetric)measurementLocale=supportedName("fr_FR");
+        else measurementLocale=regional;
+    }
+    if(measurementLocale.isEmpty())return {{"locales",QStringList{}},{"error","A supported locale for this measurement system is unavailable."}};
+    if(measurement!="metric"||measurementLocale!=regional)ensure(measurementLocale);
+    return {{"locales",missing},{"error",QString()}};
+}
+QVariantMap Region::generationPlan(QVariantMap draft) {
+    auto error=validate(draft);
+    if(error.isEmpty())error=refreshLocales();
+    if(!error.isEmpty())return {{"locales",QStringList{}},{"error",error}};
+    QFile catalog("/usr/share/i18n/SUPPORTED");
+    if(!catalog.open(QIODevice::ReadOnly))return {{"locales",QStringList{}},{"error","Debian locale definitions are unavailable. Install the locales package first."}};
+    QStringList supported;
+    for(const auto &line:QString::fromUtf8(catalog.readAll()).split('\n')){
+        auto parts=line.simplified().split(' ');
+        if(parts.size()==2&&parts.at(1)=="UTF-8"&&parts.first().endsWith(".UTF-8"))supported<<parts.first();
+    }
+    return planLocales(draft,supported,m_availableLocales);
+}
+void Region::generateAndApply(QVariantMap draft) {
+    if(m_busy)return;
+    const auto plan=generationPlan(draft);
+    const auto error=plan.value("error").toString();
+    if(!error.isEmpty()){m_message=error;emit changed();emit generationFinished(false);return;}
+    const auto locales=strings(plan.value("locales"));
+    if(locales.isEmpty()){emit generationFinished(apply(draft));return;}
+    m_busy=true;m_message="Waiting for authorization to generate the required locales…";emit changed();
+    m_generation.disconnect(this);
+    connect(&m_generation,&QProcess::errorOccurred,this,[this](QProcess::ProcessError error){
+        if(error!=QProcess::FailedToStart||!m_busy)return;
+        m_busy=false;m_message="Could not start locale generation. Check that PolicyKit and the Harbor locale helper are installed. Your preferences were not changed.";
+        emit changed();emit generationFinished(false);
+    });
+    connect(&m_generation,qOverload<int,QProcess::ExitStatus>(&QProcess::finished),this,[this,draft,locales](int code,QProcess::ExitStatus status){
+        if(!m_busy)return;
+        m_busy=false;
+        if(status!=QProcess::NormalExit||code!=0){
+            m_message="Locale generation was cancelled or failed. Your preferences were not changed.";
+            emit changed();emit generationFinished(false);return;
+        }
+        auto error=refreshLocales();
+        for(auto locale:locales){locale=locale.toLower();locale.remove('-');if(!m_availableLocales.contains(locale)&&error.isEmpty())error="The requested locales could not be verified after generation.";}
+        if(!error.isEmpty()){m_message=error+" Your preferences were not changed.";emit changed();emit generationFinished(false);return;}
+        emit generationFinished(apply(draft));
+    });
+    m_generation.setProgram("/usr/bin/pkexec");
+    m_generation.setArguments(QStringList{"/usr/libexec/harbor-generate-locales"}+locales);
+    m_generation.start();
 }

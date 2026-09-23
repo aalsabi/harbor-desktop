@@ -30,3 +30,6 @@ User-supplied six screenshots define the requested layout, language chooser and 
 - Debian locale categories, LANGUAGE ordering and UTF-8: https://www.debian.org/doc/manuals/debian-reference/ch08.en.html
 - Debian generated locales: https://www.debian.org/doc/manuals/debian-handbook/basic-configuration.en.html
 - Qt 6.8 locale and calendar formatting: https://doc.qt.io/qt-6.8/qlocale.html
+
+- Debian localedef archive generation and source search: https://manpages.debian.org/trixie/manpages/localedef.1.en.html
+- PolicyKit authenticated program execution: https://www.freedesktop.org/software/polkit/docs/latest/pkexec.1.html

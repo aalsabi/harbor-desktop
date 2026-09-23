@@ -19,13 +19,24 @@ public:QVariantMap state;QVariantList users;bool busy=false;QString message;
  Q_INVOKABLE void windowAction(QString){} Q_INVOKABLE void refresh(){}
 signals:void changed();
 };
+class RegionForUI:public Region {
+ Q_OBJECT
+ Q_PROPERTY(bool busy MEMBER testBusy NOTIFY changed)
+ Q_PROPERTY(QString message MEMBER testMessage NOTIFY changed)
+public:
+ using Region::Region;
+ QString testMessage;bool missing=false,testBusy=false;int generationCalls=0;QVariantMap snapshot;
+ Q_INVOKABLE QVariantMap generationPlan(QVariantMap){return {{"locales",missing?QStringList{"ar_SA.UTF-8"}:QStringList{}},{"error",QString()}};}
+ Q_INVOKABLE void generateAndApply(QVariantMap value){if(testBusy)return;++generationCalls;snapshot=value;testBusy=true;emit changed();}
+ void finish(bool success){testBusy=false;testMessage=success?QString():QString("Authentication cancelled");emit changed();if(success)success=Region::apply(snapshot);emit generationFinished(success);}
+};
 static QQuickItem* item(QQuickItem* r,const QString& name){if(r->objectName()==name&&r->isVisible())return r;for(auto c:r->childItems())if(auto f=item(c,name))return f;return nullptr;}
 class RegionUITest:public QObject {
  Q_OBJECT
 private slots:
  void initTestCase(){QQuickStyle::setStyle("Basic");}
  void editCancelAndApply(){
-  QTemporaryDir temp;Preferences prefs(temp.filePath("settings.ini"));Region region(temp.path());RegionUIMock mock;
+  QTemporaryDir temp;Preferences prefs(temp.filePath("settings.ini"));RegionForUI region(temp.path());RegionUIMock mock;
   QQuickView view;auto ctx=view.rootContext();ctx->setContextProperty("Prefs",&prefs);ctx->setContextProperty("Region",&region);for(auto n:{"System","Accounts","Keyboard","UI"})ctx->setContextProperty(n,&mock);ctx->setContextProperty("HarborVersion","test");view.setResizeMode(QQuickView::SizeRootObjectToView);view.resize(960,800);view.setSource(QUrl("qrc:/qml/Settings.qml"));QVERIFY(view.status()==QQuickView::Ready);view.rootObject()->setProperty("section","Language & Region");view.show();QTest::qWait(150);
   auto page=item(view.contentItem(),"languageRegionPage");QVERIFY(page);
   auto before=region.state();
@@ -49,6 +60,14 @@ private slots:
   tabs->setProperty("currentIndex",2);QTest::qWait(50);shot("times");
   QVERIFY(click("acceptAdvanced"));QCOMPARE(region.state(),before);QVERIFY(QMetaObject::invokeMethod(page,"applyChanges"));QCOMPARE(region.state().value("dateFormats").toStringList().first(),QString("yyyy-MM-dd"));
   Region reloaded(temp.path());QCOMPARE(reloaded.state(),region.state());
+  const auto savedState=region.state();
+  auto pending=page->property("draft").value<QJSValue>().toVariant().toMap();pending["firstDay"]=3;page->setProperty("draft",pending);region.missing=true;
+  QVERIFY(QMetaObject::invokeMethod(page,"applyChanges"));QTest::qWait(50);QVERIFY(item(view.contentItem(),"confirmGeneration"));QCOMPARE(region.generationCalls,0);QCOMPARE(region.state(),savedState);
+  shot("generate");prefs.setLanguage("ar");view.resize(740,560);QTest::qWait(40);shot("generate-ar");for(auto name:{"cancelGeneration","confirmGeneration"}){auto b=item(view.contentItem(),name);QVERIFY(b);QVERIFY(QRectF(0,0,740,560).contains(b->mapRectToScene(b->boundingRect())));}prefs.setLanguage("en");view.resize(960,800);QTest::qWait(30);QVERIFY(click("cancelGeneration"));QCOMPARE(region.state(),savedState);
+  QVERIFY(QMetaObject::invokeMethod(page,"applyChanges"));QTest::qWait(30);QVERIFY(click("confirmGeneration"));QCOMPARE(region.generationCalls,1);QVERIFY(!item(view.contentItem(),"confirmGeneration")->isEnabled());QCOMPARE(region.state(),savedState);
+  region.finish(false);QTest::qWait(30);QCOMPARE(region.state(),savedState);QVERIFY(item(view.contentItem(),"generationError"));QVERIFY(item(view.contentItem(),"generationError")->property("text").toString().contains("cancelled"));
+  QVERIFY(click("confirmGeneration"));QCOMPARE(region.generationCalls,2);region.finish(true);QTest::qWait(40);QCOMPARE(region.state().value("firstDay").toInt(),3);QVERIFY(!item(view.contentItem(),"confirmGeneration"));
+
   view.resize(740,560);prefs.setLanguage("ar");prefs.setDark(true);QTest::qWait(50);QVERIFY(QMetaObject::invokeMethod(page,"openAdvanced"));QTest::qWait(60);shot("ar-small");
   for(auto name:{"cancelAdvanced","acceptAdvanced"}){auto b=item(view.contentItem(),name);QVERIFY(b);QVERIFY(QRectF(0,0,740,560).contains(b->mapRectToScene(b->boundingRect())));}
  }

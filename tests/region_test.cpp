@@ -46,6 +46,27 @@ private slots:
         d["timeFormats"]=QStringList{"'custom clock'","HH:mm:ss","h AP","h AP"};
         QVERIFY(r.apply(d));Region loaded(dir.path());QCOMPARE(loaded.clockText(),expectedDate+"  custom clock");
     }
+    void generationPlans(){
+        QTemporaryDir dir;Region r(dir.path());
+        const QStringList supported{"en_US.UTF-8","en_GB.UTF-8","fr_FR.UTF-8","ar_SA.UTF-8"};
+        auto draft=r.defaults("en_US");
+        auto plan=Region::planLocales(draft,supported,{"C","C.utf8"});
+        QCOMPARE(plan.value("locales").toStringList(),QStringList{"en_US.UTF-8"});
+        QVERIFY(plan.value("error").toString().isEmpty());
+        plan=Region::planLocales(draft,supported,{"en_US.utf8"});QVERIFY(plan.value("locales").toStringList().isEmpty());
+        draft["languages"]=QStringList{"ar","en"};draft["measurement"]="metric";
+        plan=Region::planLocales(draft,supported,{"en_US.utf8"});
+        QCOMPARE(plan.value("locales").toStringList(),QStringList{"ar_SA.UTF-8"});
+        draft["languages"]=QStringList{"en"};
+        plan=Region::planLocales(draft,supported,{"en_US.utf8"});
+        QCOMPARE(plan.value("locales").toStringList(),QStringList{"fr_FR.UTF-8"});
+        draft["measurement"]="uk";plan=Region::planLocales(draft,supported,{"en_US.utf8"});
+        QCOMPARE(plan.value("locales").toStringList(),QStringList{"en_GB.UTF-8"});
+        draft["region"]="xx_YY";QVERIFY(!Region::planLocales(draft,supported,{}).value("error").toString().isEmpty());
+        const auto before=r.state();QSignalSpy finished(&r,&Region::generationFinished);
+        r.generateAndApply(draft);QCOMPARE(finished.size(),1);QCOMPARE(finished.first().first().toBool(),false);
+        QCOMPARE(r.state(),before);QVERIFY(!r.busy());
+    }
     void malformedPersistenceIsIgnored(){
         QTemporaryDir dir;Region original(dir.path());const auto safe=original.state();
         for(const auto &data:QList<QByteArray>{"not JSON", "[]", "{\"schema\":2,\"region\":\"fr_FR\"}", "{\"schema\":1,\"region\":\"invalid\"}"}) {

@@ -69,13 +69,28 @@ ColumnLayout {
   if(!activePatternField)return
   var field=activePatternField;field.insert(field.cursorPosition,token);setPattern(field.patternIndex,field.text);field.forceActiveFocus()
  }
+ property var generationDraft: ({})
+ property var requiredLocales: []
+ function saved() {
+  draft=copy(Region.state)
+  var supported=draft.languages.find(function(code){return code.split(/[-_]/)[0]==="ar" || code.split(/[-_]/)[0]==="en"})
+  if(supported)Prefs.language=supported.split(/[-_]/)[0]
+  status=t("Preferences saved. Sign out and back in to apply them to other applications.","تم حفظ التفضيلات. سجّل الخروج والدخول لتطبيقها على البرامج الأخرى.")
+ }
  function applyChanges() {
-  if(Region.apply(draft)) {
-   draft=copy(Region.state)
-   var supported=draft.languages.find(function(code){return code.split(/[-_]/)[0]==="ar" || code.split(/[-_]/)[0]==="en"})
-   if(supported)Prefs.language=supported.split(/[-_]/)[0]
-   status=t("Preferences saved.","تم حفظ التفضيلات.")+" "+(Region.localeNotice || t("Other applications use the new locale after your next login.","تستخدم التطبيقات الأخرى الإعدادات الجديدة بعد تسجيل الدخول التالي."))
-  } else status=Region.message || t("The settings could not be applied.","تعذر تطبيق الإعدادات.")
+  if(Region.busy)return
+  var plan=Region.generationPlan(draft)
+  if(plan.error){status=plan.error;return}
+  if(plan.locales.length){generationDraft=copy(draft);requiredLocales=plan.locales;status="";generateDialog.open();return}
+  if(Region.apply(draft))saved()
+  else status=Region.message || t("The settings could not be applied.","تعذر تطبيق الإعدادات.")
+ }
+ Connections {
+  target:Region
+  function onGenerationFinished(success){
+   if(success){generateDialog.close();root.saved()}
+   else root.status=Region.message || root.t("Generation was cancelled or failed. Your settings were not changed.","أُلغي التوليد أو تعذّر. لم تتغير إعداداتك.")
+  }
  }
  Component.onCompleted: { draft=copy(Region.state); ready=true }
 
@@ -215,9 +230,32 @@ ColumnLayout {
   HarborButton {objectName:"restoreRegion";text:root.t("Restore Defaults","استعادة الافتراضي");onClicked:root.restoreMain()}
   Item {Layout.fillWidth:true}
   HarborButton {objectName:"revertRegion";text:root.t("Revert","تراجع");onClicked:{root.draft=root.copy(Region.state);root.selectedLanguage=0;root.status=""}}
-  HarborButton {objectName:"applyRegion";text:root.t("Apply","تطبيق");prominent:true;enabled:!root.sample.error;onClicked:root.applyChanges()}
+  HarborButton {objectName:"applyRegion";text:root.t("Apply","تطبيق");prominent:true;enabled:!root.sample.error&&!Region.busy;onClicked:root.applyChanges()}
  }
  Note {objectName:"regionStatus";visible:text.length>0;text:root.status;Accessible.role:Accessible.StaticText}
+
+ ThemedDialog {
+  id:generateDialog;objectName:"generateLocalesDialog"
+  parent:Overlay.overlay;anchors.centerIn:parent
+  width:Math.min(500,parent?parent.width-32:500)
+  modal:true;closePolicy:Region.busy?Popup.NoAutoClose:Popup.CloseOnEscape
+  title:root.t("Generate regional settings?","توليد الإعدادات الإقليمية؟")
+  contentItem:ColumnLayout {
+   spacing:12;LayoutMirroring.enabled:root.arabic;LayoutMirroring.childrenInherit:true
+   Note {text:root.t("The required locales are not generated on this computer. Choose OK to generate them and apply your preferences. Administrator authentication is required.","الإعدادات الإقليمية المطلوبة غير مولّدة على هذا الجهاز. اضغط موافق لتوليدها وتطبيق تفضيلاتك. سيطلب النظام مصادقة المسؤول.")}
+   HarborLabel {Layout.fillWidth:true;wrapMode:Text.WrapAnywhere;text:root.requiredLocales.join(" · ");LayoutMirroring.enabled:false}
+   RowLayout {visible:Region.busy;BusyIndicator{running:Region.busy;implicitWidth:28;implicitHeight:28}Note{text:root.t("Waiting for authentication or generating locales…","بانتظار المصادقة أو توليد الإعدادات…")}}
+   Note {objectName:"generationError";visible:root.status.length>0;text:root.status}
+  }
+  footer:Item {
+   implicitHeight:60
+   RowLayout {anchors.fill:parent;anchors.margins:16;spacing:8
+    Item {Layout.fillWidth:true}
+    HarborButton {objectName:"cancelGeneration";text:root.t("Cancel","إلغاء");enabled:!Region.busy;onClicked:generateDialog.close()}
+    HarborButton {objectName:"confirmGeneration";text:root.t("OK","موافق");prominent:true;enabled:!Region.busy;onClicked:{root.status="";Region.generateAndApply(root.generationDraft)}}
+   }
+  }
+ }
 
  ThemedDialog {
   id:addDialog;objectName:"addLanguageDialog"

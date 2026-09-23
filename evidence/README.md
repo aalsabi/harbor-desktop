@@ -1,5 +1,9 @@
 # Evidence index
 
+- locale-generation-0.6.1.txt: nineteen Qt suites, thirty-seven Python cases, actual installed root-helper generation of ar_SA/en_US in the isolated Debian13 container, persistence/idempotency, invalid/unprivileged rejection, unchanged system default locale, existing KWin integrations and package install/remove (exit0).
+- locale-generation-local-0.6.1.txt / locale-generation-python-0.6.1.txt / locale-generation-ui-0.6.1.txt: local verification, including confirmation, cancel/retry/busy/save UI flow and Arabic small-window confirmation bounds. Authentication completion is mocked in UI tests; the physical password dialog is not automated.
+- locale-generation-helper-red.txt: intentionally failing tests before fixed cwd and concurrent configuration edit protection.
+
 - region-0.6.0.txt: final Debian13/Qt6.8 build, nineteen Qt suites, twenty-eight Python cases, UI rendering, KWin menu/multiscreen/keyboard/session integrations and package lifecycle; container exit0.
 - region-local-0.6.0.txt / region-python-0.6.0.txt: final local suites. UI tests cover drafts, cancellation, ordering, 12/24-hour changes, persistence and Arabic dialog footer bounds.
 - region-measurement-red.txt: intentional pre-fix reproduction of a missing visible measurement-locale fallback warning.

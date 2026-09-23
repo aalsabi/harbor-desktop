@@ -2,8 +2,10 @@
 #include <QObject>
 #include <QVariantMap>
 #include <QFileSystemWatcher>
+#include <QProcess>
 class Region : public QObject {
     Q_OBJECT
+    Q_PROPERTY(bool busy READ busy NOTIFY changed)
     Q_PROPERTY(QVariantMap state READ state NOTIFY changed)
     Q_PROPERTY(QVariantList languages READ languages CONSTANT)
     Q_PROPERTY(QVariantList regions READ regions CONSTANT)
@@ -20,6 +22,10 @@ public:
     QVariantList calendars() const { return m_calendars; }
     QString localeNotice() const;
     static QString availabilityNotice(const QVariantMap &state, const QStringList &availableLocales);
+    bool busy() const { return m_busy; }
+    static QVariantMap planLocales(const QVariantMap &draft, const QStringList &supported, const QStringList &available);
+    Q_INVOKABLE QVariantMap generationPlan(QVariantMap draft);
+    Q_INVOKABLE void generateAndApply(QVariantMap draft);
     QString message() const { return m_message; }
     Q_INVOKABLE QVariantMap defaults(QString region) const;
     Q_INVOKABLE QVariantMap preview(QVariantMap draft) const;
@@ -27,8 +33,10 @@ public:
     Q_INVOKABLE QString clockText() const;
 signals:
     void changed();
+    void generationFinished(bool success);
 private:
     QString validate(const QVariantMap &draft) const;
+    QString refreshLocales();
     void reload();
     void watch();
     QString m_path, m_message;
@@ -36,4 +44,6 @@ private:
     QVariantMap m_state;
     QVariantList m_languages, m_regions, m_calendars, m_currencies;
     QFileSystemWatcher m_watcher;
+    QProcess m_generation;
+    bool m_busy = false;
 };

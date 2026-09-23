@@ -2,14 +2,15 @@
 set -eu
 # Test harness only: intentionally operates inside a disposable Docker container.
 test -f /.dockerenv || { echo "Run only inside the documented Docker test container" >&2; exit 2; }
-apt-get install -y --no-install-recommends libkf6windowsystem-dev file libcap2-bin breeze-cursor-theme >/build/extra-deps.log 2>&1
+apt-get install -y --no-install-recommends locales pkexec libkf6windowsystem-dev file libcap2-bin breeze-cursor-theme >/build/extra-deps.log 2>&1
 cmake -S /src -B /build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
 cmake --build /build -j4
 ctest --test-dir /build --output-on-failure
 python3 -m unittest discover -s /src/tests -p 'test_*.py'
 cd /build
 cpack -G DEB
-apt-get install -y --no-install-recommends ./harbor-desktop-0.6.0-Linux.deb >/build/install.log 2>&1
+apt-get install -y --no-install-recommends ./harbor-desktop-0.6.1-Linux.deb >/build/install.log 2>&1
+python3 /src/tests/locale_generation_integration.py
 setcap -r /usr/bin/kwin_wayland || true
 mkdir -p /tmp/runtime-harbor
 chmod 700 /tmp/runtime-harbor
