@@ -40,7 +40,7 @@ GlassCard {
      ComboBox{Layout.fillWidth:true;model:System.state.powerProfiles||[];currentIndex:(System.state.powerProfiles||[]).indexOf(System.state.power||"");enabled:!!System.state.powerAvailable&&!System.busy;onActivated:if(currentIndex>=0)System.action("power",currentText)}
      HarborButton{text:root.t("Battery settings…","إعدادات الطاقة…");onClicked:UI.open("settings:Battery")}
     }
-    HarborButton{text:root.t("Lock Screen","قفل الشاشة");enabled:!!System.state.lockAvailable;Layout.fillWidth:true;onClicked:System.action("lock");ToolTip.visible:hovered&&!enabled;ToolTip.text:root.t("No lock service is running","خدمة القفل غير متاحة")}
+    HarborButton{text:root.t("Lock Screen","قفل الشاشة");enabled:!!System.state.lockAvailable;Layout.fillWidth:true;onClicked:System.action("lock");}
     SessionActions{Layout.fillWidth:true}
     HarborLabel{text:System.message;visible:text.length>0;Layout.fillWidth:true;wrapMode:Text.WordWrap;color:Prefs.dark?"#edbd80":"#86571e";font.pixelSize:12}
    }

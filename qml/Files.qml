@@ -88,7 +88,6 @@ Rectangle {
      contentItem:Item{}
      background:Item{Rectangle{anchors.centerIn:parent;width:12;height:12;radius:6;color:parent.parent.modelData;border.color:parent.parent.activeFocus?Prefs.accent:Qt.darker(color,1.12);border.width:parent.parent.activeFocus?2:1}}
      onClicked:UI.windowAction(index===0?"close":index===1?"minimize":"maximize")
-     ToolTip.visible:hovered;ToolTip.text:Accessible.name
     }}
    }
    RowLayout {anchors.left:parent.left;anchors.leftMargin:202;anchors.right:parent.right;anchors.rightMargin:16;anchors.verticalCenter:parent.verticalCenter;spacing:12
@@ -97,9 +96,9 @@ Rectangle {
     }
     HarborLabel{text:Browser.path.split("/").pop()||"Computer";font.bold:true;font.pixelSize:14;Layout.fillWidth:true;elide:Text.ElideRight}
     Rectangle{implicitWidth:104;implicitHeight:34;radius:17;color:Prefs.dark?"#353538":"#f7f7f9";border.color:Prefs.dark?"#4c4c50":"#e8e8ed"
-     Row{anchors.centerIn:parent;spacing:2;Repeater{model:["▦","☰","▥"];delegate:Tool{required property int index;required property string modelData;text:modelData;prominent:root.viewMode===index;onClicked:root.viewMode=index;ToolTip.visible:hovered;ToolTip.text:["Icons","List","Columns"][index];Accessible.name:["Icons","List","Columns"][index]}}}
+     Row{anchors.centerIn:parent;spacing:2;Repeater{model:["▦","☰","▥"];delegate:Tool{required property int index;required property string modelData;text:modelData;prominent:root.viewMode===index;onClicked:root.viewMode=index;Accessible.name:["Icons","List","Columns"][index]}}}
     }
-    Tool{text:"◧";prominent:root.previewVisible;onClicked:root.previewVisible=!root.previewVisible;ToolTip.visible:hovered;ToolTip.text:"Preview";Accessible.name:"Preview"}
+    Tool{text:"◧";prominent:root.previewVisible;onClicked:root.previewVisible=!root.previewVisible;Accessible.name:"Preview"}
     Tool{text:"•••";onClicked:actions.open();Accessible.name:"File actions";Menu{id:actions
      MenuItem{text:"New tab";onTriggered:Browser.addTab()}
      MenuItem{text:"New folder";enabled:!Browser.busy;onTriggered:root.ask("mkdir")}

@@ -82,3 +82,7 @@ Repeated-launch reproduction issued eight rapid requests and observed eight fixt
 The live user activation environment still identified GNOME and lacked WAYLAND_DISPLAY. Corrected the current session environment without opening/closing applications. The session client now imports only explicit display/desktop/application-directory variables before starting clients; private/nested sessions never alter the host systemd activation environment. Import failures are bounded and nonfatal.
 
 Review regressions reproduced hidden terminal-preferences selection and a launched child losing its stderr pipe after GIO exited. Terminal selection now excludes hidden/NoDisplay entries and uses deterministic ordering. Helper output inherits the shell logs so child applications can safely outlive the helper. Local verification passed seventeen Qt suites and seventeen Python cases; release-container results are recorded in evidence/launch-0.5.4.txt. Actual Console startup latency on physical hardware was not benchmarked.
+
+## 0.5.5 — remove hover tooltips
+
+Removed hover tooltips throughout Harbor: dock, panel tray and Control Center button, Files toolbar/window controls and unavailable lock action. Accessible names remain available, with names added for tray/running-window buttons. Launch progress indicators and actionable error messages remain. Third-party application tooltips are outside Harbor control.

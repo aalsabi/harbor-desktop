@@ -29,7 +29,7 @@ Rectangle {
    }
    ScrollBar.horizontal: ScrollBar {height:3;policy:ScrollBar.AsNeeded}
   }
-  Repeater{model:Tray.items;delegate:PanelButton{required property var modelData;width:28;height:28;visible:modelData.status!=="Passive";text:"";Image{anchors.centerIn:parent;width:18;height:18;source:"image://icons/"+modelData.icon} onClicked:Tray.activate(modelData.id);onPressAndHold:Tray.activate(modelData.id,true);ToolTip.visible:hovered;ToolTip.text:modelData.title}}
+  Repeater{model:Tray.items;delegate:PanelButton{required property var modelData;Accessible.name:modelData.title;width:28;height:28;visible:modelData.status!=="Passive";text:"";Image{anchors.centerIn:parent;width:18;height:18;source:"image://icons/"+modelData.icon} onClicked:Tray.activate(modelData.id);onPressAndHold:Tray.activate(modelData.id,true);}}
   PanelButton { objectName:"keyboard-indicator"; text:Keyboard.activeLabel+" ⌄"; font.bold:true
    Accessible.name:Prefs.language==="ar"?"اختيار لغة الكتابة: "+Keyboard.activeName:"Choose input language: "+Keyboard.activeName
    onClicked:UI.open("input")
@@ -37,7 +37,7 @@ Rectangle {
   PanelButton { text: "⌕"; onClicked: UI.open("launcher"); Accessible.name: "Search applications" }
   PanelButton { text: Prefs.language==="ar" ? "النوافذ" : "Windows"; onClicked: UI.open("windows") }
   PanelButton {text:"● "+Notifications.items.length;onClicked:UI.open("notifications");Accessible.name:"Notifications"}
-  PanelButton { text: "☷";ToolTip.visible:hovered;ToolTip.text:Prefs.language==="ar"?"مركز التحكم":"Control center"; onClicked: UI.open("control"); Accessible.name: "Control center" }
+  PanelButton { text: "☷"; onClicked: UI.open("control"); Accessible.name: "Control center" }
   Text { id: clock; color: Prefs.dark ? "#eef4ff" : "#163047"; font.pixelSize: 12; text: Qt.formatDateTime(new Date(),"ddd d MMM   hh:mm"); Timer { interval: 1000; running: true; repeat: true; onTriggered: clock.text=Qt.formatDateTime(new Date(),"ddd d MMM   hh:mm") } }
  }
 }

@@ -1,5 +1,7 @@
 # Evidence index
 
+- no-tooltips-0.5.5.txt: Debian13 build, seventeen Qt suites, seventeen Python cases, UI rendering, virtual KWin integrations and package lifecycle passed (exit0). All Harbor QML tooltip declarations removed; existing pointer-interaction tests pass.
+
 - launch-0.5.4.txt: Debian13 release build; seventeen Qt suites, seventeen Python cases, virtual KWin integrations, installed session/logout and package install/remove passed (exit0).
 - launch-local-0.5.4.txt / launch-python-0.5.4.txt: local verification of launch coalescing, focus, failure retry, child pipe lifetime, terminal selection, actual Dock clicks and selected activation-environment import.
 - launch-duplicate-red.txt / launch-review-red.txt: intentionally failing pre-fix reproductions of duplicate processes, hidden terminal preferences and inherited pipe lifetime.
