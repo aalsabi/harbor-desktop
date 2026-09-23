@@ -46,7 +46,7 @@ void Keyboard::switchNext(){
 }
 
 void Keyboard::clearActive(){
- liveAvailable=false;label=QString::fromUtf8("⌨");layoutName.clear();emit activeChanged();
+ liveLayouts.clear();liveIndex=-1;liveAvailable=false;label=QString::fromUtf8("⌨");layoutName.clear();emit activeChanged();
 }
 void Keyboard::refreshActive(){
  const uint generation=++liveGeneration;
@@ -65,7 +65,16 @@ void Keyboard::refreshActive(){
    const auto row=layouts.at(reply.value());const auto code=row.at(0);
    label=code=="ara"?QString::fromUtf8("ع"):(code=="us"||code=="gb")?QString("EN"):code.isEmpty()?QString::fromUtf8("⌨"):code.toUpper();
    layoutName=row.at(2);if(!row.at(1).isEmpty())layoutName+=" ("+row.at(1)+")";
+   liveLayouts.clear();liveIndex=int(reply.value());
+   for(int i=0;i<layouts.size();++i){const auto item=layouts.at(i);auto code=item.at(0);QString shortName=code=="ara"?QString::fromUtf8("ع"):(code=="us"||code=="gb")?QString("EN"):code.toUpper();liveLayouts.append(QVariantMap{{"index",i},{"code",code},{"variant",item.at(1)},{"name",item.at(2)},{"label",shortName}});}
    liveAvailable=true;emit activeChanged();
   });
  });
+}
+
+void Keyboard::selectLayout(int index){
+ if(!liveAvailable||index<0||index>=liveLayouts.size()){status=tr("Input source is no longer available. Refresh the list.");emit changed();emit selectionFinished(false);return;}
+ auto message=QDBusMessage::createMethodCall("org.kde.keyboard","/Layouts","org.kde.KeyboardLayouts","setLayout");message<<uint(index);
+ auto watcher=new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message,2000),this);
+ connect(watcher,&QDBusPendingCallWatcher::finished,this,[this,watcher]{QDBusPendingReply<bool> reply=*watcher;const bool ok=!reply.isError()&&reply.value();status=ok?QString():tr("Could not select the input source. Refresh and try again.");watcher->deleteLater();refreshActive();emit changed();emit selectionFinished(ok);});
 }

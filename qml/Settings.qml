@@ -174,25 +174,76 @@ Rectangle {
       }
       ColumnLayout{id:keyboardPage;visible:root.section==="Keyboard";Layout.fillWidth:true;spacing:18
        property var selectedLayouts:[]
-       property bool loaded:false
        property string selectedShortcut:""
-       function reload(){if(Keyboard.state.layouts){selectedLayouts=Keyboard.state.layouts.slice();selectedShortcut=Keyboard.state.shortcut||"";loaded=true}}
-       Component.onCompleted:reload()
-       Connections{target:Keyboard;function onChanged(){if(!keyboardPage.loaded)keyboardPage.reload()}}
+       property int selectedSource:0
+       function sourceName(code){if(code==="ara")return root.t("Arabic","العربية");if(code==="us")return root.t("English (US)","الإنجليزية (الولايات المتحدة)");return ((Keyboard.state.catalog||[]).find(x=>x.id===code)||({name:code})).name}
+       function editSources(){selectedLayouts=(Keyboard.state.layouts||[]).slice();selectedShortcut=Keyboard.state.shortcut||"";selectedSource=0;sourceEditor.open()}
        Group{Label{text:root.t("Text Input","إدخال النص");font.bold:true;font.pixelSize:16}
-        Note{text:root.t("Choose up to four input sources. The first is the default.","اختر حتى أربع لغات كتابة. اللغة الأولى هي الافتراضية.")}
-        Repeater{model:keyboardPage.selectedLayouts;delegate:SettingRow{required property string modelData;required property int index;label:((Keyboard.state.catalog||[]).find(x=>x.id===modelData)||({name:modelData})).name
-         HarborButton{text:"↑";enabled:index>0;Accessible.name:"Move input source up";onClicked:{let v=keyboardPage.selectedLayouts.slice();let a=v[index-1];v[index-1]=v[index];v[index]=a;keyboardPage.selectedLayouts=v}}
-         HarborButton{text:"−";enabled:keyboardPage.selectedLayouts.length>1;Accessible.name:"Remove input source";onClicked:keyboardPage.selectedLayouts=keyboardPage.selectedLayouts.filter((x,i)=>i!==index)}
-        }}
-        Divider{}
-        RowLayout{Select{id:inputCatalog;objectName:"input-catalog";Layout.fillWidth:true;model:Keyboard.state.catalog||[];textRole:"name"}HarborButton{objectName:"add-input";text:"+";Accessible.name:"Add input source";enabled:keyboardPage.selectedLayouts.length<4&&inputCatalog.currentIndex>=0&&!keyboardPage.selectedLayouts.includes((Keyboard.state.catalog||[])[inputCatalog.currentIndex].id);onClicked:keyboardPage.selectedLayouts=keyboardPage.selectedLayouts.concat([Keyboard.state.catalog[inputCatalog.currentIndex].id])}}
+        SettingRow{label:root.t("Input Sources","لغات الكتابة");hint:(Keyboard.state.layouts||[]).map(code=>keyboardPage.sourceName(code)).join(" · ")
+         HarborButton{objectName:"edit-input-sources";text:root.t("Edit…","تحرير…");enabled:!Keyboard.busy;onClicked:keyboardPage.editSources()}}
        }
-       Group{SettingRow{label:root.t("Switch input source","تبديل لغة الكتابة");Select{Layout.preferredWidth:190;model:["None","Alt + Shift","Ctrl + Shift","Super + Space","Ctrl + Space"];property var values:["","grp:alt_shift_toggle","grp:ctrl_shift_toggle","grp:win_space_toggle","grp:ctrl_space_toggle"];currentIndex:Math.max(0,values.indexOf(keyboardPage.selectedShortcut));onActivated:keyboardPage.selectedShortcut=values[currentIndex]}}
-        Note{text:root.t("Super is the Windows or Command key. Existing layout variants and unrelated keyboard options are preserved.","Super هو مفتاح Windows أو Command. تُحفظ تنويعات التخطيط وخيارات المفاتيح الأخرى الحالية.")}}
-       RowLayout{HarborButton{objectName:"apply-keyboard";text:root.t("Apply","تطبيق");prominent:true;enabled:!Keyboard.busy&&keyboardPage.selectedLayouts.length>0;onClicked:Keyboard.apply(keyboardPage.selectedLayouts,keyboardPage.selectedShortcut)}HarborButton{text:root.t("Switch now","تبديل الآن");enabled:!Keyboard.busy;onClicked:Keyboard.switchNext()}Item{Layout.fillWidth:true}}
+       Note{text:root.t("Use the input menu in the menu bar to change your typing language.","استخدم قائمة لغة الكتابة في الشريط العلوي لتغيير لغة الإدخال.")}
        HarborField{Layout.fillWidth:true;placeholderText:root.t("Type here to test your keyboard…","اكتب هنا لتجربة لوحة المفاتيح…")}
        Note{text:Keyboard.message;visible:text.length>0}
+       Popup{id:sourceEditor;parent:root;anchors.centerIn:parent;width:Math.min(760,root.width-40);height:Math.min(550,root.height-40);padding:root.height<620?16:22;modal:true;focus:true;closePolicy:Popup.CloseOnEscape
+        background:Rectangle{objectName:"input-sources-background";radius:14;color:root.card;border.color:root.line}
+        contentItem:ColumnLayout{LayoutMirroring.enabled:Prefs.language==="ar";LayoutMirroring.childrenInherit:true;spacing:root.height<620?10:18
+         Label{text:root.t("Input Sources","لغات الكتابة");font.pixelSize:21;font.bold:true}
+         RowLayout{Layout.fillWidth:true;Layout.fillHeight:true;spacing:22
+          Rectangle{Layout.preferredWidth:230;Layout.fillHeight:true;radius:8;color:Prefs.dark?"#252529":"#f5f5f7";border.color:root.line
+           ColumnLayout{anchors.fill:parent;anchors.margins:8;spacing:5
+            ListView{id:configuredSources;Layout.fillWidth:true;Layout.fillHeight:true;clip:true;spacing:3;model:keyboardPage.selectedLayouts
+             delegate:Button{required property string modelData;required property int index;objectName:"configured-input-"+modelData;width:ListView.view.width;height:52;onClicked:keyboardPage.selectedSource=index
+              background:Rectangle{radius:6;color:keyboardPage.selectedSource===index?Prefs.accent:parent.hovered?root.line:"transparent"}
+              contentItem:RowLayout{spacing:10;Text{text:modelData==="ara"?"ع":modelData.toUpperCase();font.pixelSize:18;color:keyboardPage.selectedSource===index?"white":root.ink;Layout.preferredWidth:30;horizontalAlignment:Text.AlignHCenter}Text{text:keyboardPage.sourceName(modelData);color:keyboardPage.selectedSource===index?"white":root.ink;font.pixelSize:13;Layout.fillWidth:true;elide:Text.ElideRight}}
+             }
+            }
+            Divider{}
+            RowLayout{spacing:4
+             HarborButton{objectName:"add-input";text:"+";Accessible.name:root.t("Add input source","إضافة لغة كتابة");enabled:keyboardPage.selectedLayouts.length<4;onClicked:{candidateSearch.text="";sourceChooser.candidate="";sourceChooser.open()}}
+             HarborButton{objectName:"remove-input";text:"−";Accessible.name:root.t("Remove input source","إزالة لغة الكتابة");enabled:keyboardPage.selectedLayouts.length>1;onClicked:{keyboardPage.selectedLayouts=keyboardPage.selectedLayouts.filter((x,i)=>i!==keyboardPage.selectedSource);keyboardPage.selectedSource=Math.max(0,Math.min(keyboardPage.selectedSource,keyboardPage.selectedLayouts.length-1))}}
+             Item{Layout.fillWidth:true}
+            }
+           }
+          }
+          ColumnLayout{Layout.fillWidth:true;Layout.fillHeight:true;spacing:root.height<620?8:16
+           Rectangle{Layout.alignment:Qt.AlignHCenter;width:root.height<620?56:76;height:width;radius:14;color:Prefs.dark?"#45454b":"#f0f0f5";border.color:root.line
+            Text{anchors.centerIn:parent;text:(keyboardPage.selectedLayouts[keyboardPage.selectedSource]||"")==="ara"?"ع":(keyboardPage.selectedLayouts[keyboardPage.selectedSource]||"").toUpperCase();font.pixelSize:32;color:root.ink}}
+           Label{text:keyboardPage.sourceName(keyboardPage.selectedLayouts[keyboardPage.selectedSource]||"");font.pixelSize:18;font.bold:true;horizontalAlignment:Text.AlignHCenter}
+           Note{text:keyboardPage.selectedSource===0?root.t("Default input source","لغة الكتابة الافتراضية"):root.t("Available from the input menu","متاحة من قائمة لغة الكتابة");horizontalAlignment:Text.AlignHCenter}
+           HarborButton{Layout.alignment:Qt.AlignHCenter;text:root.t("Make Default","تعيين كافتراضية");enabled:keyboardPage.selectedSource>0;onClicked:{let v=keyboardPage.selectedLayouts.slice();let selected=v.splice(keyboardPage.selectedSource,1)[0];v.unshift(selected);keyboardPage.selectedLayouts=v;keyboardPage.selectedSource=0}}
+           Item{Layout.fillHeight:true}
+           Note{text:root.t("Add up to four input sources. The first source is your default.","أضف حتى أربع لغات كتابة. اللغة الأولى هي الافتراضية.")}
+          }
+         }
+         Divider{}
+         SettingRow{label:root.t("Switch input source","تبديل لغة الكتابة");Select{objectName:"input-shortcut";Layout.preferredWidth:190;model:[root.t("None","بدون"),"Alt + Shift","Ctrl + Shift","Super + Space","Ctrl + Space"];property var values:["","grp:alt_shift_toggle","grp:ctrl_shift_toggle","grp:win_space_toggle","grp:ctrl_space_toggle"];currentIndex:Math.max(0,values.indexOf(keyboardPage.selectedShortcut));onActivated:keyboardPage.selectedShortcut=values[currentIndex]}}
+         Note{text:root.t("Super is the Windows or Command key. Existing layout variants are preserved.","Super هو مفتاح Windows أو Command. تُحفظ تنويعات التخطيط الحالية.")}
+         RowLayout{Layout.fillWidth:true;Item{Layout.fillWidth:true}
+          HarborButton{objectName:"cancel-input-sources";text:root.t("Cancel","إلغاء");onClicked:sourceEditor.close()}
+          HarborButton{objectName:"done-input-sources";text:root.t("Done","تم");prominent:true;enabled:!Keyboard.busy&&keyboardPage.selectedLayouts.length>0;onClicked:{Keyboard.apply(keyboardPage.selectedLayouts,keyboardPage.selectedShortcut);sourceEditor.close()}}
+         }
+        }
+       }
+       Popup{id:sourceChooser;parent:root;anchors.centerIn:parent;width:Math.min(480,root.width-60);height:Math.min(450,root.height-60);padding:22;modal:true;focus:true;closePolicy:Popup.CloseOnEscape
+        property string candidate:""
+        property var matches:(Keyboard.state.catalog||[]).filter(x=>(x.name+" "+x.id+" "+keyboardPage.sourceName(x.id)).toLowerCase().includes(candidateSearch.text.toLowerCase()))
+        background:Rectangle{radius:14;color:root.card;border.color:root.line}
+        contentItem:ColumnLayout{LayoutMirroring.enabled:Prefs.language==="ar";LayoutMirroring.childrenInherit:true;spacing:14
+         Label{text:root.t("Add Input Source","إضافة لغة كتابة");font.bold:true;font.pixelSize:19}
+         HarborField{id:candidateSearch;objectName:"input-source-search";Layout.fillWidth:true;placeholderText:root.t("Search languages","البحث عن لغة")}
+         ListView{Layout.fillWidth:true;Layout.fillHeight:true;clip:true;spacing:3;model:sourceChooser.matches
+          delegate:Button{required property var modelData;objectName:"input-candidate-"+modelData.id;width:ListView.view.width;height:42;enabled:!keyboardPage.selectedLayouts.includes(modelData.id);onClicked:sourceChooser.candidate=modelData.id
+           background:Rectangle{radius:6;color:sourceChooser.candidate===parent.modelData.id?Prefs.accent:parent.hovered?root.line:"transparent"}
+           contentItem:Text{text:keyboardPage.sourceName(parent.modelData.id)+(keyboardPage.selectedLayouts.includes(parent.modelData.id)?" ✓":"");color:sourceChooser.candidate===parent.modelData.id?"white":parent.enabled?root.ink:root.muted;font.pixelSize:14;verticalAlignment:Text.AlignVCenter;elide:Text.ElideRight}
+          }
+         }
+         Note{visible:sourceChooser.matches.length===0;text:root.t("No input sources found","لم يتم العثور على لغات كتابة")}
+         RowLayout{Item{Layout.fillWidth:true}HarborButton{text:root.t("Cancel","إلغاء");onClicked:sourceChooser.close()}
+          HarborButton{objectName:"confirm-add-input";text:root.t("Add","إضافة");prominent:true;enabled:sourceChooser.candidate.length>0&&keyboardPage.selectedLayouts.length<4&&!keyboardPage.selectedLayouts.includes(sourceChooser.candidate);onClicked:{keyboardPage.selectedLayouts=keyboardPage.selectedLayouts.concat([sourceChooser.candidate]);keyboardPage.selectedSource=keyboardPage.selectedLayouts.length-1;sourceChooser.close()}}
+         }
+        }
+       }
       }
       ColumnLayout{visible:root.section==="Battery";Layout.fillWidth:true;spacing:18
        Group{visible:!!System.state.batteryAvailable;SettingRow{label:root.t("Battery","البطارية");hint:System.state.batteryCharging?root.t("Charging","جارٍ الشحن"):root.t("On battery / fully charged","على البطارية / مكتملة الشحن");Label{text:Math.round(System.state.batteryPercent||0)+"%";Layout.preferredWidth:70}}}

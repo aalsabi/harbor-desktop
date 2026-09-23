@@ -21,7 +21,7 @@ Disabled hardware controls indicate an unavailable service. Network pairing, adv
 
 ## Keyboard
 
-Choose one to four distinct base layouts from the installed XKB catalogue. English (US) is `us`; Arabic is `ara`. Move a source upward to change its default order. Choose Alt+Shift, Ctrl+Shift, Super+Space, Ctrl+Space or no XKB switching shortcut, then Apply. “Switch now” uses KWin's keyboard service. The typing field lets you check the result.
+Open Keyboard → Text Input → Edit. The input-source sheet has a configured-source list, selected-source details, a searchable + chooser and removal/default controls. Cancel discards edits; Done saves them. Choose one to four distinct base layouts from the installed XKB catalogue. English (US) is `us`; Arabic is `ara`. Move a source upward to change its default order. Choose Alt+Shift, Ctrl+Shift, Super+Space, Ctrl+Space or no XKB switching shortcut, then Done. The panel input menu uses KWin's keyboard service. The typing field lets you check the result.
 
 Only `~/.config/harbor/session/kxkbrc` is written, through an atomic replacement. Existing variants of retained layouts and unrelated keyboard options are preserved. Configurations containing multiple variants of the same base layout cannot be edited here yet: the helper refuses them without changing the file. This UI does not configure compose-key options, repeat rate or input-method engines such as Fcitx/IBus.
 
@@ -62,4 +62,14 @@ References: [KWin 6.7 keyboard watcher](https://github.com/KDE/kwin/blob/Plasma/
 
 ## Panel input indicator (0.5.2)
 
-The top panel reads the active KWin input source, independently of the interface language or saved configuration. Arabic shows ع, US/GB English shows EN, and other layouts show their XKB code. Hover shows the full name and variant. Click switches to the next source; press and hold opens Keyboard settings. Layout/list-change signals refresh the indicator, with a five-second retry for service recovery. Missing service or an invalid active index clears the stale value to a disabled keyboard symbol.
+The top panel reads the active KWin input source, independently of the interface language or saved configuration. Arabic shows ع, US/GB English shows EN, and other layouts show their XKB code. Hover shows the full name and variant. Click opens a selectable input menu with a checkmark on the current source and a Keyboard Settings link. Layout/list-change signals refresh the indicator, with a five-second retry for service recovery. Missing service or an invalid active index clears the stale value to a disabled keyboard symbol.
+
+## Input menu and system icons (0.5.3)
+
+The language indicator no longer creates a hover tooltip or cycles blindly. It opens a separate panel menu that calls KWin.setLayout for the chosen source and closes only after success; errors remain visible. The Settings source manager follows the Text Input → Edit organisation documented by [Apple](https://support.apple.com/en-nz/guide/mac-help/mchl84525d76/mac), with original UI code. It does not implement macOS-specific text correction, dictation or a keyboard-layout preview.
+
+Application icons use Harbor’s explicit `iconTheme` preference (when set), otherwise the configured KDE icon theme and desktop-file icon paths, including paths with spaces and #. Bundled Harbor artwork is fallback only. Running windows resolve icons by desktop ID or StartupWMClass. A missing or unidentifiable application may still show the generic fallback. The icon theme is read at application startup; live external theme-change propagation is not implemented.
+
+An already-installed theme such as `MacTahoe` can be selected with `iconTheme=MacTahoe` in Harbor settings.ini. The package does not redistribute that third-party theme.
+
+Icon discovery explicitly includes standard XDG data icon directories, ~/.icons and pixmaps fallbacks so it works without Plasma’s platform-theme plugin.

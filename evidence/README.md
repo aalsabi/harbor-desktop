@@ -1,5 +1,8 @@
 # Evidence index
 
+- input-and-icons-0.5.3.txt: Debian13 release checks with fifteen Qt suites, fourteen Python cases, six popup types, multiscreen/keyboard/session integrations and package lifecycle. Container completed with exit0.
+- input-and-icons-local-0.5.3.txt: final local suite including real pointer menu interaction, source editor Cancel/Done, icon precedence/path/configuration and standard-directory discovery.
+
 - indicator-0.5.2.txt: Debian13 full release checks with thirteen Qt suites and package lifecycle.
 - indicator-local-0.5.2.txt: local regressions including compositor-driven language changes, click-cycle backend and service-loss handling.
 

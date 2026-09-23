@@ -66,3 +66,11 @@ Verification: twelve local and Debian13 CTest suites pass; fourteen Python cases
 Added a compact input indicator driven by KWin layout/list-change signals and live D-Bus reads. Click cycles sources; press and hold opens Keyboard settings. Requests carry generations to discard stale replies, and missing services clear stale labels. A private-bus test covers English/Arabic switching, list replacement and service loss.
 
 Validation: thirteen Qt suites passed locally and on Debian13, plus fourteen Python cases, menu/multiscreen/keyboard/session integrations and package lifecycle. The offscreen composed preview read the real active Arabic source from the user session and displayed ع in the panel; no live-session input change was made during this preview.
+
+## 0.5.3 — input menu, source editor and system icons
+
+Replaced the language hover/cycle interaction with a dedicated selectable menu. Added indexed live-layout selection with failure feedback. Reworked Keyboard Text Input into an Edit sheet with source list, searchable add chooser, defaults and Cancel/Done. Corrected icon resolution order, absolute desktop-file icons and dock running-window icon lookup. Tests reproduce the former direct-cycle/no-menu behavior and bundled-icon precedence before fixes.
+
+The user identified the installed MacTahoe theme. A live preview then exposed Qt theme search paths containing only :/icons without a desktop platform-theme plugin. Added standard user/system icon directories and pixmaps fallback, with a regression starting from :/icons only. Harbor supports an explicit iconTheme preference; the requested MacTahoe choice was saved in this user’s Harbor settings with a backup. Theme assets are not bundled in the package.
+
+Final verification: fifteen Qt suites and fourteen Python cases passed on Debian13, including six popup types and existing menu/multiscreen/keyboard/session checks. Container exit0 and package install/runtime/remove passed. Visually inspected the input menu, English/light source sheet, Arabic/dark sheet at740×560, and actual installed MacTahoe icons in the composed preview.

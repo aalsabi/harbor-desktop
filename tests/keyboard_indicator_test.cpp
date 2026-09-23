@@ -15,6 +15,7 @@ public:uint current=0;QList<InputLayout> layouts{{"us","","English (US)"},{"ara"
 public slots:
  QList<InputLayout> getLayoutsList(){return layouts;}
  uint getLayout(){return current;}
+ bool setLayout(uint index){if(index>=uint(layouts.size()))return false;current=index;emit layoutChanged(current);return true;}
  void switchToNextLayout(){current=(current+1)%layouts.size();emit layoutChanged(current);}
 signals:void layoutChanged(uint index);void layoutListChanged();
 };
@@ -26,7 +27,8 @@ private slots:
   auto bus=QDBusConnection::sessionBus();LayoutFixture fixture;
   QVERIFY(bus.registerService("org.kde.keyboard"));QVERIFY(bus.registerObject("/Layouts",&fixture,QDBusConnection::ExportAllSlots|QDBusConnection::ExportAllSignals));
   Keyboard keyboard;QTRY_COMPARE_WITH_TIMEOUT(keyboard.property("activeLabel").toString(),QString("EN"),1500);
-  fixture.current=1;emit fixture.layoutChanged(1);
+  QCOMPARE(keyboard.property("activeLayouts").toList().size(),2);
+  QVERIFY(QMetaObject::invokeMethod(&keyboard,"selectLayout",Q_ARG(int,1)));
   QTRY_COMPARE_WITH_TIMEOUT(keyboard.property("activeLabel").toString(),QString::fromUtf8("ع"),1500);
   QCOMPARE(keyboard.property("activeName").toString(),QString("Arabic"));
   keyboard.switchNext();QTRY_COMPARE_WITH_TIMEOUT(keyboard.property("activeLabel").toString(),QString("EN"),1500);

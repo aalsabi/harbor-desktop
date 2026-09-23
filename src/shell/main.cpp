@@ -1,3 +1,4 @@
+#include "core/Icons.h"
 #include <QGuiApplication>
 #include <QQuickView>
 #include <QQuickStyle>
@@ -34,11 +35,10 @@
 #include "core/Keyboard.h"
 #include "kwin/WindowMenu.h"
 #include <QQuickItem>
-class Icons:public QQuickImageProvider{public:Icons():QQuickImageProvider(Pixmap){}QPixmap requestPixmap(const QString& id,QSize* size,const QSize& requested)override{QSize s=requested.isValid()?requested:QSize(64,64);QString own=":/assets/icons/"+id+".svg";QIcon icon=QFile::exists(own)?QIcon(own):QIcon::fromTheme(id,QIcon(":/assets/icons/app.svg"));auto p=icon.pixmap(s);if(size)*size=p.size();return p;}};
 int main(int argc,char** argv){
  QQuickStyle::setStyle("Basic");
  QQuickWindow::setDefaultAlphaBuffer(true);
- QGuiApplication app(argc,argv);app.setApplicationName("Harbor");app.setOrganizationName("Harbor");app.setFont(QFont("Noto Sans",10));app.setDesktopFileName("org.harbor.Shell");app.setQuitOnLastWindowClosed(false);
+ QGuiApplication app(argc,argv);Icons::configureTheme();app.setApplicationName("Harbor");app.setOrganizationName("Harbor");app.setFont(QFont("Noto Sans",10));app.setDesktopFileName("org.harbor.Shell");app.setQuitOnLastWindowClosed(false);
  const auto args=app.arguments();bool preview=args.contains("--preview"),settings=args.contains("--settings"),filesMode=args.contains("--files"),controlMode=args.contains("--control");
  Files browser; if(filesMode)app.setDesktopFileName("org.harbor.Files");if(filesMode||preview){int n=args.indexOf(filesMode?"--files":"--preview");if(n+1<args.size()&&!args[n+1].startsWith("--"))browser.navigate(args[n+1]);}
  Preferences preferences;Keyboard keyboard;
@@ -74,7 +74,7 @@ controller.onList=[&]{return QString::fromUtf8(QJsonDocument(QJsonArray::fromVar
  controller.onWindowAction=[&](QString name){QQuickView* v=popup?popup:((settings||filesMode)&&!surfaces.isEmpty()?surfaces[0]:nullptr);if(!v)return;if(name=="move")v->startSystemMove();else if(name=="resize")v->startSystemResize(Qt::RightEdge|Qt::BottomEdge);else if(name=="close")v->close();else if(name=="minimize")v->showMinimized();else if(name=="maximize"){if(v->visibility()==QWindow::Maximized)v->showNormal();else v->showMaximized();}};
  controller.onLogout=[&]{if(!preview&&!settings&&!filesMode&&!controlMode)QTimer::singleShot(100,&app,&QCoreApplication::quit);else{auto message=QDBusMessage::createMethodCall("org.harbor.Shell","/Shell","org.harbor.Shell","Logout");QDBusConnection::sessionBus().asyncCall(message,2000);}};
  controller.onClose=[&]{if(popup){popup->hide();popup->deleteLater();popup=nullptr;}else if(controlMode)app.quit();};
- controller.onOpen=[&](QString page){controller.dismiss();const bool settingsPage=page=="settings"||page.startsWith("settings:");QString name=page=="menu"?"AppMenu":page=="notifications"?"NotificationCenter":page=="launcher"?"Launcher":settingsPage?"Settings":page=="windows"?"WindowList":"ControlCenter";popup=make(name,app.primaryScreen(),name=="Settings"?960:name=="Launcher"?680:390,name=="Settings"?680:name=="Launcher"?560:560,name=="Settings"?-1:3);if(popup){if(settingsPage&&page.startsWith("settings:"))popup->rootObject()->setProperty("section",page.mid(9));popup->requestActivate();}};
+ controller.onOpen=[&](QString page){controller.dismiss();const bool settingsPage=page=="settings"||page.startsWith("settings:");QString name=page=="input"?"InputMenu":page=="menu"?"AppMenu":page=="notifications"?"NotificationCenter":page=="launcher"?"Launcher":settingsPage?"Settings":page=="windows"?"WindowList":"ControlCenter";popup=make(name,app.primaryScreen(),name=="Settings"?960:name=="Launcher"?680:name=="InputMenu"?320:390,name=="Settings"?680:name=="Launcher"?560:name=="InputMenu"?320:560,name=="Settings"?-1:3);if(popup){if(settingsPage&&page.startsWith("settings:"))popup->rootObject()->setProperty("section",page.mid(9));popup->requestActivate();}};
  if(preview||settings||filesMode||controlMode){auto v=make(filesMode?"Files":settings?"Settings":controlMode?"ControlCenter":"Preview",app.primaryScreen(),filesMode?1200:settings?960:controlMode?410:1440,filesMode?760:settings?680:controlMode?720:900,-1);if(!v)return 2;surfaces<<v;
   if(settings){int pageIndex=args.indexOf("--settings")+1;if(pageIndex<args.size()&&!args[pageIndex].startsWith("--")){const QStringList pages{"General","Wi-Fi","Bluetooth","Network","Sound","Appearance","Accessibility","Desktop & Dock","Displays","Keyboard","Battery","Users & Groups","About","Software Update"};if(pages.contains(args[pageIndex]))v->rootObject()->setProperty("section",args[pageIndex]);}}
   if(filesMode||preview){auto fileRoot=filesMode?v->rootObject():v->rootObject()->findChild<QQuickItem*>("filesView");if(fileRoot){auto exporter=new FilesMenu(v);fileRoot->setProperty("menuExporter",QVariant::fromValue(static_cast<QObject*>(exporter)));if(filesMode)attachWindowMenu(v,exporter->objectPath());else menu.setSource(QDBusConnection::sessionBus().baseService(),exporter->objectPath());}}

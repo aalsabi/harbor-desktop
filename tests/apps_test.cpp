@@ -5,8 +5,13 @@
 #include "core/Applications.h"
 class AppsTest: public QObject {
  Q_OBJECT
+QTemporaryDir data;
 private slots:
- void hiddenEntriesStayHidden(){QTemporaryDir dir;qputenv("XDG_DATA_HOME",dir.path().toUtf8());QDir().mkpath(dir.path()+"/applications");QFile f(dir.path()+"/applications/harbor-hidden-test.desktop");QVERIFY(f.open(QIODevice::WriteOnly));f.write("[Desktop Entry]\nType=Application\nName=Harbor Hidden Test\nExec=/bin/true\nHidden=true\n");f.close();Applications a;for(auto v:a.entries())QVERIFY(v.toMap()["id"]!="harbor-hidden-test.desktop");}
+ void initTestCase(){qputenv("XDG_DATA_HOME",data.path().toUtf8());QDir().mkpath(data.path()+"/applications");QFile f(data.path()+"/applications/harbor-icon-test.desktop");QVERIFY(f.open(QIODevice::WriteOnly));f.write(("[Desktop Entry]\nType=Application\nName=Harbor Icon Test\nExec=/bin/true\nStartupWMClass=HarborIconFixture\nIcon="+data.path()+"/official icon.png\n").toUtf8());}
+ void absoluteIconsArePreserved(){Applications a;for(auto v:a.entries()){auto entry=v.toMap();if(entry["id"]=="harbor-icon-test.desktop"){QCOMPARE(entry["icon"].toString(),data.path()+"/official icon.png");return;}}QFAIL("fixture app missing");}
+
+ void runningWindowUsesDesktopEntryIcon(){Applications a;QString icon;QVERIFY(QMetaObject::invokeMethod(&a,"iconForAppId",Q_RETURN_ARG(QString,icon),Q_ARG(QString,QString("HarborIconFixture"))));QCOMPARE(icon,data.path()+"/official icon.png");QCOMPARE(a.iconForAppId("harbor-icon-test"),icon);QCOMPARE(a.iconForAppId("harbor-icon-test.desktop"),icon);QCOMPARE(a.iconForAppId("harboriconfixture"),icon);}
+ void hiddenEntriesStayHidden(){QFile f(data.path()+"/applications/harbor-hidden-test.desktop");QVERIFY(f.open(QIODevice::WriteOnly));f.write("[Desktop Entry]\nType=Application\nName=Harbor Hidden Test\nExec=/bin/true\nHidden=true\n");f.close();Applications a;for(auto v:a.entries())QVERIFY(v.toMap()["id"]!="harbor-hidden-test.desktop");}
  void pathsCannotBeLaunchedAsIds(){Applications a;QSignalSpy errors(&a,&Applications::error);QVERIFY(!a.launch("../../untrusted.desktop"));QCOMPARE(errors.size(),1);}
 };
 QTEST_GUILESS_MAIN(AppsTest)

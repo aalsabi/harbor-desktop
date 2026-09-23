@@ -34,11 +34,11 @@ try:
  assert next(r for r in windows() if r['id']==ids[0])['active'], {'windows':windows(),'processes':[p.poll() for p in children]}
  call('Close',ids[1]);time.sleep(.5)
  assert ids[1] not in [r['id'] for r in windows()]
- for panel in ['control','launcher','windows','settings','notifications']:
+ for panel in ['control','launcher','windows','settings','notifications','input']:
   call('Show',panel);time.sleep(.2)
  r=subprocess.run(['gdbus','call','--session','--dest','org.freedesktop.Notifications','--object-path','/org/freedesktop/Notifications','--method','org.freedesktop.Notifications.Notify','Harbor test','0','','Integration test','Notification delivered','[]','{}','1000'],capture_output=True,text=True)
  assert r.returncode==0,r.stderr
- print(json.dumps({'kwinWindowEnumeration':True,'activate':True,'close':True,'panelsOpened':5,'notificationDelivered':True,'initialWindowCount':len(rows),'filesMenuExported':True}),flush=True)
+ print(json.dumps({'kwinWindowEnumeration':True,'activate':True,'close':True,'panelsOpened':6,'notificationDelivered':True,'initialWindowCount':len(rows),'filesMenuExported':True}),flush=True)
 finally:
  for c in children+[shell]:
   if c.poll() is None:c.terminate()
