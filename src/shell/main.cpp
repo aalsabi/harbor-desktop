@@ -34,9 +34,9 @@ int main(int argc,char** argv){
  QQuickWindow::setDefaultAlphaBuffer(true);
  QGuiApplication app(argc,argv);app.setApplicationName("Harbor");app.setOrganizationName("Harbor");app.setFont(QFont("Noto Sans",10));app.setDesktopFileName("org.harbor.Shell");app.setQuitOnLastWindowClosed(false);
  const auto args=app.arguments();bool preview=args.contains("--preview"),settings=args.contains("--settings"),filesMode=args.contains("--files");
- Files browser; if(filesMode){app.setDesktopFileName("org.harbor.Files");int n=args.indexOf("--files");if(n+1<args.size()&&!args[n+1].startsWith("--"))browser.navigate(args[n+1]);}
+ Files browser; if(filesMode)app.setDesktopFileName("org.harbor.Files");if(filesMode||preview){int n=args.indexOf(filesMode?"--files":"--preview");if(n+1<args.size()&&!args[n+1].startsWith("--"))browser.navigate(args[n+1]);}
  Preferences preferences;
- auto updatePalette=[&]{QPalette p;bool d=preferences.dark();p.setColor(QPalette::Window,d?QColor("#101b2c"):QColor("#f3f6fc"));p.setColor(QPalette::WindowText,d?QColor("#edf3fa"):QColor("#182e47"));p.setColor(QPalette::Text,p.color(QPalette::WindowText));p.setColor(QPalette::ButtonText,p.color(QPalette::WindowText));p.setColor(QPalette::Base,d?QColor("#20324a"):Qt::white);p.setColor(QPalette::Button,d?QColor("#243953"):QColor("#dce6f4"));p.setColor(QPalette::Highlight,QColor("#64bfb5"));app.setPalette(p);};updatePalette();QObject::connect(&preferences,&Preferences::changed,&app,updatePalette);
+ auto updatePalette=[&]{QPalette p;bool d=preferences.dark();p.setColor(QPalette::Window,d?QColor("#252528"):QColor("#f6f6f8"));p.setColor(QPalette::WindowText,d?QColor("#eeeeef"):QColor("#26262a"));p.setColor(QPalette::Text,p.color(QPalette::WindowText));p.setColor(QPalette::ButtonText,p.color(QPalette::WindowText));p.setColor(QPalette::Base,d?QColor("#333337"):Qt::white);p.setColor(QPalette::Button,d?QColor("#3d3d43"):QColor("#ededf1"));p.setColor(QPalette::Highlight,QColor("#1684f8"));app.setPalette(p);};updatePalette();QObject::connect(&preferences,&Preferences::changed,&app,updatePalette);
  Applications applications;SystemServices services;WindowModel windows;Controller controller;Notifications notifications(!preview&&!settings&&!filesMode);Tray tray(!preview&&!settings&&!filesMode);Accounts accounts;QTimer::singleShot(0,&accounts,&Accounts::refresh);
  GlobalMenu menu;QObject::connect(&windows,&WindowModel::changed,&menu,[&]{menu.setSource(windows.menuService(),windows.menuPath());});
  Translation translation;translation.arabic=preferences.language()=="ar";app.installTranslator(&translation);app.setLayoutDirection(translation.arabic?Qt::RightToLeft:Qt::LeftToRight);
@@ -47,7 +47,7 @@ controller.onList=[&]{return QString::fromUtf8(QJsonDocument(QJsonArray::fromVar
  if(!preview&&!settings&&!filesMode){auto bus=QDBusConnection::sessionBus();if(!bus.registerService("org.harbor.Shell"))return 4;bus.registerObject("/Shell",&controller,QDBusConnection::ExportAllSlots);}
  QList<QQuickView*> surfaces;QQuickView* popup=nullptr;
  auto make=[&](QString name,QScreen* screen,int width,int height,int role)->QQuickView*{
-  auto view=new QQuickView(&engine,nullptr);view->setResizeMode(QQuickView::SizeRootObjectToView);view->setColor(Qt::transparent);view->setScreen(screen);view->resize(width,height);if(name=="Settings"){view->setFlags(Qt::FramelessWindowHint);view->setMinimumSize(QSize(740,560));}
+  auto view=new QQuickView(&engine,nullptr);view->setResizeMode(QQuickView::SizeRootObjectToView);view->setColor(Qt::transparent);view->setScreen(screen);view->resize(width,height);if(name=="Settings"||name=="Files"){view->setFlags(Qt::FramelessWindowHint);view->setMinimumSize(QSize(740,560));}
   if(name=="Files")view->setMinimumSize(QSize(1000,600));
   view->setTitle("Harbor — "+name);view->setProperty("harborScreen",QVariant::fromValue(screen));
   if(role>=0&&!preview&&app.platformName()=="wayland"){
@@ -62,7 +62,7 @@ controller.onList=[&]{return QString::fromUtf8(QJsonDocument(QJsonArray::fromVar
   view->setSource(QUrl("qrc:/qml/"+name+".qml"));if(view->status()==QQuickView::Error){delete view;return nullptr;}
   view->show();if(role>0&&!preview&&app.platformName()=="wayland")KWindowEffects::enableBlurBehind(view,true);return view;
  };
- controller.onWindowAction=[&](QString name){QQuickView* v=popup?popup:(settings&&!surfaces.isEmpty()?surfaces[0]:nullptr);if(!v)return;if(name=="move")v->startSystemMove();else if(name=="resize")v->startSystemResize(Qt::RightEdge|Qt::BottomEdge);else if(name=="close")v->close();else if(name=="minimize")v->showMinimized();else if(name=="maximize"){if(v->visibility()==QWindow::Maximized)v->showNormal();else v->showMaximized();}};
+ controller.onWindowAction=[&](QString name){QQuickView* v=popup?popup:((settings||filesMode)&&!surfaces.isEmpty()?surfaces[0]:nullptr);if(!v)return;if(name=="move")v->startSystemMove();else if(name=="resize")v->startSystemResize(Qt::RightEdge|Qt::BottomEdge);else if(name=="close")v->close();else if(name=="minimize")v->showMinimized();else if(name=="maximize"){if(v->visibility()==QWindow::Maximized)v->showNormal();else v->showMaximized();}};
  controller.onClose=[&]{if(popup){popup->hide();popup->deleteLater();popup=nullptr;}};
  controller.onOpen=[&](QString page){controller.dismiss();QString name=page=="menu"?"AppMenu":page=="notifications"?"NotificationCenter":page=="launcher"?"Launcher":page=="settings"?"Settings":page=="windows"?"WindowList":"ControlCenter";popup=make(name,app.primaryScreen(),name=="Settings"?960:name=="Launcher"?680:390,name=="Settings"?680:name=="Launcher"?560:560,name=="Settings"?-1:3);if(popup)popup->requestActivate();};
  if(preview||settings||filesMode){auto v=make(filesMode?"Files":settings?"Settings":"Preview",app.primaryScreen(),filesMode?1200:settings?960:1440,filesMode?760:settings?680:900,-1);if(!v)return 2;surfaces<<v;QObject::connect(v,&QWindow::visibleChanged,&app,[&app,v]{if(!v->isVisible())app.quit();});

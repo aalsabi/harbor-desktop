@@ -1,8 +1,8 @@
 import QtQuick
 import QtQuick.Controls
 TextField {
- color:Prefs.dark?"#edf3fa":"#182e47"
- placeholderTextColor:Prefs.dark?"#899bae":"#64778b"
- selectionColor:"#55bdb2"
- background:Rectangle{radius:10;color:Prefs.dark?"#24364d":"#ffffff";border.color:parent.activeFocus?"#81ddd0":"#406e8b9c"}
+ color:Prefs.dark?"#eeeeef":"#26262a"
+ placeholderTextColor:Prefs.dark?"#a1a1a9":"#85858d"
+ selectionColor:"#1684f8"
+ background:Rectangle{radius:8;color:Prefs.dark?"#39393e":"#ffffff";border.color:parent.activeFocus?"#1684f8":"#30909098"}
 }

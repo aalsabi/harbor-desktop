@@ -9,7 +9,7 @@ Preferences::Preferences(QString path,QObject* parent):QObject(parent),settings(
  connect(&watcher,&QFileSystemWatcher::directoryChanged,this,[this]{settings.sync();emit changed();});
 }
 double Preferences::opacity()const {auto v=settings.value("opacity",.9).toDouble();return std::isfinite(v)&&v>=.45&&v<=1?v:.9;}
-bool Preferences::dark()const{return settings.value("dark",true).toBool();}
+bool Preferences::dark()const{return settings.value("dark",false).toBool();}
 bool Preferences::reduceMotion()const{return settings.value("reduceMotion",false).toBool();}
 QStringList Preferences::pins()const{return settings.value("pins",QStringList{"org.kde.dolphin.desktop","firefox-esr.desktop","org.kde.konsole.desktop","org.harbor.Settings.desktop"}).toStringList();}
 void Preferences::setOpacity(double v){if(!std::isfinite(v)||v<.45||v>1)return;settings.setValue("opacity",v);settings.sync();emit changed();}

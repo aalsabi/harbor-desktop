@@ -1,16 +1,18 @@
 import QtQuick
 import QtQuick.Controls
 Item {
- GlassCard {anchors.fill:parent;anchors.margins:4;radius:23}
+ GlassCard {anchors.centerIn:parent;height:parent.height-8;width:Math.min(parent.width-8,row.width+24);radius:23}
  Flickable {id:flick;anchors.fill:parent;anchors.margins:10;contentWidth:Math.max(width,row.width);clip:true;flickableDirection:Flickable.HorizontalFlick
   Row {id:row;x:Math.max(0,(flick.width-width)/2);height:58;spacing:9
    Repeater {model:[{icon:"view-app-grid",name:"Applications",action:"launcher"},{icon:"system-file-manager",name:"Files",action:"files"},{icon:"utilities-terminal",name:"Terminal",action:"terminal"},{icon:"preferences-system",name:"Settings",action:"settings"}]
-    delegate:HarborButton {required property var modelData;width:54;height:58;text:"";Accessible.name:modelData.name;Image{anchors.centerIn:parent;width:40;height:40;source:"image://icons/"+modelData.icon}onClicked:modelData.action==="files"||modelData.action==="terminal"?System.openTool(modelData.action):UI.open(modelData.action);ToolTip.visible:hovered;ToolTip.text:modelData.name}
+    delegate:HarborButton {required property var modelData;width:58;height:58;background:Rectangle{radius:12;color:parent.hovered?"#44ffffff":"transparent"}
+text:"";Accessible.name:modelData.name;Image{anchors.centerIn:parent;width:48;height:48;source:"image://icons/"+modelData.icon}onClicked:modelData.action==="files"||modelData.action==="terminal"?System.openTool(modelData.action):UI.open(modelData.action);ToolTip.visible:hovered;ToolTip.text:modelData.name}
    }
    Rectangle{width:1;height:38;anchors.verticalCenter:parent.verticalCenter;color:"#446e9bac"}
    Repeater {model:Prefs.pins.filter(id=>Apps.entries.some(a=>a.id===id))
-    delegate:HarborButton {required property string modelData;property var entry:Apps.entries.find(a=>a.id===modelData)||({name:modelData,icon:"app"});width:54;height:58;text:""
-     Image{anchors.centerIn:parent;width:36;height:36;source:"image://icons/"+parent.entry.icon}
+    delegate:HarborButton {required property string modelData;property var entry:Apps.entries.find(a=>a.id===modelData)||({name:modelData,icon:"app"});width:58;height:58;background:Rectangle{radius:12;color:parent.hovered?"#44ffffff":"transparent"}
+text:""
+     Image{anchors.centerIn:parent;width:44;height:44;source:"image://icons/"+parent.entry.icon}
      onClicked:{let w=Windows.windows.find(w=>w.appId===modelData||w.appId+".desktop"===modelData);if(w)Windows.activate(w.id);else Apps.launch(modelData)}
      onPressAndHold:Prefs.pins=Prefs.pins.filter(id=>id!==modelData)
      ToolTip.visible:hovered;ToolTip.text:entry.name;Accessible.name:entry.name
@@ -18,7 +20,8 @@ Item {
     }
    }
    Repeater {model:Windows.windows
-    delegate:HarborButton{required property var modelData;width:54;height:58;text:modelData.title.substring(0,2);prominent:modelData.active;onClicked:Windows.activate(modelData.id);onPressAndHold:UI.open("windows");ToolTip.visible:hovered;ToolTip.text:modelData.title}
+    delegate:HarborButton{required property var modelData;width:58;height:58;background:Rectangle{radius:12;color:parent.hovered?"#44ffffff":"transparent"}
+text:modelData.title.substring(0,2);prominent:modelData.active;onClicked:Windows.activate(modelData.id);onPressAndHold:UI.open("windows");ToolTip.visible:hovered;ToolTip.text:modelData.title}
    }
   }
  }

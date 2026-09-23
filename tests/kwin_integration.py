@@ -19,11 +19,11 @@ try:
  assert len(rows)>=2,rows
  ids=[r['id'] for r in rows]
  call('Activate',ids[0])
- for _ in range(30):
+ for _ in range(80):
   if next(r for r in windows() if r['id']==ids[0])['active']:break
   # Enumeration can precede mapping/focus readiness on KWin 6.3.
   time.sleep(.1);call('Activate',ids[0])
- assert next(r for r in windows() if r['id']==ids[0])['active']
+ assert next(r for r in windows() if r['id']==ids[0])['active'], {'windows':windows(),'processes':[p.poll() for p in children]}
  call('Close',ids[1]);time.sleep(.5)
  assert ids[1] not in [r['id'] for r in windows()]
  for panel in ['control','launcher','windows','settings','notifications']:

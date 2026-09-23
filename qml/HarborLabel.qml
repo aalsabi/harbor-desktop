@@ -1,3 +1,3 @@
 import QtQuick
 import QtQuick.Controls
-Label {color: Prefs.dark ? "#edf3fa" : "#182e47"}
+Label {color: Prefs.dark ? "#eeeeef" : "#26262a"}

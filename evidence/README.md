@@ -1,6 +1,8 @@
 # Evidence index
 
-- trixie-validation.txt: authoritative final Debian13 build, tests, package installation, UI render, virtual KWin integration, installed-session startup and removal run. Read its final status; intermediate attempts are not acceptance evidence.
+- visual-0.3.0.txt: release0.3 final build, UI interaction, packaging, KWin integration, install and remove checks.
+- files-0.2.0.txt: release0.2 verification.
+- trixie-validation.txt: baseline0.1 Debian13 build, tests, package installation, UI render, virtual KWin integration, installed-session startup and removal run. Read its final status; intermediate attempts are not acceptance evidence.
 - benchmark.json: one local Qt6.11 preview-only offscreen idle measurement; no KWin/GPU/hardware performance claim.
 - trixie-build.txt: earlier successful Debian13 build/package.
 - kwin-probe.txt: earlier local KWin6.7 protocol probe.

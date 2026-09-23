@@ -2,7 +2,7 @@
 
 Harbor source code, QML, original SVG artwork, theme configuration, scripts and documentation: GPL-3.0-or-later. Copyright 2026 Harbor Desktop contributors. The complete GPL version 3 text is included in LICENSE.
 
-The SVG backgrounds and six Harbor icons were authored for this project from simple geometry. No Apple image, font, sound, logo or extracted system resource is included. Golden Gate is only the reference platform named in the design documentation. This project is independent of Apple and KDE.
+The SVG backgrounds and eight Harbor icons were authored for this project from simple geometry. No Apple image, font, sound, logo or extracted system resource is included. Golden Gate is only the reference platform named in the design documentation. This project is independent of Apple and KDE.
 
 External libraries and services are installed by Debian, not vendored:
 - Qt 6 (Core, Gui, Quick, Controls, DBus, SVG): their available free-software licenses; this build uses shared Debian libraries.

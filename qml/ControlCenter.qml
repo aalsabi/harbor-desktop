@@ -3,13 +3,12 @@ import QtQuick.Controls
 import QtQuick.Layouts
 GlassCard {
  focus: true; Keys.onEscapePressed: UI.dismiss()
- ColumnLayout { anchors.fill: parent; anchors.margins: 24; spacing: 14
-  RowLayout { Layout.fillWidth: true; HarborLabel { text: qsTr("Control center"); font.pixelSize: 22; font.bold: true; Layout.fillWidth: true }
+ ColumnLayout { anchors.fill: parent; anchors.margins: 18; spacing: 12
+  RowLayout { Layout.fillWidth: true; HarborLabel { text: qsTr("Control center"); font.pixelSize: 17; font.bold: true; Layout.fillWidth: true }
  HarborButton { text:"×"; onClicked: UI.dismiss() } }
-  HarborLabel { text: qsTr("Your devices. One place."); opacity: .6 }
   GridLayout { columns: 2; Layout.fillWidth: true
-   HarborButton { text: System.state.wifiAvailable ? "Wi-Fi · "+System.state.wifi : qsTr("Wi-Fi unavailable"); Layout.fillWidth:true; enabled:System.state.wifiAvailable && !System.busy; prominent:System.state.wifi==="enabled"; onClicked:System.action("wifi",System.state.wifi!=="enabled") }
-   HarborButton { text: "Bluetooth"; Layout.fillWidth:true; enabled:System.state.bluetoothAvailable && !System.busy; prominent:(System.state.bluetooth||"").includes("Powered: yes"); onClicked:System.action("bluetooth",!(System.state.bluetooth||"").includes("Powered: yes")) }
+   HarborButton { text: System.state.wifiAvailable ? "Wi-Fi · "+System.state.wifi : qsTr("Wi-Fi unavailable"); Layout.fillWidth:true;implicitHeight:58; enabled:System.state.wifiAvailable && !System.busy; prominent:System.state.wifi==="enabled"; onClicked:System.action("wifi",System.state.wifi!=="enabled") }
+   HarborButton { text: "Bluetooth"; Layout.fillWidth:true;implicitHeight:58; enabled:System.state.bluetoothAvailable && !System.busy; prominent:(System.state.bluetooth||"").includes("Powered: yes"); onClicked:System.action("bluetooth",!(System.state.bluetooth||"").includes("Powered: yes")) }
   }
   HarborLabel { text: qsTr("Sound")+"   "+(System.state.volume||qsTr("Unavailable")); font.bold:true }
   Slider { Layout.fillWidth:true; from:0; to:1; value:parseFloat((System.state.volume||"Volume: 0").split(" ")[1])||0; enabled:System.state.volumeAvailable&&!System.busy; onMoved: volumeTimer.restart(); Timer {id:volumeTimer;interval:180;onTriggered:System.action("volume",parent.value)} }

@@ -5,13 +5,13 @@ Rectangle {
  LayoutMirroring.enabled: Prefs.language==="ar"
  LayoutMirroring.childrenInherit:true
  radius:18
- id:root;color:Prefs.dark?"#101b2c":"#f3f6fc"
+ id:root;color:Prefs.dark?"#29292d":"#f7f7f9"
  property string section: "Appearance"
  RowLayout {anchors.fill:parent;spacing:0
-  Rectangle {Layout.preferredWidth:222;Layout.fillHeight:true;color:Prefs.dark?"#16243a":"#e5ecf6"
+  Rectangle {Layout.preferredWidth:222;Layout.fillHeight:true;color:Prefs.dark?"#333338":"#ececf1"
    ColumnLayout {anchors.fill:parent;anchors.margins:20;spacing:8
     Row {spacing:8;Repeater{model:["#fa7773","#f3c576","#80d6b8"];delegate:Rectangle{required property string modelData;required property int index;width:12;height:12;radius:6;color:modelData;MouseArea{anchors.fill:parent;onClicked:UI.windowAction(index===0?"close":index===1?"minimize":"maximize")}}}}
-    HarborLabel{text:"Harbor";font.pixelSize:29;font.bold:true;Layout.topMargin:22;MouseArea{anchors.fill:parent;onPressed:UI.windowAction("move")}}
+    HarborLabel{text:"Harbor";font.pixelSize:20;font.bold:true;Layout.topMargin:12;MouseArea{anchors.fill:parent;onPressed:UI.windowAction("move")}}
     HarborLabel{text:qsTr("System settings");opacity:.6;Layout.bottomMargin:16}
     HarborField{id:filter;Layout.fillWidth:true;placeholderText:qsTr("Find a setting")}
     Repeater {model:["Appearance","Network","Sound","Bluetooth","Displays","Power","Users","Updates","About"].filter(x=>x.toLowerCase().includes(filter.text.toLowerCase()))
@@ -24,12 +24,12 @@ Rectangle {
   ScrollView {Layout.fillWidth:true;Layout.fillHeight:true;contentWidth:availableWidth;clip:true
    ColumnLayout {width:parent.width;spacing:18
     Item{height:14}
-    HarborLabel {text:qsTr(root.section);font.pixelSize:30;font.bold:true;Layout.leftMargin:30}
+    HarborLabel {text:qsTr(root.section);font.pixelSize:23;font.bold:true;Layout.leftMargin:30}
     HarborLabel {text:qsTr("Make this desktop your own.");opacity:.6;Layout.leftMargin:30;visible:root.section==="Appearance"}
     ColumnLayout {visible:root.section==="Appearance";Layout.fillWidth:true;Layout.margins:30;spacing:20
      RowLayout {HarborButton{text:qsTr("Dark");prominent:Prefs.dark;onClicked:Prefs.dark=true;Layout.preferredWidth:150}
 HarborButton{text:qsTr("Light");prominent:!Prefs.dark;onClicked:Prefs.dark=false;Layout.preferredWidth:150}}
-     Image{source:"qrc:/assets/wallpapers/harbor.svg";Layout.fillWidth:true;Layout.preferredHeight:190;fillMode:Image.PreserveAspectCrop}
+     Image{source:"qrc:/assets/wallpapers/harbor.svg";Layout.fillWidth:true;Layout.preferredHeight:150;fillMode:Image.PreserveAspectCrop}
      HarborLabel{text:qsTr("Glass opacity");font.bold:true}
      Slider{Layout.fillWidth:true;from:.45;to:1;value:Prefs.opacity;onMoved:Prefs.opacity=value}
      HarborLabel{text:qsTr("Adjust the transparency of desktop panels.");wrapMode:Text.Wrap;Layout.fillWidth:true;opacity:.65}

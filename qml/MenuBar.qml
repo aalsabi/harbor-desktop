@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 Rectangle {
- color: Prefs.dark ? "#f2111e30" : "#f2f7f9fc"
+ color: Prefs.dark ? "#80222228" : "#80f7f7ff"
  component PanelButton: HarborButton {
   implicitHeight: 28
   Layout.preferredHeight: 28
@@ -17,7 +17,7 @@ Rectangle {
  }
  Rectangle {anchors.bottom:parent.bottom;width:parent.width;height:1;color:Prefs.dark?"#40516a":"#c5d1df"}
  RowLayout { anchors.fill: parent; anchors.leftMargin: 18; anchors.rightMargin: 18; spacing: 8
-  PanelButton { text: Prefs.language==="ar" ? "◈  التطبيقات" : "◈  Applications"; font.bold: true; onClicked: UI.open("launcher"); Accessible.name: "Applications" }
+  PanelButton { text: Prefs.language==="ar" ? "◈  هاربور" : "◈  Harbor"; font.bold: true; onClicked: UI.open("launcher"); Accessible.name: "Applications" }
 
   Text { text: Windows.activeTitle;visible:text!=="Harbor"; Layout.maximumWidth: 160; elide: Text.ElideRight; color: Prefs.dark ? "#eef4ff" : "#435b70"; font.pixelSize: 12 }
   Flickable {
