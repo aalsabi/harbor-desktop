@@ -9,7 +9,9 @@ import sys
 
 TAG = re.compile(r'[a-zA-Z]{2,3}(?:[-_][a-zA-Z0-9]{2,8}){0,3}\Z')
 REGION = re.compile(r'[a-z]{2,3}_(?:[A-Z][a-z]{3}_)?(?:[A-Z]{2}|[0-9]{3})\Z')
-CATEGORIES = ('LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MEASUREMENT')
+CATEGORIES = ('LC_CTYPE', 'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY',
+              'LC_MEASUREMENT', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS',
+              'LC_TELEPHONE', 'LC_IDENTIFICATION')
 
 
 def warn(message):
@@ -66,7 +68,9 @@ def apply_locale_environment(env, available_locales=None):
             return match
         same_language = sorted(value for value in available.values()
                                if language and value.lower().startswith(language.lower() + '_') and 'utf8' in normalized(value))
-        selected = same_language[0] if same_language else fallback
+        if same_language:
+            return same_language[0]
+        selected = fallback
         warn(f'{requested}.UTF-8 is not generated; applications will use {selected} instead.')
         return selected
 
@@ -92,8 +96,6 @@ def apply_locale_environment(env, available_locales=None):
     env['LANG'] = language_locale
     env['LANGUAGE'] = ':'.join(tag.replace('-', '_') for tag in languages)
     env['LC_MESSAGES'] = language_locale
-    env['LC_CTYPE'] = language_locale
-    env['LC_COLLATE'] = language_locale
     for category in CATEGORIES:
         env[category] = region_locale
     env['LC_MEASUREMENT'] = measurement_locale
@@ -106,4 +108,4 @@ if __name__ == '__main__':
     session = os.environ.copy()
     applied = apply_locale_environment(session)
     print(json.dumps({'applied': applied, 'environment': {key: session[key] for key in
-          ('LANG', 'LANGUAGE', 'LC_MESSAGES', 'LC_CTYPE', 'LC_COLLATE', *CATEGORIES) if key in session}}))
+          ('LANG', 'LANGUAGE', 'LC_MESSAGES', *CATEGORIES) if key in session}}))

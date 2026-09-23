@@ -1,5 +1,9 @@
 # Evidence index
 
+- english-saudi-0.6.2.txt: Debian13 build, nineteen Qt suites, thirty-eight Python cases, locale helper and existing KWin/package lifecycle integrations; container exit0.
+- english-saudi-local-0.6.2.txt / english-saudi-python-0.6.2.txt: local verification, including English-only message language with every non-message category following Saudi Arabia and stale overrides removed.
+- english-saudi-red.txt: pre-fix regional category regression.
+
 - locale-generation-0.6.1.txt: nineteen Qt suites, thirty-seven Python cases, actual installed root-helper generation of ar_SA/en_US in the isolated Debian13 container, persistence/idempotency, invalid/unprivileged rejection, unchanged system default locale, existing KWin integrations and package install/remove (exit0).
 - locale-generation-local-0.6.1.txt / locale-generation-python-0.6.1.txt / locale-generation-ui-0.6.1.txt: local verification, including confirmation, cancel/retry/busy/save UI flow and Arabic small-window confirmation bounds. Authentication completion is mocked in UI tests; the physical password dialog is not automated.
 - locale-generation-helper-red.txt: intentionally failing tests before fixed cwd and concurrent configuration edit protection.

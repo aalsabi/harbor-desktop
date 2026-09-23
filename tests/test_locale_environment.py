@@ -48,6 +48,21 @@ class LocaleEnvironmentTests(unittest.TestCase):
         self.assertEqual(env['LC_TIME'], 'ar_SA.utf8')
         self.assertEqual(env['LANGUAGE'], 'en:ar')
 
+    def test_english_interface_and_all_saudi_regional_categories(self):
+        applied, env, _, warning = self.apply(self.settings(languages=['en']),
+            ['C', 'C.utf8', 'en_US.utf8', 'ar_SA.utf8'],
+            {'LC_PAPER': 'en_US.utf8', 'LC_ADDRESS': 'en_US.utf8', 'LC_ALL': 'ar_SA.utf8'})
+        self.assertTrue(applied)
+        self.assertEqual(env['LANG'], 'en_US.utf8')
+        self.assertEqual(env['LANGUAGE'], 'en')
+        self.assertEqual(warning, '')
+        self.assertEqual(env['LC_MESSAGES'], 'en_US.utf8')
+        for category in ('LC_CTYPE', 'LC_COLLATE', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY',
+                         'LC_MEASUREMENT', 'LC_PAPER', 'LC_NAME', 'LC_ADDRESS',
+                         'LC_TELEPHONE', 'LC_IDENTIFICATION'):
+            self.assertEqual(env[category], 'ar_SA.utf8')
+        self.assertNotIn('LC_ALL', env)
+
     def test_unavailable_locales_fall_back_to_available_inherited_locale_with_warning(self):
         applied, env, _, warning = self.apply(self.settings(), ['C', 'C.utf8', 'en_US.utf8'], {'LC_ALL': 'en_US.UTF-8'})
         self.assertTrue(applied)

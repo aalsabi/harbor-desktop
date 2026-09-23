@@ -9,7 +9,7 @@ ctest --test-dir /build --output-on-failure
 python3 -m unittest discover -s /src/tests -p 'test_*.py'
 cd /build
 cpack -G DEB
-apt-get install -y --no-install-recommends ./harbor-desktop-0.6.1-Linux.deb >/build/install.log 2>&1
+apt-get install -y --no-install-recommends ./harbor-desktop-0.6.2-Linux.deb >/build/install.log 2>&1
 python3 /src/tests/locale_generation_integration.py
 setcap -r /usr/bin/kwin_wayland || true
 mkdir -p /tmp/runtime-harbor

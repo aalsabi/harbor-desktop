@@ -150,7 +150,7 @@ ColumnLayout {
    contentItem:ColumnLayout {
     spacing:9
     Heading {text:root.t("Preferred languages","اللغات المفضلة")}
-    Note {text:root.t("Applications use the first language they support.","تستخدم التطبيقات أول لغة تدعمها من القائمة.")}
+    Note {text:root.t("Menu languages, not keyboard layouts. Keep only English for English-only menus.","هذه لغات القوائم وليست لغات الكتابة. أبقِ الإنجليزية وحدها لقوائم إنجليزية فقط.")}
     Rectangle {
      Layout.fillWidth:true;Layout.preferredHeight:184;color:Prefs.dark?"#222226":"white";border.color:root.line;radius:4
      ListView {
