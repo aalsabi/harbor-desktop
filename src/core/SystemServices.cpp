@@ -31,7 +31,7 @@ void SystemServices::action(QString name,QVariant v){
   connect(watcher,&QDBusPendingCallWatcher::finished,this,[this,watcher]{QDBusPendingReply<> r=*watcher;status=r.isError()?tr("Lock service unavailable: ")+r.error().message():tr("Lock requested");emit changed();watcher->deleteLater();});
  }else {status=tr("Unsupported action");emit changed();}
 }
-void SystemServices::openTool(QString name){QMap<QString,QStringList> tools{{"network",{"nm-connection-editor"}},{"bluetooth",{"blueman-manager"}},{"audio",{"pavucontrol"}},{"users",{"user-manager"}},{"updates",{"plasma-discover"}},{"terminal",{"x-terminal-emulator"}},{"files",{"xdg-open",QStandardPaths::writableLocation(QStandardPaths::HomeLocation)}},{"settings",{"harbor-settings"}}};if(!tools.contains(name))return;auto args=tools[name];auto cmd=args.takeFirst();if(!QProcess::startDetached(cmd,args)){status=tr("Install the external tool: ")+cmd;emit changed();}}
+void SystemServices::openTool(QString name){QMap<QString,QStringList> tools{{"network",{"nm-connection-editor"}},{"bluetooth",{"blueman-manager"}},{"audio",{"pavucontrol"}},{"users",{"user-manager"}},{"updates",{"plasma-discover"}},{"terminal",{"x-terminal-emulator"}},{"files",{"harbor-files"}},{"settings",{"harbor-settings"}}};if(!tools.contains(name))return;auto args=tools[name];auto cmd=args.takeFirst();if(!QProcess::startDetached(cmd,args)){status=tr("Install the external tool: ")+cmd;emit changed();}}
 
 void SystemServices::applyDisplay(int output,double scale,QString mode){
  if(!displayTransaction.isEmpty()||!std::isfinite(scale)||scale<.5||scale>4)return;

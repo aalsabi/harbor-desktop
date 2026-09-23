@@ -11,7 +11,7 @@ try:
  for attempt in range(40):
   try:windows();break
   except Exception:time.sleep(.2)
- for _ in range(2):children.append(subprocess.Popen([binary,'--settings']))
+ for mode in ['--files','--settings']:children.append(subprocess.Popen([binary,mode]))
  for _ in range(50):
   rows=windows()
   if len(rows)>=2:break

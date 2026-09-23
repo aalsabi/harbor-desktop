@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Harbor Files
+Name[ar]=ملفات هاربور
+Exec=harbor-files %U
+Icon=system-file-manager
+Categories=System;FileManager;
+MimeType=inode/directory;
+StartupNotify=true

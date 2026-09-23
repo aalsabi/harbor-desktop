@@ -1,0 +1,39 @@
+#!/usr/bin/python3
+"""User-owned file operations. Never overwrite an existing destination."""
+import argparse,ctypes,errno,os,pathlib,shutil,subprocess,sys,stat
+p=argparse.ArgumentParser();p.add_argument('action',choices=['copy','move','rename','mkdir','trash']);p.add_argument('--destination',required=True);p.add_argument('--name',default='');p.add_argument('sources',nargs='*');a=p.parse_args()
+def valid(name):
+ if not name or name in ('.','..') or '/' in name or '\x00' in name:raise ValueError('Enter a single file or folder name')
+ return name
+def copy(src,dst):
+ if os.path.islink(src):os.symlink(os.readlink(src),dst)
+ elif os.path.isdir(src):shutil.copytree(src,dst,symlinks=True)
+ else:
+  if not stat.S_ISREG(os.lstat(src).st_mode):raise ValueError('Copying device files, sockets and pipes is not supported')
+  with open(src,'rb') as source,open(dst,'xb') as target:shutil.copyfileobj(source,target)
+  shutil.copystat(src,dst,follow_symlinks=False)
+def move(src,dst):
+ libc=ctypes.CDLL(None,use_errno=True)
+ if libc.renameat2(-100,os.fsencode(src),-100,os.fsencode(dst),1)==0:return
+ error=ctypes.get_errno()
+ if error!=errno.EXDEV:raise OSError(error,os.strerror(error),str(dst))
+ copy(src,dst)
+ if os.path.isdir(src) and not os.path.islink(src):shutil.rmtree(src)
+ else:os.unlink(src)
+try:
+ destination=pathlib.Path(a.destination)
+ if a.action=='mkdir':(destination/valid(a.name)).mkdir()
+ elif a.action=='rename':
+  if len(a.sources)!=1:raise ValueError('Select one item to rename')
+  src=pathlib.Path(a.sources[0]);move(src,src.parent/valid(a.name))
+ else:
+  for item in a.sources:
+   src=pathlib.Path(item)
+   if not src.is_absolute() or src==pathlib.Path('/'):raise ValueError('Invalid source')
+   if a.action=='trash':subprocess.run(['gio','trash','--',str(src)],check=True)
+   else:
+    dst=destination/src.name
+    if os.path.isdir(src) and not os.path.islink(src) and (dst.resolve()==src.resolve() or src.resolve() in dst.resolve().parents):raise ValueError('Cannot place a folder inside itself')
+    (copy if a.action=='copy' else move)(src,dst)
+except Exception as e:
+ print(str(e),file=sys.stderr);sys.exit(1)
