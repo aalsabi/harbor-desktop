@@ -1,5 +1,8 @@
 # Evidence index
 
+- control-0.5.0.txt: Debian13 final build, eleven Qt suites, fourteen Python cases, virtual KWin/menu/multiscreen/keyboard/session logout and package lifecycle.
+- control-local-0.5.0.txt: eleven local Qt suites including the slider debounce regression.
+
 - settings-0.4.0.txt: final Debian13 Settings release checks, including eight CTest suites, fourteen Python cases and real virtual-KWin keyboard load/switch/reload.
 - settings-local-0.4.0.txt: local Qt6.11 UI/regression checks.
 

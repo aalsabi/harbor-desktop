@@ -86,7 +86,7 @@ Rectangle {
     Repeater{model:["#ff6057","#febc2e","#28c840"];delegate:Button{required property string modelData;required property int index;objectName:"traffic-"+index;width:24;height:28;activeFocusOnTab:true;hoverEnabled:true
      Accessible.name:["Close window","Minimize window","Maximize window"][index]
      contentItem:Item{}
-     background:Item{Rectangle{anchors.centerIn:parent;width:12;height:12;radius:6;color:parent.parent.modelData;border.color:parent.parent.activeFocus?"#1684f8":Qt.darker(color,1.12);border.width:parent.parent.activeFocus?2:1}}
+     background:Item{Rectangle{anchors.centerIn:parent;width:12;height:12;radius:6;color:parent.parent.modelData;border.color:parent.parent.activeFocus?Prefs.accent:Qt.darker(color,1.12);border.width:parent.parent.activeFocus?2:1}}
      onClicked:UI.windowAction(index===0?"close":index===1?"minimize":"maximize")
      ToolTip.visible:hovered;ToolTip.text:Accessible.name
     }}
@@ -131,7 +131,7 @@ Rectangle {
      HarborLabel{text:"Favorites";color:root.muted;font.pixelSize:11;font.bold:true;Layout.leftMargin:10;Layout.bottomMargin:4}
      ListView{Layout.fillWidth:true;Layout.fillHeight:true;clip:true;model:Browser.places;spacing:3
       delegate:Button{required property var modelData;id:placeButton;width:ListView.view.width;height:31;activeFocusOnTab:true;hoverEnabled:true;Accessible.name:modelData.name
-       background:Rectangle{radius:7;color:Browser.path===placeButton.modelData.path?(Prefs.dark?"#52525a":"#dcdce2"):placeButton.hovered?(Prefs.dark?"#414148":"#e4e4e9"):"transparent";border.width:placeButton.activeFocus?2:0;border.color:"#1684f8"}
+       background:Rectangle{radius:7;color:Browser.path===placeButton.modelData.path?(Prefs.dark?"#52525a":"#dcdce2"):placeButton.hovered?(Prefs.dark?"#414148":"#e4e4e9"):"transparent";border.width:placeButton.activeFocus?2:0;border.color:Prefs.accent}
        contentItem:Row{spacing:10;leftPadding:9
         Text{width:18;height:parent.height;text:placeButton.modelData.path==="/"?"▣":placeButton.modelData.name==="Home"?"⌂":placeButton.modelData.name==="Downloads"?"↓":placeButton.modelData.name==="Pictures"?"▧":placeButton.modelData.name==="Desktop"?"▱":"▤";color:"#248bef";font.pixelSize:21;verticalAlignment:Text.AlignVCenter}
         Text{height:parent.height;width:parent.width-40;text:placeButton.modelData.name;elide:Text.ElideRight;color:root.ink;font.pixelSize:13;font.bold:Browser.path===placeButton.modelData.path;verticalAlignment:Text.AlignVCenter}

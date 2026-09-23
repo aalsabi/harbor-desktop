@@ -13,3 +13,5 @@ External libraries and services are installed by Debian, not vendored:
 - Icons provided by installed applications retain their own licenses; Harbor reads them at runtime and does not redistribute them in this source archive.
 
 The names of KDE APIs and packages containing “Plasma” do not imply execution of Plasma Shell. Harbor does not run plasmashell or startplasma-wayland. The Breeze window decoration is reused and configured, not represented as original Harbor artwork. The Harbor color scheme is original.
+
+Harbor 0.5.0 adds original Sunset and Forest SVG gradient wallpaper variants, distributed under the project license. No Apple artwork is included.

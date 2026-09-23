@@ -1,0 +1,74 @@
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Configuring done (0.5s)
+-- Generating done (0.3s)
+-- Build files have been written to: /build
+ninja: no work to do.
+Test project /build
+      Start  1: core
+ 1/11 Test  #1: core .............................   Passed    0.12 sec
+      Start  2: notifications
+ 2/11 Test  #2: notifications ....................   Passed    0.08 sec
+      Start  3: apps
+ 3/11 Test  #3: apps .............................   Passed    0.04 sec
+      Start  4: global-menu
+ 4/11 Test  #4: global-menu ......................   Passed    0.10 sec
+      Start  5: files
+ 5/11 Test  #5: files ............................   Passed    0.04 sec
+      Start  6: files-ui
+ 6/11 Test  #6: files-ui .........................   Passed    0.50 sec
+      Start  7: files-menu
+ 7/11 Test  #7: files-menu .......................   Passed    0.18 sec
+      Start  8: settings-ui
+ 8/11 Test  #8: settings-ui ......................   Passed    0.54 sec
+      Start  9: system-state
+ 9/11 Test  #9: system-state .....................   Passed    0.01 sec
+      Start 10: system-actions
+10/11 Test #10: system-actions ...................   Passed    0.53 sec
+      Start 11: control-ui
+11/11 Test #11: control-ui .......................   Passed    0.45 sec
+
+100% tests passed, 0 tests failed out of 11
+
+Total Test time (real) =   2.59 sec
+..............
+----------------------------------------------------------------------
+Ran 14 tests in 3.341s
+
+OK
+CPack: Create package using DEB
+CPack: Install projects
+CPack: - Install project: HarborDesktop []
+CPack: Create package
+CPackDeb: - Generating dependency list
+CPack: - package: /build/harbor-desktop-0.5.0-Linux.deb generated.
+File 'setcap' has no capablity to remove
+.
+----------------------------------------------------------------------
+Ran 1 test in 2.108s
+
+OK
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"kwinWindowEnumeration": true, "activate": true, "close": true, "panelsOpened": 5, "notificationDelivered": true, "initialWindowCount": 2, "filesMenuExported": true}
+QThreadStorage: Thread 0x556969f614c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"twoScreenRouting": {"desktop": ["20", "22"], "menubar": ["20", "22"], "dock": ["20", "22"]}, "passed": true}
+QThreadStorage: Thread 0x55a59bf084c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"keyboardLayoutsLoaded": true, "keyboardSwitch": true, "keyboardReload": true}
+QThreadStorage: Thread 0x55bcafc8c4c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+kwin_xwl: /tmp/.X11-unix does not exist. Please check your installation
+kwin_xwl: Failed to establish X11 socket
+QThreadStorage: Thread 0x5605f74784c0 exited after QThreadStorage 7 destroyed
+{"installedSessionStartup": true, "settingsWindowManaged": true, "gracefulLogout": true}
+PACKAGE_INSTALL_RUNTIME_REMOVE_PASS

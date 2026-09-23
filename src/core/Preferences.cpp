@@ -19,3 +19,11 @@ void Preferences::setPins(QStringList v){v.removeDuplicates();settings.setValue(
 
 QString Preferences::language()const{return settings.value("language","en").toString();}
 void Preferences::setLanguage(QString v){if(v!="en"&&v!="ar")return;settings.setValue("language",v);settings.sync();emit changed();}
+
+static const QStringList accents{"#1684f8","#168044","#7955c9","#b65b00","#c63f75"};
+QString Preferences::accent()const{auto v=settings.value("accent","#1684f8").toString();return accents.contains(v)?v:accents[0];}
+void Preferences::setAccent(QString v){if(!accents.contains(v))return;settings.setValue("accent",v);settings.sync();emit changed();}
+QString Preferences::wallpaper()const{auto v=settings.value("wallpaper","harbor").toString();return QStringList{"harbor","sunset","forest"}.contains(v)?v:QString("harbor");}
+void Preferences::setWallpaper(QString v){if(!QStringList{"harbor","sunset","forest"}.contains(v))return;settings.setValue("wallpaper",v);settings.sync();emit changed();}
+int Preferences::dockIconSize()const{auto v=settings.value("dockIconSize",48).toInt();return v>=32&&v<=56?v:48;}
+void Preferences::setDockIconSize(int v){if(v<32||v>56)return;settings.setValue("dockIconSize",v);settings.sync();emit changed();}

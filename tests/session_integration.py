@@ -17,7 +17,8 @@ try:
   if rows:break
   time.sleep(.1)
  assert rows, 'session could not enumerate its settings window'
- print(json.dumps({'installedSessionStartup':True,'settingsWindowManaged':True}),flush=True)
+ call('Logout');p.wait(timeout=8);assert p.returncode==0,p.returncode
+ print(json.dumps({'installedSessionStartup':True,'settingsWindowManaged':True,'gracefulLogout':True}),flush=True)
 finally:
- p.terminate()
+ if p.poll() is None:p.terminate()
  p.wait(timeout=8)

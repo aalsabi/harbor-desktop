@@ -46,3 +46,11 @@ Added a menu export/activation test, real-QML New Tab/view/text-paste/select-all
 Replaced the sparse Settings page with a searchable category sidebar, grouped controls, original icon tiles, rounded selectors, real version/system information and Arabic labels/layout. Preserved existing hardware integrations and explicitly identified external-manager operations. Added an isolated XKB input-source helper and asynchronous Settings backend, with KWin reload/switch integration. See SETTINGS.md for the supported scope and gaps.
 
 Validation includes eight CTest suites, fourteen Python cases, menu/window integration, two-output routing, a real virtual-KWin keyboard load/switch/reload test and package lifecycle checks. Hardware key-event/shortcut behavior is not inferred from the D-Bus test. No performance benchmark was added for this release.
+
+## 0.5.0 — shared controls and expanded Settings
+
+Added normalized service state, saved-network and paired-Bluetooth actions, PipeWire default output/input selection and independent volume/mute, real backlight/battery readings, supported power profiles, accent/wallpaper/dock sizing and confirmed session actions. Control Center links to the corresponding Settings pages. Login1 power actions are permission-gated; logout uses the Harbor session endpoint.
+
+Review identified a debounce race: an unrelated state update replaced a pending brightness value (73) with the previous reading (37). A failing UI regression reproduced it; all five device sliders now capture the requested value before the debounce timer. A separate fake-command test verifies queued writes retain the final request. Hardware-service and Apple-specific scope limits are recorded in SETTINGS.md.
+
+Final release validation on Debian 13 / Qt 6.8 passed 11 CTest suites, 14 Python cases, offscreen rendering, virtual KWin menus/windows, two-output routing, keyboard load/switch/reload and installed-session graceful logout. Package install/remove passed. All 14 Settings pages rendered locally without QML errors; Arabic dark Desktop & Dock and the Control Center were visually inspected. No new hardware performance measurement was made. See evidence/control-0.5.0.txt.
