@@ -9,6 +9,22 @@ def stop(signum,frame):
  for child in children:
   if child.poll() is None: child.terminate()
 for sig in (signal.SIGTERM,signal.SIGINT):signal.signal(sig,stop)
+# KWin supplies the actual display names to this client. Publish them only
+# after restoring application configuration, before launching any clients.
+# A nested/private bus must never overwrite the host systemd user environment.
+activation_keys = (
+ 'WAYLAND_DISPLAY', 'DISPLAY', 'XAUTHORITY', 'XDG_CURRENT_DESKTOP',
+ 'XDG_SESSION_DESKTOP', 'XDG_SESSION_TYPE', 'XDG_MENU_PREFIX',
+ 'XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME', 'XDG_STATE_HOME',
+)
+activation_command = ['dbus-update-activation-environment']
+if not os.getenv('HARBOR_PRIVATE_BUS'):
+ activation_command.append('--systemd')
+activation_command.extend(key for key in activation_keys if key in os.environ)
+try:
+ subprocess.run(activation_command, check=True, timeout=3)
+except (OSError, subprocess.SubprocessError) as error:
+ print(f'Harbor: could not synchronize application activation environment: {error}', file=sys.stderr)
 # Authentication is supplied by a packaged agent, not an elevated shell.
 for candidate in ['/usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1','/usr/lib/polkit-kde-authentication-agent-1','/usr/libexec/polkit-gnome-authentication-agent-1']:
  if os.path.isfile(candidate):

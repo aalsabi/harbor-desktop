@@ -1,0 +1,25 @@
+Test project /home/abdullahsa/Documents/Codex/2026-09-23/referenced-chatgpt-conversation-this-is-an/work/build
+    Start 16: launch
+1/1 Test #16: launch ...........................***Failed    0.63 sec
+********* Start testing of LaunchTest *********
+Config: Using QtTest library 6.11.2, Qt 6.11.2 (x86_64-little_endian-lp64 shared (dynamic) release build; by GCC 16.2.0), debian unknown
+PASS   : LaunchTest::initTestCase()
+dbus-daemon[1494549]: [session uid=1000 pid=1494549 pidfd=4] Activating service name='org.gtk.vfs.Daemon' requested by ':1.0' (uid=1000 pid=1494550 comm="/home/abdullahsa/Documents/Codex/2026-09-23/refere" label="chatgpt (unconfined)")
+dbus-daemon[1494549]: [session uid=1000 pid=1494549 pidfd=4] Successfully activated service 'org.gtk.vfs.Daemon'
+FAIL!  : LaunchTest::repeatedClicksLaunchOnceAndExistingWindowIsActivated() Compared values are not the same
+   Actual   (calls.readAll())        : "started\nstarted\nstarted\nstarted\nstarted\nstarted\nstarted\nstarted\n"
+   Expected (QByteArray("started\n")): "started\n"
+   Loc: [/home/abdullahsa/Documents/Codex/2026-09-23/referenced-chatgpt-conversation-this-is-an/outputs/harbor-desktop/tests/launch_test.cpp(18)]
+PASS   : LaunchTest::cleanupTestCase()
+Totals: 2 passed, 1 failed, 0 skipped, 0 blacklisted, 555ms
+********* Finished testing of LaunchTest *********
+A connection to the bus can't be made
+
+
+0% tests passed, 1 tests failed out of 1
+
+Total Test time (real) =   0.64 sec
+
+The following tests FAILED:
+	 16 - launch (Failed)
+Errors while running CTest

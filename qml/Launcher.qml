@@ -7,6 +7,7 @@ GlassCard {
   RowLayout { HarborLabel {text:qsTr("Applications · right-click to pin");font.pixelSize:24;font.bold:true;Layout.fillWidth:true}
 HarborButton{text:"×";onClicked:UI.dismiss()} }
   HarborField {id:search;Layout.fillWidth:true;placeholderText:qsTr("Search installed applications…");focus:true;onAccepted:if(grid.count>0)Apps.launch(grid.model[0].id)}
+  HarborLabel{text:Apps.message;visible:text.length>0;Layout.fillWidth:true;wrapMode:Text.WordWrap}
   GridView {id:grid;Layout.fillWidth:true;Layout.fillHeight:true;clip:true;cellWidth:145;cellHeight:110;model:Apps.entries.filter(a=>a.name.toLowerCase().includes(search.text.toLowerCase()))
    delegate:Item {required property var modelData;width:145;height:110
     Column {anchors.centerIn:parent;spacing:8;Image{anchors.horizontalCenter:parent.horizontalCenter;width:42;height:42;source:"image://icons/"+encodeURIComponent(modelData.icon)}

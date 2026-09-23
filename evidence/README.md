@@ -1,5 +1,9 @@
 # Evidence index
 
+- launch-0.5.4.txt: Debian13 release build; seventeen Qt suites, seventeen Python cases, virtual KWin integrations, installed session/logout and package install/remove passed (exit0).
+- launch-local-0.5.4.txt / launch-python-0.5.4.txt: local verification of launch coalescing, focus, failure retry, child pipe lifetime, terminal selection, actual Dock clicks and selected activation-environment import.
+- launch-duplicate-red.txt / launch-review-red.txt: intentionally failing pre-fix reproductions of duplicate processes, hidden terminal preferences and inherited pipe lifetime.
+
 - input-and-icons-0.5.3.txt: Debian13 release checks with fifteen Qt suites, fourteen Python cases, six popup types, multiscreen/keyboard/session integrations and package lifecycle. Container completed with exit0.
 - input-and-icons-local-0.5.3.txt: final local suite including real pointer menu interaction, source editor Cancel/Done, icon precedence/path/configuration and standard-directory discovery.
 
