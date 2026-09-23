@@ -49,6 +49,9 @@ controller.onList=[&]{return QString::fromUtf8(QJsonDocument(QJsonArray::fromVar
  auto make=[&](QString name,QScreen* screen,int width,int height,int role)->QQuickView*{
   auto view=new QQuickView(&engine,nullptr);view->setResizeMode(QQuickView::SizeRootObjectToView);view->setColor(Qt::transparent);view->setScreen(screen);view->resize(width,height);if(name=="Settings"||name=="Files"){view->setFlags(Qt::FramelessWindowHint);view->setMinimumSize(QSize(740,560));}
   if(name=="Files")view->setMinimumSize(QSize(1000,600));
+  // Keep the initial geometry on the target output: Qt may otherwise
+  // select the primary output when creating the native Wayland surface.
+  view->setPosition(screen->geometry().topLeft());
   view->setTitle("Harbor — "+name);view->setProperty("harborScreen",QVariant::fromValue(screen));
   if(role>=0&&!preview&&app.platformName()=="wayland"){
    view->setFlags(Qt::FramelessWindowHint);auto layer=LayerShellQt::Window::get(view);layer->setScope("harbor-"+name.toLower());

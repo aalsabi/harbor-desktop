@@ -28,3 +28,9 @@
 - Review corrections: New tab remains mouse-accessible in the actions menu when tabs are hidden; sidebar/control buttons preserve keyboard/accessibility roles; selected toolbar glyph contrast corrected. Interaction tests exercise window action callbacks in addition to previous file workflows.
 - Virtual KWin activation initially exceeded the3-second test poll. An8-second bounded readiness poll passed with the same activation assertion; this is a test timing adjustment, not a hardware performance guarantee. Preserved final integration log with the release.
 - Final0.3 validation passed: six CTest suites, ten Python cases, preview render, package install/remove, Files/Settings enumeration/activation/close and installed-session startup. Inspected light Files, dark Files, Settings and composed desktop previews. Evidence: evidence/visual-0.3.0.txt.
+
+## 0.3.1 — multiple monitor routing
+
+A two-output KWin Wayland reproduction confirmed that both copies of each desktop, menu bar and dock were sent to the first output. QWindow::setScreen alone did not preserve the intended output through native window creation with the initial geometry at the origin. Set each window's initial position to the target screen's geometry origin before mapping it.
+
+The regression test checks actual Wayland get_layer_surface output IDs, not only the stored intended QScreen. Before the fix: desktop/menu/dock each routed to [20,20]. After the fix: each routes to [20,22]. Tested with Debian 13 Qt 6.8 / KWin virtual two-output session; physical HDMI and hot-plug behavior still require device validation.

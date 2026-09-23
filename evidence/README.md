@@ -1,5 +1,7 @@
 # Evidence index
 
+- multiscreen-0.3.1.txt: two-output Wayland routing regression, full unit/UI checks and package install/runtime/remove verification.
+
 - visual-0.3.0.txt: release0.3 final build, UI interaction, packaging, KWin integration, install and remove checks.
 - files-0.2.0.txt: release0.2 verification.
 - trixie-validation.txt: baseline0.1 Debian13 build, tests, package installation, UI render, virtual KWin integration, installed-session startup and removal run. Read its final status; intermediate attempts are not acceptance evidence.

@@ -1,0 +1,67 @@
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /build
+[1/27] Automatic MOC for target harbor-core
+[2/25] Automatic MOC for target core-test
+[3/23] Automatic MOC for target harbor-desktop-core
+[4/21] Automatic MOC for target harbor-shell
+[5/19] Automatic MOC for target notifications-test
+[6/17] Automatic MOC for target apps-test
+[7/15] Automatic MOC for target files-ui-test
+[8/13] Automatic MOC for target menu-test
+[9/11] Automatic MOC for target files-test
+Test project /build
+    Start 1: core
+1/6 Test #1: core .............................   Passed    0.08 sec
+    Start 2: notifications
+2/6 Test #2: notifications ....................   Passed    0.07 sec
+    Start 3: apps
+3/6 Test #3: apps .............................   Passed    0.08 sec
+    Start 4: global-menu
+4/6 Test #4: global-menu ......................   Passed    0.09 sec
+    Start 5: files
+5/6 Test #5: files ............................   Passed    0.09 sec
+    Start 6: files-ui
+6/6 Test #6: files-ui .........................   Passed    0.47 sec
+
+100% tests passed, 0 tests failed out of 6
+
+Total Test time (real) =   0.88 sec
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 2.858s
+
+OK
+CPack: Create package using DEB
+CPack: Install projects
+CPack: - Install project: HarborDesktop []
+CPack: Create package
+CPackDeb: - Generating dependency list
+CPack: - package: /build/harbor-desktop-0.3.1-Linux.deb generated.
+.
+----------------------------------------------------------------------
+Ran 1 test in 2.023s
+
+OK
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"kwinWindowEnumeration": true, "activate": true, "close": true, "panelsOpened": 5, "notificationDelivered": true, "initialWindowCount": 2}
+QThreadStorage: Thread 0x5641cc55d4c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"twoScreenRouting": {"desktop": ["20", "22"], "menubar": ["20", "22"], "dock": ["20", "22"]}, "passed": true}
+QThreadStorage: Thread 0x55e73aac24c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+kwin_xwl: /tmp/.X11-unix does not exist. Please check your installation
+kwin_xwl: Failed to establish X11 socket
+{"installedSessionStartup": true, "settingsWindowManaged": true}
+QProcess: Destroyed while process ("/usr/bin/harbor-session-client") is still running.
+QThreadStorage: Thread 0x558db5c234c0 exited after QThreadStorage 7 destroyed
+PACKAGE_INSTALL_RUNTIME_REMOVE_PASS
