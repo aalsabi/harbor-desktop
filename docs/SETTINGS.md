@@ -59,3 +59,7 @@ Service contracts: [wpctl](https://pipewire.pages.freedesktop.org/wireplumber/ma
 A real KWin 6.7 session retained US only despite a saved US/Arabic configuration. Sending the old reload signal did not change the live layout list. Sending the KConfig notification immediately loaded both sources, and activating Arabic returned success. The application now emits both protocols to support older and newer KWin. A private-bus regression exercises the production Keyboard.apply path and checks notification payloads.
 
 References: [KWin 6.7 keyboard watcher](https://github.com/KDE/kwin/blob/Plasma/6.7/src/keyboard_layout.cpp), [KConfig notification contract](https://github.com/KDE/kconfig/blob/master/src/core/kconfigwatcher.cpp).
+
+## Panel input indicator (0.5.2)
+
+The top panel reads the active KWin input source, independently of the interface language or saved configuration. Arabic shows ع, US/GB English shows EN, and other layouts show their XKB code. Hover shows the full name and variant. Click switches to the next source; press and hold opens Keyboard settings. Layout/list-change signals refresh the indicator, with a five-second retry for service recovery. Missing service or an invalid active index clears the stale value to a disabled keyboard symbol.

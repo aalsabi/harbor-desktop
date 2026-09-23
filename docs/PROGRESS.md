@@ -60,3 +60,9 @@ Final release validation on Debian 13 / Qt 6.8 passed 11 CTest suites, 14 Python
 Diagnosed saved US/Arabic layouts while the running compositor exposed only US. KWin 6.7 replaced the legacy reload signal with KConfigWatcher. Added the typed ConfigChanged notification while retaining the old signal for Debian13/KWin6.3. The live session loaded Arabic after notification and accepted Arabic activation. Added a failing-then-passing private-bus regression for production apply notifications.
 
 Verification: twelve local and Debian13 CTest suites pass; fourteen Python cases and package install/runtime/remove pass. Separate KWin6.7 virtual integration verifies loading, switching and reloading. The live user session also reported both US/Arabic and successful Arabic activation after the modern notification. Physical typing confirmation remains with the user.
+
+## 0.5.2 — live input language in the panel
+
+Added a compact input indicator driven by KWin layout/list-change signals and live D-Bus reads. Click cycles sources; press and hold opens Keyboard settings. Requests carry generations to discard stale replies, and missing services clear stale labels. A private-bus test covers English/Arabic switching, list replacement and service loss.
+
+Validation: thirteen Qt suites passed locally and on Debian13, plus fourteen Python cases, menu/multiscreen/keyboard/session integrations and package lifecycle. The offscreen composed preview read the real active Arabic source from the user session and displayed ع in the panel; no live-session input change was made during this preview.

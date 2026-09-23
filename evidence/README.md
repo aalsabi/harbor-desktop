@@ -1,5 +1,8 @@
 # Evidence index
 
+- indicator-0.5.2.txt: Debian13 full release checks with thirteen Qt suites and package lifecycle.
+- indicator-local-0.5.2.txt: local regressions including compositor-driven language changes, click-cycle backend and service-loss handling.
+
 - keyboard-fix-0.5.1.txt: Debian13/KWin6.3 full release checks, twelve Qt suites and package lifecycle.
 - keyboard-local-0.5.1.txt: twelve local regression suites, including production reload notifications.
 - keyboard-kwin67-0.5.1.txt: isolated local KWin6.7 keyboard load/switch/reload; virtual compositor warnings are preserved.

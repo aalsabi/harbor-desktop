@@ -30,6 +30,11 @@ Rectangle {
    ScrollBar.horizontal: ScrollBar {height:3;policy:ScrollBar.AsNeeded}
   }
   Repeater{model:Tray.items;delegate:PanelButton{required property var modelData;width:28;height:28;visible:modelData.status!=="Passive";text:"";Image{anchors.centerIn:parent;width:18;height:18;source:"image://icons/"+modelData.icon} onClicked:Tray.activate(modelData.id);onPressAndHold:Tray.activate(modelData.id,true);ToolTip.visible:hovered;ToolTip.text:modelData.title}}
+  PanelButton { objectName:"keyboard-indicator"; text:Keyboard.activeLabel; font.bold:true; enabled:Keyboard.available
+   Accessible.name:Prefs.language==="ar"?"لغة الكتابة: "+Keyboard.activeName:"Input language: "+Keyboard.activeName
+   ToolTip.visible:hovered;ToolTip.text:Keyboard.available?Keyboard.activeName+(Prefs.language==="ar"?" — اضغط للتبديل":" — click to switch"):(Prefs.language==="ar"?"لغة الكتابة غير متاحة":"Input source unavailable")
+   onClicked:Keyboard.switchNext();onPressAndHold:UI.open("settings:Keyboard")
+  }
   PanelButton { text: "⌕"; onClicked: UI.open("launcher"); Accessible.name: "Search applications" }
   PanelButton { text: Prefs.language==="ar" ? "النوافذ" : "Windows"; onClicked: UI.open("windows") }
   PanelButton {text:"● "+Notifications.items.length;onClicked:UI.open("notifications");Accessible.name:"Notifications"}

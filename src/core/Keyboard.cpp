@@ -4,11 +4,18 @@
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusMetaType>
+#include <QDBusArgument>
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
 #include <QJsonDocument>
 #include <QJsonObject>
-Keyboard::Keyboard(QObject* parent):QObject(parent){QTimer::singleShot(0,this,&Keyboard::refresh);}
+Keyboard::Keyboard(QObject* parent):QObject(parent){
+ QTimer::singleShot(0,this,&Keyboard::refresh);QTimer::singleShot(0,this,&Keyboard::refreshActive);
+ auto bus=QDBusConnection::sessionBus();
+ bus.connect("org.kde.keyboard","/Layouts","org.kde.KeyboardLayouts","layoutChanged",this,SLOT(refreshActive()));
+ bus.connect("org.kde.keyboard","/Layouts","org.kde.KeyboardLayouts","layoutListChanged",this,SLOT(refreshActive()));
+ auto timer=new QTimer(this);connect(timer,&QTimer::timeout,this,&Keyboard::refreshActive);timer->start(5000);
+}
 void Keyboard::refresh(){run({},false);}
 void Keyboard::apply(QStringList layouts,QString shortcut){if(layouts.isEmpty()||layouts.size()>4)return;run({"--layouts",layouts.join(','),"--shortcut",shortcut},true);}
 void Keyboard::run(QStringList args,bool applying){
@@ -35,5 +42,30 @@ void Keyboard::run(QStringList args,bool applying){
 }
 void Keyboard::switchNext(){
  auto msg=QDBusMessage::createMethodCall("org.kde.keyboard","/Layouts","org.kde.KeyboardLayouts","switchToNextLayout");auto watcher=new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(msg,2000),this);
- connect(watcher,&QDBusPendingCallWatcher::finished,this,[this,watcher]{QDBusPendingReply<> reply=*watcher;status=reply.isError()?tr("Keyboard switching is available inside the Harbor session."):tr("Switched input source.");watcher->deleteLater();emit changed();});
+ connect(watcher,&QDBusPendingCallWatcher::finished,this,[this,watcher]{QDBusPendingReply<> reply=*watcher;status=reply.isError()?tr("Keyboard switching is available inside the Harbor session."):tr("Switched input source.");watcher->deleteLater();refreshActive();emit changed();});
+}
+
+void Keyboard::clearActive(){
+ liveAvailable=false;label=QString::fromUtf8("⌨");layoutName.clear();emit activeChanged();
+}
+void Keyboard::refreshActive(){
+ const uint generation=++liveGeneration;
+ auto message=QDBusMessage::createMethodCall("org.kde.keyboard","/Layouts","org.kde.KeyboardLayouts","getLayoutsList");
+ auto watcher=new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message,2000),this);
+ connect(watcher,&QDBusPendingCallWatcher::finished,this,[this,watcher,generation]{
+  const auto reply=watcher->reply();watcher->deleteLater();if(generation!=liveGeneration)return;
+  if(reply.type()==QDBusMessage::ErrorMessage||reply.arguments().isEmpty()){clearActive();return;}
+  QList<QStringList> layouts;const auto argument=qvariant_cast<QDBusArgument>(reply.arguments().first());argument.beginArray();
+  while(!argument.atEnd()){QString code,variant,name;argument.beginStructure();argument>>code>>variant>>name;argument.endStructure();layouts.append({code,variant,name});}argument.endArray();
+  auto message=QDBusMessage::createMethodCall("org.kde.keyboard","/Layouts","org.kde.KeyboardLayouts","getLayout");
+  auto current=new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(message,2000),this);
+  connect(current,&QDBusPendingCallWatcher::finished,this,[this,current,generation,layouts]{
+   QDBusPendingReply<uint> reply=*current;current->deleteLater();if(generation!=liveGeneration)return;
+   if(reply.isError()||reply.value()>=uint(layouts.size())){clearActive();return;}
+   const auto row=layouts.at(reply.value());const auto code=row.at(0);
+   label=code=="ara"?QString::fromUtf8("ع"):(code=="us"||code=="gb")?QString("EN"):code.isEmpty()?QString::fromUtf8("⌨"):code.toUpper();
+   layoutName=row.at(2);if(!row.at(1).isEmpty())layoutName+=" ("+row.at(1)+")";
+   liveAvailable=true;emit activeChanged();
+  });
+ });
 }

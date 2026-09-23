@@ -1,0 +1,122 @@
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Configuring done (0.4s)
+-- Generating done (0.2s)
+-- Build files have been written to: /build
+[1/61] Automatic MOC for target harbor-core
+[2/59] Automatic MOC for target control-ui-test
+[3/58] Automatic MOC for target core-test
+[4/56] Automatic MOC for target settings-ui-test
+[5/55] Automatic RCC for resources.qrc
+[6/55] Automatic RCC for resources.qrc
+[7/55] Building CXX object CMakeFiles/settings-ui-test.dir/settings-ui-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[8/55] Building CXX object CMakeFiles/control-ui-test.dir/control-ui-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[9/55] Automatic MOC for target harbor-desktop-core
+[10/55] Linking CXX executable control-ui-test
+[11/55] Linking CXX executable settings-ui-test
+[12/55] Building CXX object CMakeFiles/harbor-desktop-core.dir/harbor-desktop-core_autogen/mocs_compilation.cpp.o
+[13/55] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/Keyboard.cpp.o
+[14/55] Linking CXX static library libharbor-desktop-core.a
+[15/55] Automatic MOC for target files-ui-test
+[16/54] Automatic MOC for target notifications-test
+[17/53] Automatic MOC for target apps-test
+[18/52] Automatic MOC for target files-menu-test
+[19/51] Automatic MOC for target menu-test
+[20/50] Automatic MOC for target files-test
+[21/49] Automatic MOC for target system-actions-test
+[22/48] Automatic MOC for target system-state-test
+[23/47] Automatic RCC for resources.qrc
+[24/47] Building CXX object CMakeFiles/files-ui-test.dir/files-ui-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[25/47] Automatic MOC for target harbor-shell
+[26/47] Automatic RCC for resources.qrc
+[27/47] Linking CXX executable notifications-test
+[28/47] Automatic MOC for target keyboard-notify-test
+[29/46] Automatic MOC for target keyboard-indicator-test
+[30/46] Building CXX object CMakeFiles/harbor-shell.dir/harbor-shell_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[31/46] Building CXX object CMakeFiles/harbor-shell.dir/harbor-shell_autogen/mocs_compilation.cpp.o
+[32/46] Building CXX object CMakeFiles/keyboard-indicator-test.dir/keyboard-indicator-test_autogen/mocs_compilation.cpp.o
+[33/46] Building CXX object CMakeFiles/harbor-shell.dir/src/kwin/WindowMenu.cpp.o
+[34/46] Linking CXX executable apps-test
+[35/46] Linking CXX executable menu-test
+[36/46] Linking CXX executable files-test
+[37/46] Linking CXX executable files-ui-test
+[38/46] Linking CXX executable files-menu-test
+[39/46] Linking CXX executable system-state-test
+[40/46] Linking CXX executable system-actions-test
+[41/46] Building CXX object CMakeFiles/harbor-shell.dir/src/shell/main.cpp.o
+[42/46] Linking CXX executable harbor-shell
+[43/46] Building CXX object CMakeFiles/keyboard-notify-test.dir/tests/keyboard_notify_test.cpp.o
+[44/46] Linking CXX executable keyboard-notify-test
+[45/46] Building CXX object CMakeFiles/keyboard-indicator-test.dir/tests/keyboard_indicator_test.cpp.o
+[46/46] Linking CXX executable keyboard-indicator-test
+Test project /build
+      Start  1: core
+ 1/13 Test  #1: core .............................   Passed    0.13 sec
+      Start  2: notifications
+ 2/13 Test  #2: notifications ....................   Passed    0.08 sec
+      Start  3: apps
+ 3/13 Test  #3: apps .............................   Passed    0.03 sec
+      Start  4: global-menu
+ 4/13 Test  #4: global-menu ......................   Passed    0.11 sec
+      Start  5: files
+ 5/13 Test  #5: files ............................   Passed    0.05 sec
+      Start  6: files-ui
+ 6/13 Test  #6: files-ui .........................   Passed    0.48 sec
+      Start  7: files-menu
+ 7/13 Test  #7: files-menu .......................   Passed    0.20 sec
+      Start  8: settings-ui
+ 8/13 Test  #8: settings-ui ......................   Passed    0.61 sec
+      Start  9: system-state
+ 9/13 Test  #9: system-state .....................   Passed    0.01 sec
+      Start 10: system-actions
+10/13 Test #10: system-actions ...................   Passed    0.58 sec
+      Start 11: control-ui
+11/13 Test #11: control-ui .......................   Passed    0.48 sec
+      Start 12: keyboard-notify
+12/13 Test #12: keyboard-notify ..................   Passed    0.19 sec
+      Start 13: keyboard-indicator
+13/13 Test #13: keyboard-indicator ...............   Passed    0.37 sec
+
+100% tests passed, 0 tests failed out of 13
+
+Total Test time (real) =   3.33 sec
+..............
+----------------------------------------------------------------------
+Ran 14 tests in 2.979s
+
+OK
+CPack: Create package using DEB
+CPack: Install projects
+CPack: - Install project: HarborDesktop []
+CPack: Create package
+CPackDeb: - Generating dependency list
+CPack: - package: /build/harbor-desktop-0.5.2-Linux.deb generated.
+.
+----------------------------------------------------------------------
+Ran 1 test in 2.093s
+
+OK
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"kwinWindowEnumeration": true, "activate": true, "close": true, "panelsOpened": 5, "notificationDelivered": true, "initialWindowCount": 2, "filesMenuExported": true}
+QThreadStorage: Thread 0x55cce83924c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"twoScreenRouting": {"desktop": ["20", "22"], "menubar": ["20", "22"], "dock": ["20", "22"]}, "passed": true}
+QThreadStorage: Thread 0x55babf1ef4c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"keyboardLayoutsLoaded": true, "keyboardSwitch": true, "keyboardReload": true}
+QThreadStorage: Thread 0x5579825004c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+kwin_xwl: /tmp/.X11-unix does not exist. Please check your installation
+kwin_xwl: Failed to establish X11 socket
+QThreadStorage: Thread 0x55baaad6d4c0 exited after QThreadStorage 7 destroyed
+{"installedSessionStartup": true, "settingsWindowManaged": true, "gracefulLogout": true}
+PACKAGE_INSTALL_RUNTIME_REMOVE_PASS
