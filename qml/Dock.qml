@@ -2,8 +2,8 @@ import QtQuick
 import QtQuick.Controls
 Item {
  GlassCard {anchors.fill:parent;anchors.margins:4;radius:23}
- Flickable {anchors.fill:parent;anchors.margins:10;contentWidth:row.width;clip:true;flickableDirection:Flickable.HorizontalFlick
-  Row {id:row;height:58;spacing:9
+ Flickable {id:flick;anchors.fill:parent;anchors.margins:10;contentWidth:Math.max(width,row.width);clip:true;flickableDirection:Flickable.HorizontalFlick
+  Row {id:row;x:Math.max(0,(flick.width-width)/2);height:58;spacing:9
    Repeater {model:[{icon:"view-app-grid",name:"Applications",action:"launcher"},{icon:"system-file-manager",name:"Files",action:"files"},{icon:"utilities-terminal",name:"Terminal",action:"terminal"},{icon:"preferences-system",name:"Settings",action:"settings"}]
     delegate:HarborButton {required property var modelData;width:54;height:58;text:"";Accessible.name:modelData.name;Image{anchors.centerIn:parent;width:40;height:40;source:"image://icons/"+modelData.icon}onClicked:modelData.action==="files"||modelData.action==="terminal"?System.openTool(modelData.action):UI.open(modelData.action);ToolTip.visible:hovered;ToolTip.text:modelData.name}
    }

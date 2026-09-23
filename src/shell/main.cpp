@@ -1,5 +1,6 @@
 #include <QGuiApplication>
 #include <QQuickView>
+#include <QQuickStyle>
 #include <QQuickItem>
 #include <QQmlContext>
 #include <QQmlEngine>
@@ -28,6 +29,7 @@
 #include "Controller.h"
 class Icons:public QQuickImageProvider{public:Icons():QQuickImageProvider(Pixmap){}QPixmap requestPixmap(const QString& id,QSize* size,const QSize& requested)override{QSize s=requested.isValid()?requested:QSize(64,64);QString own=":/assets/icons/"+id+".svg";QIcon icon=QFile::exists(own)?QIcon(own):QIcon::fromTheme(id,QIcon(":/assets/icons/app.svg"));auto p=icon.pixmap(s);if(size)*size=p.size();return p;}};
 int main(int argc,char** argv){
+ QQuickStyle::setStyle("Basic");
  QQuickWindow::setDefaultAlphaBuffer(true);
  QGuiApplication app(argc,argv);app.setApplicationName("Harbor");app.setOrganizationName("Harbor");app.setFont(QFont("Noto Sans",10));app.setDesktopFileName("org.harbor.Shell");app.setQuitOnLastWindowClosed(false);
  const auto args=app.arguments();bool preview=args.contains("--preview"),settings=args.contains("--settings");

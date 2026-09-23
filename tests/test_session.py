@@ -19,6 +19,15 @@ class SessionTests(unittest.TestCase):
    r=subprocess.run(['/usr/bin/python3',str(script),'--nested'],env={**os.environ,'PATH':d,'DBUS_SESSION_BUS_ADDRESS':'test','HARBOR_PRIVATE_BUS':'1','XDG_CONFIG_HOME':d},capture_output=True,text=True)
    self.assertEqual(r.returncode,0,r.stderr)
    self.assertEqual((folder/'kwinrc').read_text(),'preserve')
+ def test_compositor_exit_cleans_surviving_group(self):
+  import time
+  with tempfile.TemporaryDirectory() as d:
+   folder=pathlib.Path(d)
+   fake=folder/'kwin_wayland'; fake.write_text('#!/usr/bin/python3\nimport os,time,pathlib\npid=os.fork()\nif pid==0:\n time.sleep(1);pathlib.Path('+repr(str(folder/'leaked'))+').touch();time.sleep(10)\n');fake.chmod(0o755)
+   sh=folder/'harbor-shell';sh.write_text('#!/bin/sh\nexit 0\n');sh.chmod(0o755)
+   r=subprocess.run(['/usr/bin/python3',str(ROOT/'scripts/harbor-session'),'--nested'],env={**os.environ,'PATH':d,'DBUS_SESSION_BUS_ADDRESS':'test','HARBOR_PRIVATE_BUS':'1','XDG_CONFIG_HOME':d},capture_output=True,text=True,timeout=8)
+   time.sleep(1.2)
+   self.assertFalse((folder/'leaked').exists(),'session child survived compositor exit')
  def test_doctor_machine_readable(self):
   script=ROOT/'scripts/harbor-doctor'
   self.assertTrue(script.exists(), 'doctor is not implemented')

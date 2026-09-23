@@ -28,7 +28,7 @@
 
 ثبت اعتماديات البناء:
 
-    sudo apt install build-essential cmake pkg-config qt6-base-dev qt6-declarative-dev qt6-svg-dev liblayershellqtinterface-dev libkf6windowsystem-dev kwayland-dev libglib2.0-dev dbus-x11 python3
+    sudo apt install build-essential cmake pkg-config qt6-base-dev qt6-declarative-dev qt6-svg-dev liblayershellqtinterface-dev libkf6windowsystem-dev kwayland-dev libglib2.0-dev dbus-x11 python3 file
 
 ثم من جذر المصدر:
 
@@ -69,3 +69,9 @@
     harbor-doctor
 
 إذا كانت إدارة النوافذ غير متاحة، تحقق من تثبيت org.harbor.Shell.desktop ومن تطابق Exec مع الملف التنفيذي. لا تعطل فحوص الصلاحيات في KWin. تأكد من عدم تشغيل نسختين من Harbor على ناقل الجلسة نفسه.
+
+## إعادة اختبار الحزمة في حاوية معزولة
+
+بعد بناء صورة Docker المذكورة، يمكن تشغيل scripts/validate-trixie.sh داخلها فقط، مع ربط المصدر في /src ومجلد بناء قابل للكتابة في /build. يفحص البناء والاختبارات والتثبيت والجلسة الافتراضية والإزالة. يحتاج وصولاً لمستودعات Debian. إزالة capability من KWin ضمن هذا المشغّل تخص نسخة الحاوية حصراً.
+
+أثناء تثبيت سطح مكتب Debian مصغر جداً، ثبت x11-common وتحقق من تجهيز /tmp/.X11-unix بواسطة النظام إذا أردت تطبيقات XWayland. اختبار التسليم اعتمد تطبيقات Wayland فقط.

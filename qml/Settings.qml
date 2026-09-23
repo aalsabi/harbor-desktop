@@ -32,9 +32,9 @@ HarborButton{text:qsTr("Light");prominent:!Prefs.dark;onClicked:Prefs.dark=false
      Image{source:"qrc:/assets/wallpapers/harbor.svg";Layout.fillWidth:true;Layout.preferredHeight:190;fillMode:Image.PreserveAspectCrop}
      HarborLabel{text:qsTr("Glass opacity");font.bold:true}
      Slider{Layout.fillWidth:true;from:.45;to:1;value:Prefs.opacity;onMoved:Prefs.opacity=value}
-     HarborLabel{text:qsTr("An original translucent surface. Optical refraction is not simulated.");wrapMode:Text.Wrap;Layout.fillWidth:true;opacity:.65}
+     HarborLabel{text:qsTr("Adjust the transparency of desktop panels.");wrapMode:Text.Wrap;Layout.fillWidth:true;opacity:.65}
      HarborButton{text:Prefs.language==="ar"?"English":"العربية";onClicked:Prefs.language=Prefs.language==="ar"?"en":"ar"}
-     Switch{text:qsTr("Reduce motion");checked:Prefs.reduceMotion;onToggled:Prefs.reduceMotion=checked}
+     Switch{palette.windowText:Prefs.dark?"#edf3fa":"#182e47";text:qsTr("Reduce motion");checked:Prefs.reduceMotion;onToggled:Prefs.reduceMotion=checked}
     }
     ColumnLayout {visible:root.section==="Network";Layout.fillWidth:true;Layout.margins:30
      HarborLabel{text:System.state.network||qsTr("NetworkManager is unavailable");wrapMode:Text.Wrap;Layout.fillWidth:true}
@@ -62,7 +62,7 @@ HarborButton{text:qsTr("Light");prominent:!Prefs.dark;onClicked:Prefs.dark=false
        HarborLabel{text:modelData.name;font.bold:true}
        RowLayout{
         ComboBox{id:scale;model:["100%","125%","150%","175%","200%"];currentIndex:Math.max(0,Math.round((modelData.scale-1)*4))}
-        ComboBox{id:mode;model:modelData.modes||[];textRole:"name";Layout.fillWidth:true}
+        ComboBox{id:mode;model:modelData.modes||[];currentIndex:(modelData.modes||[]).findIndex(m=>String(m.id)===String(modelData.currentModeId));textRole:"name";Layout.fillWidth:true}
         HarborButton{text:qsTr("Apply");enabled:!System.state.displayChanging;onClicked:System.applyDisplay(modelData.id,1+scale.currentIndex*.25,mode.currentIndex>=0?String(modelData.modes[mode.currentIndex].id):"")}
        }
       }

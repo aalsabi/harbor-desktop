@@ -11,3 +11,10 @@
 - Task 2: offscreen UI render passes. Initial QML syntax and palette issues reproduced and corrected.
 - Ruling: use GIO desktop-entry launching instead of KIO, preserving standard field-code handling and avoiding shell interpretation; fewer dependencies.
 - Ruling: advanced network/audio/Bluetooth configuration initially opens explicitly named external tools; those flows remain integration gaps until replaced by native pages.
+- Tasks 1–8: implementation delivered as experimental0.1.0 with native shell panels, KWin window model, original assets, settings/service adapters and packaging. Scope gaps are explicit in COMPATIBILITY.md; this is not completion of a production desktop.
+- A Debian13 container was added after the extracted sid dependency check. The delivery package is built with Qt6.8/KWin6.3 dependencies, not copied from the sid build.
+- Independent read-only review found three issues: cross-process preference updates, wrong default display mode, process-group cleanup after compositor exit. All three corrected; preference and supervisor regression tests added. Display mode binding selects currentModeId.
+- Test adaptation: asynchronous window activation must be polled, not assumed after400ms; integration test now polls a bounded interval.
+- Residual validation: actual hardware services, lock screen, portal screen sharing, hotplug, multi-monitor and accessibility remain unvalidated. No performance target is claimed from offscreen results.
+- Clean Debian13 integration exposed missing KDE application menu index and relative Exec path. Added a Harbor-specific XDG menu and an absolute configured shell Exec. Verified KWin grants only declared window-management protocol with permission checks enabled.
+- Final Debian13 validation: four Qt suites + five Python cases + UI render + virtual KWin operations + installed headless session startup + apt install/remove passed. X11, physical hardware and lock remain explicitly unvalidated.

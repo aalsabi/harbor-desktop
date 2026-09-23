@@ -1,7 +1,13 @@
 #include "Preferences.h"
 #include <QStandardPaths>
 #include <cmath>
-Preferences::Preferences(QString path,QObject* parent):QObject(parent),settings(path.isEmpty()?QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)+"/harbor/settings.ini":path,QSettings::IniFormat){}
+#include <QDir>
+#include <QFileInfo>
+Preferences::Preferences(QString path,QObject* parent):QObject(parent),settings(path.isEmpty()?QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)+"/harbor/settings.ini":path,QSettings::IniFormat){
+ auto directory=QFileInfo(settings.fileName()).absolutePath();QDir().mkpath(directory);
+ watcher.addPath(directory);
+ connect(&watcher,&QFileSystemWatcher::directoryChanged,this,[this]{settings.sync();emit changed();});
+}
 double Preferences::opacity()const {auto v=settings.value("opacity",.9).toDouble();return std::isfinite(v)&&v>=.45&&v<=1?v:.9;}
 bool Preferences::dark()const{return settings.value("dark",true).toBool();}
 bool Preferences::reduceMotion()const{return settings.value("reduceMotion",false).toBool();}

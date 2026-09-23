@@ -1,0 +1,12 @@
+{
+  "scope": "Harbor preview process only; offscreen software rendering; no KWin/GPU",
+  "kernel": "7.1.13+deb14-amd64",
+  "machine": "x86_64",
+  "durationSeconds": 60.042392705974635,
+  "warmupSeconds": 5,
+  "samples": 60,
+  "rssMeanMiB": 94.3841796875,
+  "rssPeakMiB": 94.5078125,
+  "cpuPercentOfOneCore": 0.13323919383385835,
+  "hardwareValidated": false
+}

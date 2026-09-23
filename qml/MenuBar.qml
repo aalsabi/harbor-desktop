@@ -6,7 +6,7 @@ Rectangle {
  RowLayout { anchors.fill: parent; anchors.leftMargin: 18; anchors.rightMargin: 18; spacing: 16
   HarborButton { text: "◈"; font.pixelSize: 22; onClicked: UI.open("launcher"); Accessible.name: "Applications" }
   Text { text: "Harbor"; color: Prefs.dark ? "white" : "#163047"; font.bold: true; font.pixelSize: 13 }
-  Text { text: Windows.activeTitle; Layout.maximumWidth: 350; elide: Text.ElideRight; color: Prefs.dark ? "#bdcce0" : "#435b70"; font.pixelSize: 12 }
+  Text { text: Windows.activeTitle;visible:text!=="Harbor"; Layout.maximumWidth: 350; elide: Text.ElideRight; color: Prefs.dark ? "#bdcce0" : "#435b70"; font.pixelSize: 12 }
   Repeater {model:GlobalMenu.roots;delegate:HarborButton{required property var modelData;text:modelData.label;onClicked:{GlobalMenu.select(modelData.id);UI.open("menu")}}}
   Item { Layout.fillWidth: true }
   Repeater{model:Tray.items;delegate:HarborButton{required property var modelData;width:28;height:28;visible:modelData.status!=="Passive";text:"";Image{anchors.centerIn:parent;width:18;height:18;source:"image://icons/"+modelData.icon} onClicked:Tray.activate(modelData.id);onPressAndHold:Tray.activate(modelData.id,true);ToolTip.visible:hovered;ToolTip.text:modelData.title}}

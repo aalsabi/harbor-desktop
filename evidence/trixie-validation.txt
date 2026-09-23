@@ -1,0 +1,56 @@
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Configuring done (0.4s)
+-- Generating done (0.1s)
+-- Build files have been written to: /build
+[1/21] Automatic MOC for target harbor-core
+[2/19] Automatic MOC for target core-test
+[3/17] Automatic MOC for target harbor-desktop-core
+[4/15] Automatic MOC for target harbor-shell
+[5/13] Automatic MOC for target notifications-test
+[6/11] Automatic MOC for target apps-test
+[7/9] Automatic MOC for target menu-test
+Test project /build
+    Start 1: core
+1/4 Test #1: core .............................   Passed    0.07 sec
+    Start 2: notifications
+2/4 Test #2: notifications ....................   Passed    0.07 sec
+    Start 3: apps
+3/4 Test #3: apps .............................   Passed    0.06 sec
+    Start 4: global-menu
+4/4 Test #4: global-menu ......................   Passed    0.10 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =   0.30 sec
+.....
+----------------------------------------------------------------------
+Ran 5 tests in 2.679s
+
+OK
+CPack: Create package using DEB
+CPack: Install projects
+CPack: - Install project: HarborDesktop []
+CPack: Create package
+CPackDeb: - Generating dependency list
+CPack: - package: /build/harbor-desktop-0.1.0-Linux.deb generated.
+.
+----------------------------------------------------------------------
+Ran 1 test in 2.185s
+
+OK
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"kwinWindowEnumeration": true, "activate": true, "close": true, "panelsOpened": 5, "notificationDelivered": true, "initialWindowCount": 2}
+QThreadStorage: Thread 0x55baf2d004c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+kwin_xwl: /tmp/.X11-unix does not exist. Please check your installation
+kwin_xwl: Failed to establish X11 socket
+{"installedSessionStartup": true, "settingsWindowManaged": true}
+QProcess: Destroyed while process ("/usr/bin/harbor-session-client") is still running.
+QThreadStorage: Thread 0x561c334b04c0 exited after QThreadStorage 7 destroyed
+PACKAGE_INSTALL_RUNTIME_REMOVE_PASS

@@ -1,62 +1,28 @@
--- The CXX compiler identification is GNU 14.2.0
--- Detecting CXX compiler ABI info
--- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: /usr/bin/c++ - skipped
--- Detecting CXX compile features
--- Detecting CXX compile features - done
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
--- Found Threads: TRUE
--- Performing Test HAVE_STDATOMIC
--- Performing Test HAVE_STDATOMIC - Success
--- Found WrapAtomic: TRUE
--- Found OpenGL: /usr/lib/x86_64-linux-gnu/libOpenGL.so
--- Found WrapOpenGL: TRUE
--- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
--- Found WrapVulkanHeaders: /usr/include
--- Found PkgConfig: /usr/bin/pkg-config (found version "1.8.1")
--- Checking for module 'gio-unix-2.0'
---   Found gio-unix-2.0, version 2.84.4
 -- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
 -- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
--- Found X11: /usr/include
--- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so
--- Looking for XOpenDisplay in /usr/lib/x86_64-linux-gnu/libX11.so - found
--- Looking for gethostbyname
--- Looking for gethostbyname - found
--- Looking for connect
--- Looking for connect - found
--- Looking for remove
--- Looking for remove - found
--- Looking for shmat
--- Looking for shmat - found
--- Configuring done (1.3s)
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Configuring done (0.3s)
 -- Generating done (0.1s)
 -- Build files have been written to: /build
-[1/37] Automatic MOC for target harbor-core
-[2/37] Building CXX object CMakeFiles/harbor-core.dir/src/core/Command.cpp.o
-[3/37] Building CXX object CMakeFiles/harbor-core.dir/src/core/Preferences.cpp.o
-[4/37] Building CXX object CMakeFiles/harbor-core.dir/harbor-core_autogen/mocs_compilation.cpp.o
-[5/37] Linking CXX static library libharbor-core.a
-[6/37] Automatic MOC for target core-test
-[7/37] Building CXX object CMakeFiles/core-test.dir/core-test_autogen/mocs_compilation.cpp.o
-[8/37] Automatic MOC for target harbor-desktop-core
-[9/37] Building CXX object CMakeFiles/harbor-desktop-core.dir/harbor-desktop-core_autogen/mocs_compilation.cpp.o
-[10/37] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/Applications.cpp.o
-[11/37] Building CXX object CMakeFiles/core-test.dir/tests/core_test.cpp.o
-[12/37] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/SystemServices.cpp.o
-[13/37] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/kwin/WindowModel.cpp.o
-[14/37] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/Notifications.cpp.o
-[15/37] Linking CXX executable core-test
-[16/37] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/Tray.cpp.o
-[17/37] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/GlobalMenu.cpp.o
-[18/37] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/Accounts.cpp.o
-[19/37] Linking CXX static library libharbor-desktop-core.a
-[20/37] Automatic MOC for target harbor-shell
-[21/37] Automatic RCC for resources.qrc
-[22/37] Automatic MOC for target menu-test
-[23/37] Automatic MOC for target notifications-test
-[24/37] Automatic MOC for target apps-test
-[25/37] Building CXX object CMakeFiles/notifications-test.dir/notifications-test_autogen/mocs_compilation.cpp.o
-[26/37] Building CXX object CMakeFiles/harbor-shell.dir/harbor-shell_autogen/EWIEGA46WW/qrc_resources.cpp.o
-[27/37] Building CXX object CMakeFiles/apps-test.dir/apps-test_autogen/mocs_compilation.cpp.o
+[1/3] Automatic RCC for resources.qrc
+[2/3] Building CXX object CMakeFiles/harbor-shell.dir/harbor-shell_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[3/3] Linking CXX executable harbor-shell
+Test project /build
+    Start 1: core
+1/4 Test #1: core .............................   Passed    0.06 sec
+    Start 2: notifications
+2/4 Test #2: notifications ....................   Passed    0.09 sec
+    Start 3: apps
+3/4 Test #3: apps .............................   Passed    0.04 sec
+    Start 4: global-menu
+4/4 Test #4: global-menu ......................   Passed    0.08 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =   0.28 sec
+CPack: Create package using DEB
+CPack: Install projects
+CPack: - Install project: HarborDesktop []
+CPack: Create package
+CPackDeb: - Generating dependency list
+CPack: - package: /build/harbor-desktop-0.1.0-Linux.deb generated.
