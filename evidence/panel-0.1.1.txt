@@ -1,0 +1,41 @@
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Configuring done (0.3s)
+-- Generating done (0.1s)
+-- Build files have been written to: /build
+[1/24] Automatic MOC for target harbor-core
+[2/22] Automatic MOC for target core-test
+[3/20] Automatic MOC for target harbor-desktop-core
+[4/18] Automatic MOC for target harbor-shell
+[5/17] Automatic MOC for target apps-test
+[6/15] Automatic MOC for target notifications-test
+[7/13] Automatic MOC for target menu-test
+[8/11] Automatic RCC for resources.qrc
+[9/11] Building CXX object CMakeFiles/harbor-shell.dir/harbor-shell_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[10/11] Building CXX object CMakeFiles/harbor-shell.dir/src/shell/main.cpp.o
+[11/11] Linking CXX executable harbor-shell
+Test project /build
+    Start 1: core
+1/4 Test #1: core .............................   Passed    0.09 sec
+    Start 2: notifications
+2/4 Test #2: notifications ....................   Passed    0.07 sec
+    Start 3: apps
+3/4 Test #3: apps .............................   Passed    0.02 sec
+    Start 4: global-menu
+4/4 Test #4: global-menu ......................   Passed    0.07 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =   0.25 sec
+.
+----------------------------------------------------------------------
+Ran 1 test in 2.152s
+
+OK
+CPack: Create package using DEB
+CPack: Install projects
+CPack: - Install project: HarborDesktop []
+CPack: Create package
+CPackDeb: - Generating dependency list
+CPack: - package: /build/harbor-desktop-0.1.1-Linux.deb generated.

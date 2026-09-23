@@ -18,3 +18,5 @@
 - Residual validation: actual hardware services, lock screen, portal screen sharing, hotplug, multi-monitor and accessibility remain unvalidated. No performance target is claimed from offscreen results.
 - Clean Debian13 integration exposed missing KDE application menu index and relative Exec path. Added a Harbor-specific XDG menu and an absolute configured shell Exec. Verified KWin grants only declared window-management protocol with permission checks enabled.
 - Final Debian13 validation: four Qt suites + five Python cases + UI render + virtual KWin operations + installed headless session startup + apt install/remove passed. X11, physical hardware and lock remain explicitly unvalidated.
+
+- 0.1.1: corrected panel button overflow (38px buttons in a32px panel); dedicated28px panel buttons,38px panel, explicit Applications label, stronger contrast, bounded scrolling global-menu region, and reduced active-title width. UI render inspected; Debian13 validation in evidence/panel-0.1.1.txt.

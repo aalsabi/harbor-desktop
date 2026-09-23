@@ -65,7 +65,7 @@ controller.onList=[&]{return QString::fromUtf8(QJsonDocument(QJsonArray::fromVar
  if(preview||settings){auto v=make(settings?"Settings":"Preview",app.primaryScreen(),settings?960:1440,settings?680:900,-1);if(!v)return 2;surfaces<<v;QObject::connect(v,&QWindow::visibleChanged,&app,[&app,v]{if(!v->isVisible())app.quit();});
   int i=args.indexOf("--screenshot");if(i>=0&&i+1<args.size()){auto path=args[i+1];QTimer::singleShot(1800,&app,[&app,v,path]{bool ok=v->grabWindow().save(path);app.exit(ok?0:3);});}
  }else{
-  auto addScreen=[&](QScreen* screen){auto geo=screen->geometry();for(auto spec:QList<QPair<QString,int>>{{"Desktop",0},{"MenuBar",1},{"Dock",2}}){auto v=make(spec.first,screen,spec.second==2?720:geo.width(),spec.second==0?geo.height():spec.second==1?32:78,spec.second);if(v){surfaces<<v;QObject::connect(screen,&QScreen::geometryChanged,v,[v,spec](QRect r){if(spec.second!=2)v->setWidth(r.width());if(spec.second==0)v->setHeight(r.height());});}}};
+  auto addScreen=[&](QScreen* screen){auto geo=screen->geometry();for(auto spec:QList<QPair<QString,int>>{{"Desktop",0},{"MenuBar",1},{"Dock",2}}){auto v=make(spec.first,screen,spec.second==2?720:geo.width(),spec.second==0?geo.height():spec.second==1?38:78,spec.second);if(v){surfaces<<v;QObject::connect(screen,&QScreen::geometryChanged,v,[v,spec](QRect r){if(spec.second!=2)v->setWidth(r.width());if(spec.second==0)v->setHeight(r.height());});}}};
   for(auto screen:app.screens())addScreen(screen);
   QObject::connect(&app,&QGuiApplication::screenAdded,&app,addScreen);
   QObject::connect(&app,&QGuiApplication::screenRemoved,&app,[&](QScreen* screen){for(int i=surfaces.size()-1;i>=0;--i)if(surfaces[i]->property("harborScreen").value<QScreen*>()==screen){delete surfaces.takeAt(i);}});
