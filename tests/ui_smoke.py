@@ -1,4 +1,5 @@
 """Render native settings with isolated user state and a private session bus."""
+
 import os
 import pathlib
 import re
@@ -12,16 +13,42 @@ from collections import Counter
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 BIN = pathlib.Path(os.environ.get('HARBOR_BINARY', ROOT / '../../work/build/harbor-shell')).resolve()
-PAGES = ('Date & Time', 'Mouse', 'Touchpad', 'Default Applications', 'Storage',
-         'Printers', 'Wi-Fi', 'Network', 'Bluetooth', 'Users & Groups',
-         'Software Update', 'Notifications & Focus', 'Startup Applications',
-         'Privacy & Permissions', 'Displays', 'Sound', 'Battery', 'Accessibility', 'Gestures')
-FOCUSED_PAGES = ('Notifications & Focus', 'Printers', 'Network', 'Bluetooth', 'Startup Applications', 'Privacy & Permissions', 'Storage')
+PAGES = (
+    'Date & Time',
+    'Mouse',
+    'Touchpad',
+    'Default Applications',
+    'Storage',
+    'Printers',
+    'Wi-Fi',
+    'Network',
+    'Bluetooth',
+    'Users & Groups',
+    'Software Update',
+    'Notifications & Focus',
+    'Startup Applications',
+    'Privacy & Permissions',
+    'Displays',
+    'Sound',
+    'Battery',
+    'Accessibility',
+    'Gestures',
+)
+FOCUSED_PAGES = (
+    'Notifications & Focus',
+    'Printers',
+    'Network',
+    'Bluetooth',
+    'Startup Applications',
+    'Privacy & Permissions',
+    'Storage',
+)
 QML_ERRORS = re.compile(
     r'ReferenceError|TypeError|SyntaxError|is not a type|Type [^\n]+ unavailable|'
     r'Cannot assign to|Invalid property assignment|Expected token|'
     r'Binding loop detected|Unable to assign|Cannot read property|'
-    r'QQmlApplicationEngine failed|QQmlComponent: Component is not ready')
+    r'QQmlApplicationEngine failed|QQmlComponent: Component is not ready'
+)
 
 
 def content_colors(png, arabic=False):
@@ -33,16 +60,16 @@ def content_colors(png, arabic=False):
     channels = 4 if color == 6 else 3
     compressed, offset = bytearray(), 8
     while offset < len(png):
-        length = struct.unpack('>I', png[offset:offset + 4])[0]
-        if png[offset + 4:offset + 8] == b'IDAT':
-            compressed.extend(png[offset + 8:offset + 8 + length])
+        length = struct.unpack('>I', png[offset : offset + 4])[0]
+        if png[offset + 4 : offset + 8] == b'IDAT':
+            compressed.extend(png[offset + 8 : offset + 8 + length])
         offset += 12 + length
     raw = zlib.decompress(compressed)
     stride, previous, colors = width * channels, bytearray(width * channels), Counter()
     left, right = (20, width - 250) if arabic else (250, width - 20)
     for y in range(height):
         start = y * (stride + 1)
-        kind, row = raw[start], bytearray(raw[start + 1:start + 1 + stride])
+        kind, row = raw[start], bytearray(raw[start + 1 : start + 1 + stride])
         for x in range(stride):
             a, b = row[x - channels] if x >= channels else 0, previous[x]
             c = previous[x - channels] if x >= channels else 0
@@ -61,7 +88,7 @@ def content_colors(png, arabic=False):
                 raise AssertionError('Unknown PNG filter')
         if 60 <= y < height - 20 and y % 3 == 0:
             for x in range(left, right, 3):
-                colors[bytes(row[x * channels:x * channels + 3])] += 1
+                colors[bytes(row[x * channels : x * channels + 3])] += 1
         previous = row
     return colors
 
@@ -76,13 +103,20 @@ class UI(unittest.TestCase):
                 (home / child).mkdir(parents=True)
             (home / 'runtime').chmod(0o700)
             (home / 'config/harbor/settings.ini').write_text(
-                f'[General]\nlanguage={language}\ndark={str(dark).lower()}\n', encoding='utf-8')
-            env = {**os.environ, 'HOME': str(home),
-                   'QT_QPA_PLATFORM': 'offscreen', 'QT_QUICK_BACKEND': 'software',
-                   'XDG_CONFIG_HOME': str(home / 'config'), 'XDG_DATA_HOME': str(home / 'data'),
-                   'XDG_CACHE_HOME': str(home / 'cache'), 'XDG_RUNTIME_DIR': str(home / 'runtime'),
-                   'DBUS_SYSTEM_BUS_ADDRESS': 'unix:path=/nonexistent-harbor-test-bus',
-                   'PATH': str(ROOT / 'scripts') + os.pathsep + os.environ.get('PATH', '')}
+                f'[General]\nlanguage={language}\ndark={str(dark).lower()}\n', encoding='utf-8'
+            )
+            env = {
+                **os.environ,
+                'HOME': str(home),
+                'QT_QPA_PLATFORM': 'offscreen',
+                'QT_QUICK_BACKEND': 'software',
+                'XDG_CONFIG_HOME': str(home / 'config'),
+                'XDG_DATA_HOME': str(home / 'data'),
+                'XDG_CACHE_HOME': str(home / 'cache'),
+                'XDG_RUNTIME_DIR': str(home / 'runtime'),
+                'DBUS_SYSTEM_BUS_ADDRESS': 'unix:path=/nonexistent-harbor-test-bus',
+                'PATH': str(ROOT / 'scripts') + os.pathsep + os.environ.get('PATH', ''),
+            }
             # The private session must not reuse the user's desktop bus or compositor.
             for key in ('DBUS_SESSION_BUS_ADDRESS', 'WAYLAND_DISPLAY', 'DISPLAY'):
                 env.pop(key, None)

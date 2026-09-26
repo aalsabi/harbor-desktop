@@ -14,16 +14,17 @@ class Region : public QObject {
     Q_PROPERTY(QString localeNotice READ localeNotice NOTIFY changed)
     Q_PROPERTY(QString message READ message NOTIFY changed)
 public:
-    explicit Region(QString configRoot = {}, QObject *parent = nullptr);
+    explicit Region(QString configRoot = {}, QObject* parent = nullptr);
     QVariantMap state() const { return m_state; }
     QVariantList languages() const { return m_languages; }
     QVariantList regions() const { return m_regions; }
     QVariantList currencies() const { return m_currencies; }
     QVariantList calendars() const { return m_calendars; }
     QString localeNotice() const;
-    static QString availabilityNotice(const QVariantMap &state, const QStringList &availableLocales);
+    static QString availabilityNotice(const QVariantMap& state, const QStringList& availableLocales);
     bool busy() const { return m_busy; }
-    static QVariantMap planLocales(const QVariantMap &draft, const QStringList &supported, const QStringList &available);
+    static QVariantMap planLocales(const QVariantMap& draft, const QStringList& supported,
+                                   const QStringList& available);
     Q_INVOKABLE QVariantMap generationPlan(QVariantMap draft);
     Q_INVOKABLE void generateAndApply(QVariantMap draft);
     QString message() const { return m_message; }
@@ -34,8 +35,9 @@ public:
 signals:
     void changed();
     void generationFinished(bool success);
+
 private:
-    QString validate(const QVariantMap &draft) const;
+    QString validate(const QVariantMap& draft) const;
     QString refreshLocales();
     void reload();
     void watch();

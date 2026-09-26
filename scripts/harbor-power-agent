@@ -1,82 +1,175 @@
 #!/usr/bin/python3
 """Session-owned Wayland idle policy. Never operates on a nested/private session."""
-import argparse,fcntl,hashlib,json,os,pathlib,shlex,shutil,signal,subprocess,sys,tempfile,time
+
+import argparse, fcntl, hashlib, json, os, pathlib, shlex, shutil, signal, subprocess, sys, tempfile, time
+
 
 def paths():
- config=pathlib.Path(os.environ.get('XDG_CONFIG_HOME',str(pathlib.Path.home()/'.config')))/'harbor/power.json'
- runtime=os.environ.get('XDG_RUNTIME_DIR')
- if not runtime or not os.environ.get('WAYLAND_DISPLAY'):raise ValueError('A Wayland session and runtime directory are required')
- key=hashlib.sha256(os.environ['WAYLAND_DISPLAY'].encode()).hexdigest()[:12]
- return config,pathlib.Path(runtime)/'harbor'/('power-agent-'+key)
+    config = (
+        pathlib.Path(os.environ.get('XDG_CONFIG_HOME', str(pathlib.Path.home() / '.config')))
+        / 'harbor/power.json'
+    )
+    runtime = os.environ.get('XDG_RUNTIME_DIR')
+    if not runtime or not os.environ.get('WAYLAND_DISPLAY'):
+        raise ValueError('A Wayland session and runtime directory are required')
+    key = hashlib.sha256(os.environ['WAYLAND_DISPLAY'].encode()).hexdigest()[:12]
+    return config, pathlib.Path(runtime) / 'harbor' / ('power-agent-' + key)
+
 
 def validate(config):
- if not isinstance(config,dict):raise ValueError('Invalid idle configuration')
- for key in ('displayMinutes','suspendMinutes'):
-  value=config.get(key,0)
-  if type(value) is not int or not 0<=value<=240:raise ValueError('Idle timeout must be 0–240 minutes')
- if config.get('displayMinutes',0) and config.get('suspendMinutes',0) and config['suspendMinutes']<config['displayMinutes']:raise ValueError('Suspend must not precede display off')
- return {key:config.get(key,0) for key in ('displayMinutes','suspendMinutes')}
+    if not isinstance(config, dict):
+        raise ValueError('Invalid idle configuration')
+    for key in ('displayMinutes', 'suspendMinutes'):
+        value = config.get(key, 0)
+        if type(value) is not int or not 0 <= value <= 240:
+            raise ValueError('Idle timeout must be 0–240 minutes')
+    if (
+        config.get('displayMinutes', 0)
+        and config.get('suspendMinutes', 0)
+        and config['suspendMinutes'] < config['displayMinutes']
+    ):
+        raise ValueError('Suspend must not precede display off')
+    return {key: config.get(key, 0) for key in ('displayMinutes', 'suspendMinutes')}
 
-def atomic(path,data):
- temp=path.with_suffix(path.suffix+'.tmp');temp.write_text(json.dumps(data));temp.replace(path)
 
-def arguments(config,executable):
- config=validate(config);cmd=['swayidle','-w','-C','/dev/null']
- action=lambda name:shlex.join([executable,'--action',name])
- if config['displayMinutes']:cmd+=['timeout',str(config['displayMinutes']*60),action('display-off'),'resume',action('display-on')]
- if config['suspendMinutes']:cmd+=['timeout',str(config['suspendMinutes']*60),action('suspend')]
- return cmd
+def atomic(path, data):
+    temp = path.with_suffix(path.suffix + '.tmp')
+    temp.write_text(json.dumps(data))
+    temp.replace(path)
+
+
+def arguments(config, executable):
+    config = validate(config)
+    cmd = ['swayidle', '-w', '-C', '/dev/null']
+    action = lambda name: shlex.join([executable, '--action', name])
+    if config['displayMinutes']:
+        cmd += [
+            'timeout',
+            str(config['displayMinutes'] * 60),
+            action('display-off'),
+            'resume',
+            action('display-on'),
+        ]
+    if config['suspendMinutes']:
+        cmd += ['timeout', str(config['suspendMinutes'] * 60), action('suspend')]
+    return cmd
+
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('--action',choices=['display-off','display-on','suspend']);a=p.parse_args()
- if os.environ.get('HARBOR_PRIVATE_BUS'):return 0
- config_path,base=paths();base.parent.mkdir(mode=0o700,parents=True,exist_ok=True)
- if a.action:
-  commands={'display-off':['kscreen-doctor','--dpms','off'],'display-on':['kscreen-doctor','--dpms','on'],'suspend':['systemctl','suspend','--no-block']}
-  try:
-   result=subprocess.run(commands[a.action],capture_output=True,text=True,timeout=20)
-   error=result.stderr.strip() or result.stdout.strip() if result.returncode else ''
-  except Exception as exc:error=str(exc)
-  atomic(base.with_suffix('.action.json'),{'error':error,'time':time.time()});return int(bool(error))
- lock=open(base.with_suffix('.lock'),'a')
- try:fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
- except BlockingIOError:return 0
- stop=False;child=None;previous=None;error='';applied={'displayMinutes':0,'suspendMinutes':0};log=None
- def stopping(*args):
-  nonlocal stop
-  stop=True
- def stop_child():
-  nonlocal child,log
-  if child and child.poll() is None:
-   child.terminate()
-   try:child.wait(timeout=8)
-   except subprocess.TimeoutExpired:child.kill();child.wait()
-  child=None
-  if log:log.close();log=None
- for sig in (signal.SIGTERM,signal.SIGINT):signal.signal(sig,stopping)
- try:
-  while not stop:
-   try:
-    raw=config_path.read_text() if config_path.exists() else '{}'
-    settings=validate(json.loads(raw));tools=all(shutil.which(name) for name in ('swayidle','kscreen-doctor','systemctl'))
-    signature=(raw,config_path.stat().st_mtime_ns if config_path.exists() else 0)
-    if signature!=previous:
-     stop_child();error='';previous=signature;base.with_suffix('.action.json').unlink(missing_ok=True)
-     if not tools and any(settings.values()):raise ValueError('Install swayidle, kscreen and systemd to enable idle actions')
-     if any(settings.values()):
-      log=tempfile.TemporaryFile(mode='w+t');child=subprocess.Popen(arguments(settings,str(pathlib.Path(__file__).resolve())),stderr=log,stdout=log)
-     applied=settings
-    if child and child.poll() is not None:
-     log.seek(0);error=log.read()[-2000:].strip() or 'The Wayland idle service stopped';stop_child()
-    action=base.with_suffix('.action.json')
-    action_error=json.loads(action.read_text()).get('error','') if action.exists() else ''
-    atomic(base.with_suffix('.json'),{'time':time.time(),'pid':os.getpid(),'available':tools,'running':child is not None or not any(applied.values()),'applied':applied,'error':error or action_error})
-   except Exception as exc:
-    stop_child();error=str(exc);atomic(base.with_suffix('.json'),{'time':time.time(),'pid':os.getpid(),'available':all(shutil.which(name) for name in ('swayidle','kscreen-doctor','systemctl')),'running':False,'applied':applied,'error':error})
-   time.sleep(1)
- finally:
-  stop_child();base.with_suffix('.json').unlink(missing_ok=True)
- return 0
-if __name__=='__main__':
- try:sys.exit(main())
- except Exception as error:sys.exit(str(error))
+    p = argparse.ArgumentParser()
+    p.add_argument('--action', choices=['display-off', 'display-on', 'suspend'])
+    a = p.parse_args()
+    if os.environ.get('HARBOR_PRIVATE_BUS'):
+        return 0
+    config_path, base = paths()
+    base.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+    if a.action:
+        commands = {
+            'display-off': ['kscreen-doctor', '--dpms', 'off'],
+            'display-on': ['kscreen-doctor', '--dpms', 'on'],
+            'suspend': ['systemctl', 'suspend', '--no-block'],
+        }
+        try:
+            result = subprocess.run(commands[a.action], capture_output=True, text=True, timeout=20)
+            error = result.stderr.strip() or result.stdout.strip() if result.returncode else ''
+        except Exception as exc:
+            error = str(exc)
+        atomic(base.with_suffix('.action.json'), {'error': error, 'time': time.time()})
+        return int(bool(error))
+    lock = open(base.with_suffix('.lock'), 'a')
+    try:
+        fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except BlockingIOError:
+        return 0
+    stop = False
+    child = None
+    previous = None
+    error = ''
+    applied = {'displayMinutes': 0, 'suspendMinutes': 0}
+    log = None
+
+    def stopping(*args):
+        nonlocal stop
+        stop = True
+
+    def stop_child():
+        nonlocal child, log
+        if child and child.poll() is None:
+            child.terminate()
+            try:
+                child.wait(timeout=8)
+            except subprocess.TimeoutExpired:
+                child.kill()
+                child.wait()
+        child = None
+        if log:
+            log.close()
+            log = None
+
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(sig, stopping)
+    try:
+        while not stop:
+            try:
+                raw = config_path.read_text() if config_path.exists() else '{}'
+                settings = validate(json.loads(raw))
+                tools = all(shutil.which(name) for name in ('swayidle', 'kscreen-doctor', 'systemctl'))
+                signature = (raw, config_path.stat().st_mtime_ns if config_path.exists() else 0)
+                if signature != previous:
+                    stop_child()
+                    error = ''
+                    previous = signature
+                    base.with_suffix('.action.json').unlink(missing_ok=True)
+                    if not tools and any(settings.values()):
+                        raise ValueError('Install swayidle, kscreen and systemd to enable idle actions')
+                    if any(settings.values()):
+                        log = tempfile.TemporaryFile(mode='w+t')
+                        child = subprocess.Popen(
+                            arguments(settings, str(pathlib.Path(__file__).resolve())), stderr=log, stdout=log
+                        )
+                    applied = settings
+                if child and child.poll() is not None:
+                    log.seek(0)
+                    error = log.read()[-2000:].strip() or 'The Wayland idle service stopped'
+                    stop_child()
+                action = base.with_suffix('.action.json')
+                action_error = json.loads(action.read_text()).get('error', '') if action.exists() else ''
+                atomic(
+                    base.with_suffix('.json'),
+                    {
+                        'time': time.time(),
+                        'pid': os.getpid(),
+                        'available': tools,
+                        'running': child is not None or not any(applied.values()),
+                        'applied': applied,
+                        'error': error or action_error,
+                    },
+                )
+            except Exception as exc:
+                stop_child()
+                error = str(exc)
+                atomic(
+                    base.with_suffix('.json'),
+                    {
+                        'time': time.time(),
+                        'pid': os.getpid(),
+                        'available': all(
+                            shutil.which(name) for name in ('swayidle', 'kscreen-doctor', 'systemctl')
+                        ),
+                        'running': False,
+                        'applied': applied,
+                        'error': error,
+                    },
+                )
+            time.sleep(1)
+    finally:
+        stop_child()
+        base.with_suffix('.json').unlink(missing_ok=True)
+    return 0
+
+
+if __name__ == '__main__':
+    try:
+        sys.exit(main())
+    except Exception as error:
+        sys.exit(str(error))

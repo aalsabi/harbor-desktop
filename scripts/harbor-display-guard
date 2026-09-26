@@ -1,39 +1,81 @@
 #!/usr/bin/python3
 """Independent display transaction; loss of the settings UI does not cancel rollback."""
-import argparse,json,math,os,pathlib,signal,subprocess,sys,time,fcntl
-p=argparse.ArgumentParser();p.add_argument('--directory',required=True);p.add_argument('--output',type=int,required=True);p.add_argument('--scale',type=float,required=True);p.add_argument('--mode');p.add_argument('--timeout',type=int,default=15);a=p.parse_args()
-if not math.isfinite(a.scale) or not .5<=a.scale<=4 or not 1<=a.timeout<=30:sys.exit('Invalid display parameters')
-folder=pathlib.Path(a.directory);folder.mkdir(mode=0o700,parents=True,exist_ok=False)
-def status(state,error=''):
- tmp=folder/'status.tmp';tmp.write_text(json.dumps({'status':state,'error':error}));tmp.replace(folder/'status.json')
+
+import argparse, json, math, os, pathlib, signal, subprocess, sys, time, fcntl
+
+p = argparse.ArgumentParser()
+p.add_argument('--directory', required=True)
+p.add_argument('--output', type=int, required=True)
+p.add_argument('--scale', type=float, required=True)
+p.add_argument('--mode')
+p.add_argument('--timeout', type=int, default=15)
+a = p.parse_args()
+if not math.isfinite(a.scale) or not 0.5 <= a.scale <= 4 or not 1 <= a.timeout <= 30:
+    sys.exit('Invalid display parameters')
+folder = pathlib.Path(a.directory)
+folder.mkdir(mode=0o700, parents=True, exist_ok=False)
+
+
+def status(state, error=''):
+    tmp = folder / 'status.tmp'
+    tmp.write_text(json.dumps({'status': state, 'error': error}))
+    tmp.replace(folder / 'status.json')
+
+
 def run(args):
- return subprocess.run(['kscreen-doctor',*args],capture_output=True,text=True,timeout=5,check=True).stdout
-lock=open(folder.parent/'display.lock','a')
-try:fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
-except BlockingIOError:
- status('failed','Another display transaction is active')
- sys.exit(1)
-original=None;applied=False;stop=False
-def interrupt(signum,frame):
- global stop
- stop=True
-signal.signal(signal.SIGTERM,interrupt);signal.signal(signal.SIGINT,interrupt)
+    return subprocess.run(
+        ['kscreen-doctor', *args], capture_output=True, text=True, timeout=5, check=True
+    ).stdout
+
+
+lock = open(folder.parent / 'display.lock', 'a')
 try:
- data=json.loads(run(['-j']));original=next(o for o in data['outputs'] if int(o['id'])==a.output and o['connected'] and o['enabled'])
- if a.mode and a.mode not in [str(m['id']) for m in original['modes']]:raise ValueError('Mode is not advertised by this output')
- prefix='output.'+str(a.output)
- args=[prefix+'.scale.'+str(a.scale)]
- if a.mode:args.append(prefix+'.mode.'+a.mode)
- applied=True
- run(args);status('pending');deadline=time.monotonic()+a.timeout
- while time.monotonic()<deadline and not stop:
-  if (folder/'confirm').exists():status('confirmed');applied=False;break
-  time.sleep(.1)
-except Exception as e:status('failed',str(e))
+    fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
+except BlockingIOError:
+    status('failed', 'Another display transaction is active')
+    sys.exit(1)
+original = None
+applied = False
+stop = False
+
+
+def interrupt(signum, frame):
+    global stop
+    stop = True
+
+
+signal.signal(signal.SIGTERM, interrupt)
+signal.signal(signal.SIGINT, interrupt)
+try:
+    data = json.loads(run(['-j']))
+    original = next(
+        o for o in data['outputs'] if int(o['id']) == a.output and o['connected'] and o['enabled']
+    )
+    if a.mode and a.mode not in [str(m['id']) for m in original['modes']]:
+        raise ValueError('Mode is not advertised by this output')
+    prefix = 'output.' + str(a.output)
+    args = [prefix + '.scale.' + str(a.scale)]
+    if a.mode:
+        args.append(prefix + '.mode.' + a.mode)
+    applied = True
+    run(args)
+    status('pending')
+    deadline = time.monotonic() + a.timeout
+    while time.monotonic() < deadline and not stop:
+        if (folder / 'confirm').exists():
+            status('confirmed')
+            applied = False
+            break
+        time.sleep(0.1)
+except Exception as e:
+    status('failed', str(e))
 finally:
- if applied and original:
-  try:
-   args=['output.'+str(a.output)+'.scale.'+str(original['scale'])]
-   if a.mode:args.append('output.'+str(a.output)+'.mode.'+str(original['currentModeId']))
-   run(args);status('reverted')
-  except Exception as e:status('rollback-failed',str(e))
+    if applied and original:
+        try:
+            args = ['output.' + str(a.output) + '.scale.' + str(original['scale'])]
+            if a.mode:
+                args.append('output.' + str(a.output) + '.mode.' + str(original['currentModeId']))
+            run(args)
+            status('reverted')
+        except Exception as e:
+            status('rollback-failed', str(e))

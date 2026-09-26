@@ -1,75 +1,119 @@
 #!/usr/bin/python3
 """Own one KWin session and its children, never another desktop's processes."""
-import argparse,os,pathlib,shutil,signal,subprocess,sys,tempfile,threading,time
-p=argparse.ArgumentParser(); p.add_argument('--nested',action='store_true'); p.add_argument('--headless',action='store_true'); args=p.parse_args()
-kwin=shutil.which('kwin_wayland')
+
+import argparse, os, pathlib, shutil, signal, subprocess, sys, tempfile, threading, time
+
+p = argparse.ArgumentParser()
+p.add_argument('--nested', action='store_true')
+p.add_argument('--headless', action='store_true')
+args = p.parse_args()
+kwin = shutil.which('kwin_wayland')
 if not kwin:
- sys.exit('Harbor: kwin_wayland is missing; install kwin-wayland.')
-shell=shutil.which('harbor-shell')
-if not shell: sys.exit('Harbor: harbor-shell is missing from PATH.')
-if not os.getenv('DBUS_SESSION_BUS_ADDRESS') or ((args.nested or args.headless) and not os.getenv('HARBOR_PRIVATE_BUS')):
- os.environ['HARBOR_PRIVATE_BUS']='1'
- os.execvp('dbus-run-session',['dbus-run-session','--',sys.executable,__file__,*sys.argv[1:]])
-env=os.environ.copy(); env['XDG_MENU_PREFIX']='harbor-'; env['XDG_CURRENT_DESKTOP']='Harbor'; env['XDG_SESSION_DESKTOP']='harbor'; env['XDG_SESSION_TYPE']='wayland'
+    sys.exit('Harbor: kwin_wayland is missing; install kwin-wayland.')
+shell = shutil.which('harbor-shell')
+if not shell:
+    sys.exit('Harbor: harbor-shell is missing from PATH.')
+if not os.getenv('DBUS_SESSION_BUS_ADDRESS') or (
+    (args.nested or args.headless) and not os.getenv('HARBOR_PRIVATE_BUS')
+):
+    os.environ['HARBOR_PRIVATE_BUS'] = '1'
+    os.execvp('dbus-run-session', ['dbus-run-session', '--', sys.executable, __file__, *sys.argv[1:]])
+env = os.environ.copy()
+env['XDG_MENU_PREFIX'] = 'harbor-'
+env['XDG_CURRENT_DESKTOP'] = 'Harbor'
+env['XDG_SESSION_DESKTOP'] = 'harbor'
+env['XDG_SESSION_TYPE'] = 'wayland'
 # KWin reads kwinrc directly. Isolate compositor configuration, then restore
 # the normal application config directory in harbor-session-client.
-base_config=pathlib.Path(env.get('XDG_CONFIG_HOME',str(pathlib.Path.home()/'.config')))
-sandbox=tempfile.TemporaryDirectory(prefix='harbor-session-') if (args.nested or args.headless) else None
+base_config = pathlib.Path(env.get('XDG_CONFIG_HOME', str(pathlib.Path.home() / '.config')))
+sandbox = tempfile.TemporaryDirectory(prefix='harbor-session-') if (args.nested or args.headless) else None
 if sandbox:
- base_config=pathlib.Path(sandbox.name)/'config'
- for key,sub in [('XDG_DATA_HOME','data'),('XDG_CACHE_HOME','cache'),('XDG_STATE_HOME','state')]:env[key]=sandbox.name+'/'+sub
-env['HARBOR_USER_CONFIG']=str(base_config)
-config=base_config/'harbor'/'session'
-config.mkdir(parents=True,exist_ok=True)
-env['XDG_CONFIG_HOME']=str(config)
-kwin_config=config/'kwinrc'
+    base_config = pathlib.Path(sandbox.name) / 'config'
+    for key, sub in [('XDG_DATA_HOME', 'data'), ('XDG_CACHE_HOME', 'cache'), ('XDG_STATE_HOME', 'state')]:
+        env[key] = sandbox.name + '/' + sub
+env['HARBOR_USER_CONFIG'] = str(base_config)
+config = base_config / 'harbor' / 'session'
+config.mkdir(parents=True, exist_ok=True)
+env['XDG_CONFIG_HOME'] = str(config)
+kwin_config = config / 'kwinrc'
 if not kwin_config.exists():
- kwin_config.write_text('[Plugins]\nblurEnabled=true\ncontrastEnabled=true\nharbor-shortcutsEnabled=true\n[org.kde.kdecoration2]\nlibrary=org.kde.breeze\nBorderSize=Tiny\nButtonsOnLeft=XIA\nButtonsOnRight=\n[Windows]\nFocusPolicy=ClickToFocus\n')
-command=[kwin,'--xwayland','--no-kactivities','--exit-with-session',shutil.which('harbor-session-client') or shell]
-if args.nested: command[1:1]=['--width','1280','--height','800']
-if args.headless: command[1:1]=['--virtual','--width','1280','--height','800']
-child=subprocess.Popen(command,env=env,start_new_session=True)
+    kwin_config.write_text(
+        '[Plugins]\nblurEnabled=true\ncontrastEnabled=true\nharbor-shortcutsEnabled=true\n[org.kde.kdecoration2]\nlibrary=org.kde.breeze\nBorderSize=Tiny\nButtonsOnLeft=XIA\nButtonsOnRight=\n[Windows]\nFocusPolicy=ClickToFocus\n'
+    )
+command = [
+    kwin,
+    '--xwayland',
+    '--no-kactivities',
+    '--exit-with-session',
+    shutil.which('harbor-session-client') or shell,
+]
+if args.nested:
+    command[1:1] = ['--width', '1280', '--height', '800']
+if args.headless:
+    command[1:1] = ['--virtual', '--width', '1280', '--height', '800']
+child = subprocess.Popen(command, env=env, start_new_session=True)
 # Child services need up to 20 seconds to restore owned settings on shutdown.
 # Leave additional time for the client to finish reaping them.
-SHUTDOWN_GRACE=25
-shutdown_deadline=None
-shutdown_timer=None
+SHUTDOWN_GRACE = 25
+shutdown_deadline = None
+shutdown_timer = None
+
 
 def signal_group(sig):
- try:os.killpg(child.pid,sig)
- except ProcessLookupError:pass
+    try:
+        os.killpg(child.pid, sig)
+    except ProcessLookupError:
+        pass
+
 
 def live_group_members():
- # killpg(..., 0) also succeeds for a group containing only unreaped zombies.
- # Those cannot run cleanup and must not delay normal logout by 25 seconds.
- try:
-  for entry in pathlib.Path('/proc').iterdir():
-   if not entry.name.isdigit():continue
-   try:
-    fields=(entry/'stat').read_text().rsplit(') ',1)[1].split()
-    if int(fields[2])==child.pid and fields[0] not in ('Z','X'):return True
-   except (FileNotFoundError,ProcessLookupError,IndexError,ValueError):continue
-  return False
- except OSError:
-  try:os.killpg(child.pid,0);return True
-  except ProcessLookupError:return False
+    # killpg(..., 0) also succeeds for a group containing only unreaped zombies.
+    # Those cannot run cleanup and must not delay normal logout by 25 seconds.
+    try:
+        for entry in pathlib.Path('/proc').iterdir():
+            if not entry.name.isdigit():
+                continue
+            try:
+                fields = (entry / 'stat').read_text().rsplit(') ', 1)[1].split()
+                if int(fields[2]) == child.pid and fields[0] not in ('Z', 'X'):
+                    return True
+            except (FileNotFoundError, ProcessLookupError, IndexError, ValueError):
+                continue
+        return False
+    except OSError:
+        try:
+            os.killpg(child.pid, 0)
+            return True
+        except ProcessLookupError:
+            return False
 
-def stop(signum,frame):
- global shutdown_deadline,shutdown_timer
- if shutdown_deadline is not None:return
- shutdown_deadline=time.monotonic()+SHUTDOWN_GRACE
- signal_group(signal.SIGTERM)
- # The compositor itself may ignore TERM, so bound the wait for its exit too.
- shutdown_timer=threading.Timer(SHUTDOWN_GRACE,lambda:signal_group(signal.SIGKILL))
- shutdown_timer.daemon=True;shutdown_timer.start()
-for sig in (signal.SIGTERM,signal.SIGINT):signal.signal(sig,stop)
-try:code=child.wait()
+
+def stop(signum, frame):
+    global shutdown_deadline, shutdown_timer
+    if shutdown_deadline is not None:
+        return
+    shutdown_deadline = time.monotonic() + SHUTDOWN_GRACE
+    signal_group(signal.SIGTERM)
+    # The compositor itself may ignore TERM, so bound the wait for its exit too.
+    shutdown_timer = threading.Timer(SHUTDOWN_GRACE, lambda: signal_group(signal.SIGKILL))
+    shutdown_timer.daemon = True
+    shutdown_timer.start()
+
+
+for sig in (signal.SIGTERM, signal.SIGINT):
+    signal.signal(sig, stop)
+try:
+    code = child.wait()
 finally:
- # A dead leader does not mean its process group is empty.
- stop(None,None)
- while time.monotonic()<shutdown_deadline and live_group_members():time.sleep(.05)
- if live_group_members():signal_group(signal.SIGKILL)
- if shutdown_timer:shutdown_timer.cancel()
- child.wait()
-if sandbox:sandbox.cleanup()
+    # A dead leader does not mean its process group is empty.
+    stop(None, None)
+    while time.monotonic() < shutdown_deadline and live_group_members():
+        time.sleep(0.05)
+    if live_group_members():
+        signal_group(signal.SIGKILL)
+    if shutdown_timer:
+        shutdown_timer.cancel()
+    child.wait()
+if sandbox:
+    sandbox.cleanup()
 sys.exit(code)

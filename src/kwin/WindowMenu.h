@@ -1,4 +1,4 @@
 #pragma once
 #include <QString>
 class QWindow;
-void attachWindowMenu(QWindow* window,const QString& objectPath);
+void attachWindowMenu(QWindow* window, const QString& objectPath);

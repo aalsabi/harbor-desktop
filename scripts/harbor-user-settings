@@ -1,102 +1,247 @@
 #!/usr/bin/python3
 """Unprivileged, fixed-operation Harbor settings. JSON in/out; never shell commands."""
-import configparser,json,os,pathlib,re,shutil,subprocess,sys,tempfile
-CONFIG=pathlib.Path(os.environ.get('XDG_CONFIG_HOME',str(pathlib.Path.home()/'.config')))
-DATA=pathlib.Path(os.environ.get('XDG_DATA_HOME',str(pathlib.Path.home()/'.local/share')))
-def run(args,timeout=15):
- p=subprocess.run(args,capture_output=True,text=True,timeout=timeout,env={**os.environ,'LC_ALL':'C.UTF-8'})
- if p.returncode:raise ValueError(p.stderr.strip() or 'Operation failed')
- return p.stdout
+
+import configparser, json, os, pathlib, re, shutil, subprocess, sys, tempfile
+
+CONFIG = pathlib.Path(os.environ.get('XDG_CONFIG_HOME', str(pathlib.Path.home() / '.config')))
+DATA = pathlib.Path(os.environ.get('XDG_DATA_HOME', str(pathlib.Path.home() / '.local/share')))
+
+
+def run(args, timeout=15):
+    p = subprocess.run(
+        args, capture_output=True, text=True, timeout=timeout, env={**os.environ, 'LC_ALL': 'C.UTF-8'}
+    )
+    if p.returncode:
+        raise ValueError(p.stderr.strip() or 'Operation failed')
+    return p.stdout
+
 
 def desktop(path):
- c=configparser.ConfigParser(interpolation=None,strict=False);c.optionxform=str;c.read(path,encoding='utf-8');return dict(c['Desktop Entry']) if c.has_section('Desktop Entry') else {}
-def atomic(path,text):
- path.parent.mkdir(parents=True,exist_ok=True)
- fd,temp=tempfile.mkstemp(dir=path.parent,prefix='.harbor-')
- try:
-  with os.fdopen(fd,'w') as f:f.write(text);f.flush();os.fsync(f.fileno())
-  os.replace(temp,path)
- finally:
-  if os.path.exists(temp):os.unlink(temp)
-def write_desktop(path,data,source=None):
- c=configparser.ConfigParser(interpolation=None,strict=False);c.optionxform=str
- if source:c.read(source,encoding='utf-8')
- c['Desktop Entry']=data
- import io
- s=io.StringIO();c.write(s,space_around_delimiters=False);atomic(path,s.getvalue())
-def entries(dirs,recursive=False):
- rows={}
- for base in reversed(dirs):
-  if base.is_dir():
-   for p in sorted(base.rglob('*.desktop') if recursive else base.glob('*.desktop')):
+    c = configparser.ConfigParser(interpolation=None, strict=False)
+    c.optionxform = str
+    c.read(path, encoding='utf-8')
+    return dict(c['Desktop Entry']) if c.has_section('Desktop Entry') else {}
+
+
+def atomic(path, text):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temp = tempfile.mkstemp(dir=path.parent, prefix='.harbor-')
     try:
-     d=desktop(p)
-     if d.get('Type')=='Application':rows['-'.join(p.relative_to(base).parts)]=(p,d)
-    except (OSError,ValueError,configparser.Error):pass
- return rows
-def startup_entries():return entries([CONFIG/'autostart']+[pathlib.Path(p)/'autostart' for p in os.environ.get('XDG_CONFIG_DIRS','/etc/xdg').split(':') if p])
-def application_entries():return entries([DATA/'applications',DATA/'flatpak/exports/share/applications']+[pathlib.Path(p)/'applications' for p in os.environ.get('XDG_DATA_DIRS','/usr/local/share:/usr/share').split(':') if p]+[pathlib.Path('/var/lib/flatpak/exports/share/applications')],recursive=True)
+        with os.fdopen(fd, 'w') as f:
+            f.write(text)
+            f.flush()
+            os.fsync(f.fileno())
+        os.replace(temp, path)
+    finally:
+        if os.path.exists(temp):
+            os.unlink(temp)
+
+
+def write_desktop(path, data, source=None):
+    c = configparser.ConfigParser(interpolation=None, strict=False)
+    c.optionxform = str
+    if source:
+        c.read(source, encoding='utf-8')
+    c['Desktop Entry'] = data
+    import io
+
+    s = io.StringIO()
+    c.write(s, space_around_delimiters=False)
+    atomic(path, s.getvalue())
+
+
+def entries(dirs, recursive=False):
+    rows = {}
+    for base in reversed(dirs):
+        if base.is_dir():
+            for p in sorted(base.rglob('*.desktop') if recursive else base.glob('*.desktop')):
+                try:
+                    d = desktop(p)
+                    if d.get('Type') == 'Application':
+                        rows['-'.join(p.relative_to(base).parts)] = (p, d)
+                except (OSError, ValueError, configparser.Error):
+                    pass
+    return rows
+
+
+def startup_entries():
+    return entries(
+        [CONFIG / 'autostart']
+        + [
+            pathlib.Path(p) / 'autostart'
+            for p in os.environ.get('XDG_CONFIG_DIRS', '/etc/xdg').split(':')
+            if p
+        ]
+    )
+
+
+def application_entries():
+    return entries(
+        [DATA / 'applications', DATA / 'flatpak/exports/share/applications']
+        + [
+            pathlib.Path(p) / 'applications'
+            for p in os.environ.get('XDG_DATA_DIRS', '/usr/local/share:/usr/share').split(':')
+            if p
+        ]
+        + [pathlib.Path('/var/lib/flatpak/exports/share/applications')],
+        recursive=True,
+    )
+
+
 def eligible(d):
- only=d.get('OnlyShowIn','').split(';');exclude=d.get('NotShowIn','').split(';')
- return d.get('Hidden','false').lower()!='true' and (not d.get('OnlyShowIn') or 'Harbor' in only) and 'Harbor' not in exclude and (not d.get('TryExec') or shutil.which(d['TryExec']) is not None)
+    only = d.get('OnlyShowIn', '').split(';')
+    exclude = d.get('NotShowIn', '').split(';')
+    return (
+        d.get('Hidden', 'false').lower() != 'true'
+        and (not d.get('OnlyShowIn') or 'Harbor' in only)
+        and 'Harbor' not in exclude
+        and (not d.get('TryExec') or shutil.which(d['TryExec']) is not None)
+    )
+
+
 def startup_policy():
- try:
-  value=json.loads((CONFIG/'harbor/startup.json').read_text())
-  return value if isinstance(value,dict) else {}
- except (OSError,ValueError):return {}
-def startup_enabled(key,data):
- value=startup_policy().get(key)
- return value if type(value) is bool else eligible(data)
+    try:
+        value = json.loads((CONFIG / 'harbor/startup.json').read_text())
+        return value if isinstance(value, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def startup_enabled(key, data):
+    value = startup_policy().get(key)
+    return value if type(value) is bool else eligible(data)
+
+
 def startup():
- return {'entries':[{'id':k,'name':d.get('Name',k),'enabled':startup_enabled(k,d)} for k,(p,d) in startup_entries().items()], 'applications':[{'id':k,'name':d.get('Name',k)} for k,(p,d) in application_entries().items() if d.get('Hidden','false')!='true' and d.get('NoDisplay','false')!='true' and d.get('Exec')]}
+    return {
+        'entries': [
+            {'id': k, 'name': d.get('Name', k), 'enabled': startup_enabled(k, d)}
+            for k, (p, d) in startup_entries().items()
+        ],
+        'applications': [
+            {'id': k, 'name': d.get('Name', k)}
+            for k, (p, d) in application_entries().items()
+            if d.get('Hidden', 'false') != 'true' and d.get('NoDisplay', 'false') != 'true' and d.get('Exec')
+        ],
+    }
+
+
 def startup_set(data):
- key=data['id'];found=startup_entries()
- if key not in found or type(data.get('enabled')) is not bool:raise ValueError('Choose a listed startup application')
- policy=startup_policy();policy[key]=data['enabled'];atomic(CONFIG/'harbor/startup.json',json.dumps(policy));return startup()
+    key = data['id']
+    found = startup_entries()
+    if key not in found or type(data.get('enabled')) is not bool:
+        raise ValueError('Choose a listed startup application')
+    policy = startup_policy()
+    policy[key] = data['enabled']
+    atomic(CONFIG / 'harbor/startup.json', json.dumps(policy))
+    return startup()
+
+
 def startup_add(data):
- key=data['id'];apps=application_entries()
- if key not in apps:raise ValueError('Choose an installed application')
- if key not in startup_entries():
-  d=apps[key][1];d['OnlyShowIn']='Harbor;';d['Hidden']='false';d.pop('NotShowIn',None)
-  write_desktop(CONFIG/'autostart'/key,d,apps[key][0])
- return startup_set({'id':key,'enabled':True})
+    key = data['id']
+    apps = application_entries()
+    if key not in apps:
+        raise ValueError('Choose an installed application')
+    if key not in startup_entries():
+        d = apps[key][1]
+        d['OnlyShowIn'] = 'Harbor;'
+        d['Hidden'] = 'false'
+        d.pop('NotShowIn', None)
+        write_desktop(CONFIG / 'autostart' / key, d, apps[key][0])
+    return startup_set({'id': key, 'enabled': True})
+
+
 def flatpak_apps():
- if not shutil.which('flatpak'):return {'available':False,'apps':[]}
- rows=[]
- for line in run(['flatpak','list','--app','--columns=application,name']).splitlines():
-  fields=line.split('\t',1)
-  if re.fullmatch(r'[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){2,}',fields[0]):rows.append({'id':fields[0],'name':fields[-1]})
- return {'available':True,'apps':rows}
+    if not shutil.which('flatpak'):
+        return {'available': False, 'apps': []}
+    rows = []
+    for line in run(['flatpak', 'list', '--app', '--columns=application,name']).splitlines():
+        fields = line.split('\t', 1)
+        if re.fullmatch(r'[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+){2,}', fields[0]):
+            rows.append({'id': fields[0], 'name': fields[-1]})
+    return {'available': True, 'apps': rows}
+
+
 def permission(data):
- app=data['id']
- if app not in [a['id'] for a in flatpak_apps()['apps']]:raise ValueError('Choose an installed Flatpak application')
- raw=run(['flatpak','info','--show-permissions',app]);c=configparser.ConfigParser(interpolation=None,strict=False);c.read_string(raw);context=dict(c['Context']) if c.has_section('Context') else {}
- return {'id':app,'raw':raw,'network':'network' in context.get('shared','').split(';'),'audio':'pulseaudio' in context.get('sockets','').split(';'),'home':any(x.split(':')[0] in ('home','host') for x in context.get('filesystems','').split(';'))}
+    app = data['id']
+    if app not in [a['id'] for a in flatpak_apps()['apps']]:
+        raise ValueError('Choose an installed Flatpak application')
+    raw = run(['flatpak', 'info', '--show-permissions', app])
+    c = configparser.ConfigParser(interpolation=None, strict=False)
+    c.read_string(raw)
+    context = dict(c['Context']) if c.has_section('Context') else {}
+    return {
+        'id': app,
+        'raw': raw,
+        'network': 'network' in context.get('shared', '').split(';'),
+        'audio': 'pulseaudio' in context.get('sockets', '').split(';'),
+        'home': any(x.split(':')[0] in ('home', 'host') for x in context.get('filesystems', '').split(';')),
+    }
+
+
 def permission_set(data):
- permission(data);app=data['id'];key=data['key'];v=data['value']
- if type(v) is not bool or key not in ('network','audio','home'):raise ValueError('Invalid permission')
- flags={'network':['--share=network' if v else '--unshare=network'],'audio':['--socket=pulseaudio' if v else '--nosocket=pulseaudio'],'home':['--filesystem=home'] if v else ['--nofilesystem=home','--nofilesystem=host']}[key]
- run(['flatpak','override','--user',*flags,app]);return permission({'id':app})
+    permission(data)
+    app = data['id']
+    key = data['key']
+    v = data['value']
+    if type(v) is not bool or key not in ('network', 'audio', 'home'):
+        raise ValueError('Invalid permission')
+    flags = {
+        'network': ['--share=network' if v else '--unshare=network'],
+        'audio': ['--socket=pulseaudio' if v else '--nosocket=pulseaudio'],
+        'home': ['--filesystem=home'] if v else ['--nofilesystem=home', '--nofilesystem=host'],
+    }[key]
+    run(['flatpak', 'override', '--user', *flags, app])
+    return permission({'id': app})
+
+
 def package_sizes():
- if not shutil.which('dpkg-query'):return {'applications':[]}
- rows=[]
- for line in run(['dpkg-query','-W','-f=${db:Status-Abbrev}\t${binary:Package}\t${Installed-Size}\n']).splitlines():
-  fields=line.split('\t')
-  if len(fields)==3 and fields[0].startswith('ii') and fields[2].isdigit():rows.append({'name':fields[1],'bytes':int(fields[2])*1024})
- return {'applications':sorted(rows,key=lambda r:r['bytes'],reverse=True)[:100]}
-def dispatch(op,data):
- if op in ("sandbox-list","sandbox-save","sandbox-start"):
-  import runpy
-  module=runpy.run_path(str(pathlib.Path(__file__).with_name("harbor-sandbox")))
-  return module["catalog"]() if op=="sandbox-list" else module["save" if op=="sandbox-save" else "start"](data)
- funcs={'startup':lambda d:startup(),'startup-set':startup_set,'startup-add':startup_add,'privacy':lambda d:flatpak_apps(),'permission':permission,'permission-set':permission_set,'package-sizes':lambda d:package_sizes()}
- if op not in funcs:raise ValueError('Unknown operation')
- return funcs[op](data)
+    if not shutil.which('dpkg-query'):
+        return {'applications': []}
+    rows = []
+    for line in run(
+        ['dpkg-query', '-W', '-f=${db:Status-Abbrev}\t${binary:Package}\t${Installed-Size}\n']
+    ).splitlines():
+        fields = line.split('\t')
+        if len(fields) == 3 and fields[0].startswith('ii') and fields[2].isdigit():
+            rows.append({'name': fields[1], 'bytes': int(fields[2]) * 1024})
+    return {'applications': sorted(rows, key=lambda r: r['bytes'], reverse=True)[:100]}
+
+
+def dispatch(op, data):
+    if op in ("sandbox-list", "sandbox-save", "sandbox-start"):
+        import runpy
+
+        module = runpy.run_path(str(pathlib.Path(__file__).with_name("harbor-sandbox")))
+        return (
+            module["catalog"]()
+            if op == "sandbox-list"
+            else module["save" if op == "sandbox-save" else "start"](data)
+        )
+    funcs = {
+        'startup': lambda d: startup(),
+        'startup-set': startup_set,
+        'startup-add': startup_add,
+        'privacy': lambda d: flatpak_apps(),
+        'permission': permission,
+        'permission-set': permission_set,
+        'package-sizes': lambda d: package_sizes(),
+    }
+    if op not in funcs:
+        raise ValueError('Unknown operation')
+    return funcs[op](data)
+
+
 def main():
- try:
-  if len(sys.argv)!=3:raise ValueError('Expected operation and JSON data')
-  print(json.dumps({'ok':True,'data':dispatch(sys.argv[1],json.loads(sys.argv[2]))}))
- except (ValueError,KeyError,OSError,subprocess.SubprocessError,configparser.Error) as e:
-  print(json.dumps({'ok':False,'error':str(e)}),file=sys.stderr);return 1
- return 0
-if __name__=='__main__':sys.exit(main())
+    try:
+        if len(sys.argv) != 3:
+            raise ValueError('Expected operation and JSON data')
+        print(json.dumps({'ok': True, 'data': dispatch(sys.argv[1], json.loads(sys.argv[2]))}))
+    except (ValueError, KeyError, OSError, subprocess.SubprocessError, configparser.Error) as e:
+        print(json.dumps({'ok': False, 'error': str(e)}), file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

@@ -25,8 +25,16 @@ class GenerateLocalesTests(unittest.TestCase):
     def test_arguments_must_exactly_match_supported_utf8_entries(self):
         helper = self.helper()
         supported = {'ar_SA.UTF-8', 'en_US.UTF-8'}
-        for names in ([], ['ar_SA'], ['en_US.ISO-8859-1'], ['../../tmp/x'], ['--prefix=/tmp'],
-                      ['ar_SA.UTF-8;id'], ['ar_SA.UTF-8\n'], ['ar_SA.UTF-8'] * 33):
+        for names in (
+            [],
+            ['ar_SA'],
+            ['en_US.ISO-8859-1'],
+            ['../../tmp/x'],
+            ['--prefix=/tmp'],
+            ['ar_SA.UTF-8;id'],
+            ['ar_SA.UTF-8\n'],
+            ['ar_SA.UTF-8'] * 33,
+        ):
             with self.subTest(names=names), self.assertRaises(ValueError):
                 helper.validate_requests(names, supported)
         self.assertEqual(helper.validate_requests(['ar_SA.UTF-8', 'ar_SA.UTF-8'], supported), ['ar_SA.UTF-8'])
@@ -36,28 +44,47 @@ class GenerateLocalesTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = pathlib.Path(directory) / 'SUPPORTED'
             path.write_text('ar_SA.UTF-8 UTF-8\nen_US ISO-8859-1\nen_US.UTF-8 UTF-8\n')
-            with patch.object(helper.os, 'fstat', return_value=types.SimpleNamespace(st_uid=0, st_mode=0o100644)):
+            with patch.object(
+                helper.os, 'fstat', return_value=types.SimpleNamespace(st_uid=0, st_mode=0o100644)
+            ):
                 self.assertEqual(helper.read_supported(path), {'ar_SA.UTF-8', 'en_US.UTF-8'})
             for owner, mode in ((1000, 0o100644), (0, 0o100666)):
-                with patch.object(helper.os, 'fstat', return_value=types.SimpleNamespace(st_uid=owner, st_mode=mode)), self.assertRaises(ValueError):
+                with (
+                    patch.object(
+                        helper.os, 'fstat', return_value=types.SimpleNamespace(st_uid=owner, st_mode=mode)
+                    ),
+                    self.assertRaises(ValueError),
+                ):
                     helper.read_supported(path)
 
     def test_generation_uses_fixed_commands_clean_environment_and_skips_existing(self):
         helper = self.helper()
         calls = []
+
         def command(args, **kwargs):
             calls.append((args, kwargs))
             output = 'C\nen_US.utf8\n' if len(calls) == 1 else 'C\nen_US.utf8\nar_SA.utf8\n'
             return subprocess.CompletedProcess(args, 0, stdout=output, stderr='')
-        with patch.object(helper.os, 'geteuid', return_value=0), patch.object(helper, 'read_supported', return_value={'ar_SA.UTF-8', 'en_US.UTF-8'}), patch.object(helper, 'generation_lock', return_value=contextlib.nullcontext()), patch.object(helper, 'persist_requests') as persist, patch.object(helper.subprocess, 'run', side_effect=command):
+
+        with (
+            patch.object(helper.os, 'geteuid', return_value=0),
+            patch.object(helper, 'read_supported', return_value={'ar_SA.UTF-8', 'en_US.UTF-8'}),
+            patch.object(helper, 'generation_lock', return_value=contextlib.nullcontext()),
+            patch.object(helper, 'persist_requests') as persist,
+            patch.object(helper.subprocess, 'run', side_effect=command),
+        ):
             result = helper.generate(['ar_SA.UTF-8', 'en_US.UTF-8'])
         persist.assert_called_once_with(['ar_SA.UTF-8', 'en_US.UTF-8'])
         self.assertTrue(result['ok'])
         self.assertEqual(result['generated'], ['ar_SA.UTF-8'])
         self.assertEqual(result['skipped'], ['en_US.UTF-8'])
-        self.assertEqual(calls[1][0], ['/usr/bin/localedef', '--inputfile=ar_SA', '--charmap=UTF-8', '--', 'ar_SA.UTF-8'])
+        self.assertEqual(
+            calls[1][0], ['/usr/bin/localedef', '--inputfile=ar_SA', '--charmap=UTF-8', '--', 'ar_SA.UTF-8']
+        )
         for args, options in calls:
-            self.assertEqual(options['env'], {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LANG': 'C', 'LC_ALL': 'C'})
+            self.assertEqual(
+                options['env'], {'PATH': '/usr/sbin:/usr/bin:/sbin:/bin', 'LANG': 'C', 'LC_ALL': 'C'}
+            )
             self.assertNotIn('shell', options)
             self.assertEqual(options['cwd'], '/')
             self.assertLessEqual(options['timeout'], 120)
@@ -66,7 +93,11 @@ class GenerateLocalesTests(unittest.TestCase):
 
     def test_non_root_cannot_invoke_generation(self):
         helper = self.helper()
-        with patch.object(helper.os, 'geteuid', return_value=1000), patch.object(helper.subprocess, 'run') as run, self.assertRaises(PermissionError):
+        with (
+            patch.object(helper.os, 'geteuid', return_value=1000),
+            patch.object(helper.subprocess, 'run') as run,
+            self.assertRaises(PermissionError),
+        ):
             helper.generate(['ar_SA.UTF-8'])
         run.assert_not_called()
 
@@ -78,7 +109,15 @@ class GenerateLocalesTests(unittest.TestCase):
             path.write_text(original)
             path.chmod(0o640)
             original_stat = path.stat()
-            fake_stat = types.SimpleNamespace(st_uid=0, st_gid=original_stat.st_gid, st_mode=original_stat.st_mode, st_dev=original_stat.st_dev, st_ino=original_stat.st_ino, st_size=original_stat.st_size, st_mtime_ns=original_stat.st_mtime_ns)
+            fake_stat = types.SimpleNamespace(
+                st_uid=0,
+                st_gid=original_stat.st_gid,
+                st_mode=original_stat.st_mode,
+                st_dev=original_stat.st_dev,
+                st_ino=original_stat.st_ino,
+                st_size=original_stat.st_size,
+                st_mtime_ns=original_stat.st_mtime_ns,
+            )
             with patch.object(helper.os, 'fstat', return_value=fake_stat), patch.object(helper.os, 'fchown'):
                 helper.persist_requests(['ar_SA.UTF-8', 'fr_FR.UTF-8'], path)
                 first = path.read_text()
@@ -94,9 +133,15 @@ class GenerateLocalesTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             path = pathlib.Path(directory) / 'locale.gen'
             path.write_text('# original\n')
+
             def edited(_):
                 path.write_text('# concurrent administrator edit\nfr_FR.UTF-8 UTF-8\n')
-            with patch.object(helper, 'trusted_file'), patch.object(helper.os, 'fchown'), patch.object(helper.os, 'fsync', side_effect=edited):
+
+            with (
+                patch.object(helper, 'trusted_file'),
+                patch.object(helper.os, 'fchown'),
+                patch.object(helper.os, 'fsync', side_effect=edited),
+            ):
                 with self.assertRaises(RuntimeError):
                     helper.persist_requests(['ar_SA.UTF-8'], path)
             self.assertEqual(path.read_text(), '# concurrent administrator edit\nfr_FR.UTF-8 UTF-8\n')
@@ -115,14 +160,30 @@ class GenerateLocalesTests(unittest.TestCase):
     def test_command_failure_does_not_enable_unverified_locales(self):
         helper = self.helper()
         failure = subprocess.CalledProcessError(1, ['/usr/bin/localedef'], stderr='failed')
-        with patch.object(helper.os, 'geteuid', return_value=0), patch.object(helper, 'read_supported', return_value={'ar_SA.UTF-8'}), patch.object(helper, 'generation_lock', return_value=contextlib.nullcontext()), patch.object(helper, 'persist_requests') as persist, patch.object(helper.subprocess, 'run', side_effect=[subprocess.CompletedProcess([], 0, 'C\n', ''), failure]):
+        with (
+            patch.object(helper.os, 'geteuid', return_value=0),
+            patch.object(helper, 'read_supported', return_value={'ar_SA.UTF-8'}),
+            patch.object(helper, 'generation_lock', return_value=contextlib.nullcontext()),
+            patch.object(helper, 'persist_requests') as persist,
+            patch.object(
+                helper.subprocess, 'run', side_effect=[subprocess.CompletedProcess([], 0, 'C\n', ''), failure]
+            ),
+        ):
             with self.assertRaises(subprocess.CalledProcessError):
                 helper.generate(['ar_SA.UTF-8'])
             persist.assert_not_called()
 
     def test_verification_failure_is_not_success(self):
         helper = self.helper()
-        with patch.object(helper.os, 'geteuid', return_value=0), patch.object(helper, 'read_supported', return_value={'ar_SA.UTF-8'}), patch.object(helper, 'generation_lock', return_value=contextlib.nullcontext()), patch.object(helper, 'persist_requests') as persist, patch.object(helper.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, 'C\n', '')):
+        with (
+            patch.object(helper.os, 'geteuid', return_value=0),
+            patch.object(helper, 'read_supported', return_value={'ar_SA.UTF-8'}),
+            patch.object(helper, 'generation_lock', return_value=contextlib.nullcontext()),
+            patch.object(helper, 'persist_requests') as persist,
+            patch.object(
+                helper.subprocess, 'run', return_value=subprocess.CompletedProcess([], 0, 'C\n', '')
+            ),
+        ):
             with self.assertRaises(RuntimeError):
                 helper.generate(['ar_SA.UTF-8'])
             persist.assert_not_called()

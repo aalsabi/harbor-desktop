@@ -1,14 +1,22 @@
 #!/usr/bin/python3
 """Exercise the installed privileged helper only in the disposable container."""
+
 import json, os, pathlib, subprocess, xml.etree.ElementTree as ET
+
 assert pathlib.Path('/.dockerenv').exists() and os.geteuid() == 0
 helper = '/usr/libexec/harbor-generate-locales'
 requested = ['ar_SA.UTF-8', 'en_US.UTF-8']
+
+
 def run(*args):
     return subprocess.run(args, capture_output=True, text=True, timeout=180)
+
+
 def read_optional(path):
     p = pathlib.Path(path)
     return p.read_bytes() if p.exists() else None
+
+
 before = read_optional('/etc/default/locale')
 result = run(helper, *requested)
 assert result.returncode == 0, result.stdout + result.stderr
@@ -33,6 +41,15 @@ action = policy.find('action')
 assert action.attrib['id'] == 'org.harbor.locale.generate'
 assert action.find('defaults/allow_active').text == 'auth_admin'
 assert action.find('annotate').text == helper
-print(json.dumps({'installedLocaleGeneration': True, 'verifiedUTF8': requested,
-                 'persistentLocaleGen': True, 'idempotent': True,
-                 'invalidAndUnprivilegedRejected': True, 'defaultLocaleUnchanged': True}))
+print(
+    json.dumps(
+        {
+            'installedLocaleGeneration': True,
+            'verifiedUTF8': requested,
+            'persistentLocaleGen': True,
+            'idempotent': True,
+            'invalidAndUnprivilegedRejected': True,
+            'defaultLocaleUnchanged': True,
+        }
+    )
+)

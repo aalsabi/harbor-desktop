@@ -1,41 +1,73 @@
 #!/usr/bin/python3 -I
 """Privileged, narrowly scoped writes to standard battery charge threshold attributes."""
-import argparse,json,os,pathlib,re,sys
 
-ATTR_START='charge_control_start_threshold'
-ATTR_END='charge_control_end_threshold'
+import argparse, json, os, pathlib, re, sys
 
-def apply_limits(battery,start,end,root=pathlib.Path('/sys/class/power_supply')):
- if not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}',battery) or battery in ('.','..'):raise ValueError('Invalid battery name')
- if type(start) is not int or type(end) is not int or not -1<=start<end<=100 or end<1:raise ValueError('Start must be below the stop percentage, within 0–100')
- folder=(root/battery).resolve(strict=True)
- if root==pathlib.Path('/sys/class/power_supply') and not folder.is_relative_to('/sys/devices'):raise ValueError('Battery is not a kernel power-supply device')
- if (folder/'type').read_text().strip()!='Battery':raise ValueError('The selected supply is not a battery')
- endfile=folder/ATTR_END;startfile=folder/ATTR_START
- if endfile.is_symlink() or startfile.is_symlink():raise ValueError('Threshold attributes may not be symbolic links')
- oldend=int(endfile.read_text());oldstart=int(startfile.read_text()) if startfile.exists() else -1
- if start>=0 and oldstart<0:raise ValueError('This battery does not support a start threshold')
- if start<0 and oldstart>=end:raise ValueError('Stop threshold must exceed the existing start threshold')
- def write(path,value):
-  fd=os.open(path,os.O_WRONLY|os.O_NOFOLLOW|os.O_CLOEXEC)
-  try:os.write(fd,(str(value)+'\n').encode())
-  finally:os.close(fd)
- def ordered(s,e,current_end):
-  if s>=current_end:write(endfile,e)
-  if s>=0:write(startfile,s)
-  if s<current_end:write(endfile,e)
- try:ordered(start,end,oldend)
- except Exception:
-  try:ordered(oldstart,oldend,int(endfile.read_text()))
-  except Exception:pass
-  raise
- # Drivers may quantize percentages. Report the actual values rather than claim exact acceptance.
- return {'start':int(startfile.read_text()) if oldstart>=0 else -1,'end':int(endfile.read_text())}
+ATTR_START = 'charge_control_start_threshold'
+ATTR_END = 'charge_control_end_threshold'
+
+
+def apply_limits(battery, start, end, root=pathlib.Path('/sys/class/power_supply')):
+    if not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.-]{0,127}', battery) or battery in ('.', '..'):
+        raise ValueError('Invalid battery name')
+    if type(start) is not int or type(end) is not int or not -1 <= start < end <= 100 or end < 1:
+        raise ValueError('Start must be below the stop percentage, within 0–100')
+    folder = (root / battery).resolve(strict=True)
+    if root == pathlib.Path('/sys/class/power_supply') and not folder.is_relative_to('/sys/devices'):
+        raise ValueError('Battery is not a kernel power-supply device')
+    if (folder / 'type').read_text().strip() != 'Battery':
+        raise ValueError('The selected supply is not a battery')
+    endfile = folder / ATTR_END
+    startfile = folder / ATTR_START
+    if endfile.is_symlink() or startfile.is_symlink():
+        raise ValueError('Threshold attributes may not be symbolic links')
+    oldend = int(endfile.read_text())
+    oldstart = int(startfile.read_text()) if startfile.exists() else -1
+    if start >= 0 and oldstart < 0:
+        raise ValueError('This battery does not support a start threshold')
+    if start < 0 and oldstart >= end:
+        raise ValueError('Stop threshold must exceed the existing start threshold')
+
+    def write(path, value):
+        fd = os.open(path, os.O_WRONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+        try:
+            os.write(fd, (str(value) + '\n').encode())
+        finally:
+            os.close(fd)
+
+    def ordered(s, e, current_end):
+        if s >= current_end:
+            write(endfile, e)
+        if s >= 0:
+            write(startfile, s)
+        if s < current_end:
+            write(endfile, e)
+
+    try:
+        ordered(start, end, oldend)
+    except Exception:
+        try:
+            ordered(oldstart, oldend, int(endfile.read_text()))
+        except Exception:
+            pass
+        raise
+    # Drivers may quantize percentages. Report the actual values rather than claim exact acceptance.
+    return {'start': int(startfile.read_text()) if oldstart >= 0 else -1, 'end': int(endfile.read_text())}
+
 
 def main():
- p=argparse.ArgumentParser();p.add_argument('battery');p.add_argument('start',type=int);p.add_argument('end',type=int);a=p.parse_args()
- if os.geteuid()!=0:raise PermissionError('Administrator authentication is required')
- print(json.dumps(apply_limits(a.battery,a.start,a.end)))
-if __name__=='__main__':
- try:main()
- except Exception as error:sys.exit(str(error))
+    p = argparse.ArgumentParser()
+    p.add_argument('battery')
+    p.add_argument('start', type=int)
+    p.add_argument('end', type=int)
+    a = p.parse_args()
+    if os.geteuid() != 0:
+        raise PermissionError('Administrator authentication is required')
+    print(json.dumps(apply_limits(a.battery, a.start, a.end)))
+
+
+if __name__ == '__main__':
+    try:
+        main()
+    except Exception as error:
+        sys.exit(str(error))

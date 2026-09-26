@@ -29,20 +29,39 @@ if name == 'dbus-update-activation-environment':
             if mode == 'missing':
                 (folder / 'dbus-update-activation-environment').unlink()
             env = {
-                'PATH': directory, 'TEST_LOG': str(log), 'TEST_MODE': mode, 'LC_CTYPE': 'C.UTF-8',
+                'PATH': directory,
+                'TEST_LOG': str(log),
+                'TEST_MODE': mode,
+                'LC_CTYPE': 'C.UTF-8',
                 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/test-session-bus',
-                'WAYLAND_DISPLAY': 'wayland-7', 'DISPLAY': ':7',
-                'XAUTHORITY': '/test/auth', 'XDG_CURRENT_DESKTOP': 'Harbor',
-                'XDG_SESSION_DESKTOP': 'harbor', 'XDG_SESSION_TYPE': 'wayland',
-                'XDG_CONFIG_HOME': '/compositor/config', 'HARBOR_USER_CONFIG': '/apps/config',
-                'XDG_DATA_HOME': '/apps/data', 'XDG_CACHE_HOME': '/apps/cache',
-                'XDG_STATE_HOME': '/apps/state', 'XDG_MENU_PREFIX': 'harbor-',
+                'WAYLAND_DISPLAY': 'wayland-7',
+                'DISPLAY': ':7',
+                'XAUTHORITY': '/test/auth',
+                'XDG_CURRENT_DESKTOP': 'Harbor',
+                'XDG_SESSION_DESKTOP': 'harbor',
+                'XDG_SESSION_TYPE': 'wayland',
+                'XDG_CONFIG_HOME': '/compositor/config',
+                'HARBOR_USER_CONFIG': '/apps/config',
+                'XDG_DATA_HOME': '/apps/data',
+                'XDG_CACHE_HOME': '/apps/cache',
+                'XDG_STATE_HOME': '/apps/state',
+                'XDG_MENU_PREFIX': 'harbor-',
                 'SECRET_TOKEN': 'must-not-be-exported',
             }
             if region:
                 config = folder / 'config' / 'harbor'
                 config.mkdir(parents=True)
-                (config / 'region.json').write_text(json.dumps({'schema': 1, 'languages': ['ar', 'en'], 'region': 'ar_SA', 'formatLanguage': 'ar', 'measurement': 'metric'}))
+                (config / 'region.json').write_text(
+                    json.dumps(
+                        {
+                            'schema': 1,
+                            'languages': ['ar', 'en'],
+                            'region': 'ar_SA',
+                            'formatLanguage': 'ar',
+                            'measurement': 'metric',
+                        }
+                    )
+                )
                 env['HARBOR_USER_CONFIG'] = str(config.parent)
                 env['LC_ALL'] = 'en_US.UTF-8'
                 locale = folder / 'locale'
@@ -53,9 +72,14 @@ if name == 'dbus-update-activation-environment':
             for key in omit:
                 env.pop(key, None)
             # Prevent starting a real host authentication agent during the test.
-            runner = "import runpy; from unittest.mock import patch;\nwith patch('os.path.isfile', return_value=False): runpy.run_path(" + repr(str(ROOT / 'scripts/harbor-session-client')) + ", run_name='__main__')"
-            result = subprocess.run(['/usr/bin/python3', '-c', runner], env=env,
-                                    capture_output=True, text=True, timeout=8)
+            runner = (
+                "import runpy; from unittest.mock import patch;\nwith patch('os.path.isfile', return_value=False): runpy.run_path("
+                + repr(str(ROOT / 'scripts/harbor-session-client'))
+                + ", run_name='__main__')"
+            )
+            result = subprocess.run(
+                ['/usr/bin/python3', '-c', runner], env=env, capture_output=True, text=True, timeout=8
+            )
             events = [json.loads(line) for line in log.read_text().splitlines()]
             return result, events, env
 
@@ -63,7 +87,15 @@ if name == 'dbus-update-activation-environment':
         result, events, _ = self.run_client(region=True)
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('LC_ALL=', events[0]['args'])
-        for key in ('LANG', 'LANGUAGE', 'LC_MESSAGES', 'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MEASUREMENT'):
+        for key in (
+            'LANG',
+            'LANGUAGE',
+            'LC_MESSAGES',
+            'LC_TIME',
+            'LC_NUMERIC',
+            'LC_MONETARY',
+            'LC_MEASUREMENT',
+        ):
             self.assertIn(key, events[0]['args'])
         for event in events:
             self.assertEqual(event['lang'], 'ar_SA.utf8')
@@ -72,14 +104,29 @@ if name == 'dbus-update-activation-environment':
     def test_shared_session_updates_activation_before_shell(self):
         result, events, env = self.run_client()
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual([e['name'] for e in events],
-                         ['dbus-update-activation-environment', 'harbor-shell'])
+        self.assertEqual([e['name'] for e in events], ['dbus-update-activation-environment', 'harbor-shell'])
         update = events[0]
         self.assertEqual(update['config'], '/apps/config')
         self.assertEqual(update['bus'], env['DBUS_SESSION_BUS_ADDRESS'])
-        self.assertEqual(set(update['args']), {'--systemd', 'LC_CTYPE', 'WAYLAND_DISPLAY', 'DISPLAY',
-            'XAUTHORITY', 'XDG_CURRENT_DESKTOP', 'XDG_SESSION_DESKTOP', 'XDG_SESSION_TYPE',
-            'XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME', 'XDG_STATE_HOME', 'XDG_MENU_PREFIX', 'QT_ACCESSIBILITY'})
+        self.assertEqual(
+            set(update['args']),
+            {
+                '--systemd',
+                'LC_CTYPE',
+                'WAYLAND_DISPLAY',
+                'DISPLAY',
+                'XAUTHORITY',
+                'XDG_CURRENT_DESKTOP',
+                'XDG_SESSION_DESKTOP',
+                'XDG_SESSION_TYPE',
+                'XDG_CONFIG_HOME',
+                'XDG_DATA_HOME',
+                'XDG_CACHE_HOME',
+                'XDG_STATE_HOME',
+                'XDG_MENU_PREFIX',
+                'QT_ACCESSIBILITY',
+            },
+        )
 
     def test_private_bus_never_updates_systemd_and_omits_absent_keys(self):
         result, events, env = self.run_client(private=True, omit=('DISPLAY', 'XAUTHORITY'))

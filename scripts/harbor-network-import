@@ -3,6 +3,7 @@
 
 No secret data is accepted on the command line or emitted to stdout/stderr.
 """
+
 import os
 import pathlib
 import pwd
@@ -20,8 +21,14 @@ def prepare_connection(kind, path, NM, user):
     if kind == 'wireguard':
         connection = NM.conn_wireguard_import(str(source))
     else:
-        plugin = next((item for item in NM.VpnPluginInfo.list_load()
-                       if item.get_service() == 'org.freedesktop.NetworkManager.openvpn'), None)
+        plugin = next(
+            (
+                item
+                for item in NM.VpnPluginInfo.list_load()
+                if item.get_service() == 'org.freedesktop.NetworkManager.openvpn'
+            ),
+            None,
+        )
         if plugin is None:
             raise ValueError('Install the NetworkManager OpenVPN import plugin.')
         connection = plugin.load_editor_plugin().import_(str(source))
@@ -45,23 +52,28 @@ def main():
         return 1
     try:
         import gi
+
         gi.require_version('NM', '1.0')
         from gi.repository import NM, GLib, Gio
+
         connection = prepare_connection(sys.argv[1], sys.argv[2], NM, pwd.getpwuid(os.getuid()).pw_name)
         client = NM.Client.new(None)
         loop = GLib.MainLoop()
         cancellation = Gio.Cancellable()
         outcome = {'ok': False}
+
         def finished(client, result, _data):
             try:
                 outcome['ok'] = client.add_connection_finish(result) is not None
             except Exception:
                 pass
             loop.quit()
+
         def timeout():
             cancellation.cancel()
             loop.quit()
             return False
+
         client.add_connection_async(connection, True, cancellation, finished, None)
         timer = GLib.timeout_add_seconds(30, timeout)
         loop.run()
@@ -70,7 +82,9 @@ def main():
             print('Imported')
             return 0
     except (ImportError, AttributeError):
-        print('Install python3-gi, gir1.2-nm-1.0, and the matching NetworkManager VPN plugin.', file=sys.stderr)
+        print(
+            'Install python3-gi, gir1.2-nm-1.0, and the matching NetworkManager VPN plugin.', file=sys.stderr
+        )
         return 1
     except ValueError as error:
         print(str(error), file=sys.stderr)
@@ -78,7 +92,10 @@ def main():
     except Exception:
         pass
     # Plugin errors may include configuration contents. Never relay them.
-    print('VPN import failed. Check the configuration, plugin, and NetworkManager authorization.', file=sys.stderr)
+    print(
+        'VPN import failed. Check the configuration, plugin, and NetworkManager authorization.',
+        file=sys.stderr,
+    )
     return 1
 
 

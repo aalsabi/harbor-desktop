@@ -1,8 +1,14 @@
 #!/usr/bin/python3
 """Launch XDG entries selected for Harbor; no shell interpretation."""
-import pathlib,runpy,subprocess,sys
-module=runpy.run_path(str(pathlib.Path(__file__).with_name('harbor-user-settings')))
-for key,(path,data) in module['startup_entries']().items():
- if module['startup_enabled'](key,data):
-  try:subprocess.Popen(['gio','launch',str(path)],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-  except OSError:pass
+
+import pathlib, runpy, subprocess, sys
+
+module = runpy.run_path(str(pathlib.Path(__file__).with_name('harbor-user-settings')))
+for key, (path, data) in module['startup_entries']().items():
+    if module['startup_enabled'](key, data):
+        try:
+            subprocess.Popen(
+                ['gio', 'launch', str(path)], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
+        except OSError:
+            pass

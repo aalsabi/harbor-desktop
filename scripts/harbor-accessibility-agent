@@ -1,83 +1,148 @@
 #!/usr/bin/python3
 """Own only Harbor's child reader and temporarily enabled accessibility settings."""
-import configparser,json,os,pathlib,shutil,signal,subprocess,tempfile,time
+
+import configparser, json, os, pathlib, shutil, signal, subprocess, tempfile, time
+
 
 class PreferenceLease:
- KEYS=(('org.gnome.desktop.interface','toolkit-accessibility'),('org.gnome.desktop.a11y.applications','screen-reader-enabled'))
- def __init__(self,run=None):
-  self.run=run or self.command
-  self.original={}
- @staticmethod
- def command(args):
-  result=subprocess.run(['gsettings',*args],capture_output=True,text=True,timeout=4)
-  if result.returncode:raise ValueError(result.stderr.strip() or 'Accessibility preference could not be changed')
-  return result.stdout.strip()
- def enable(self):
-  errors=[]
-  for schema,key in self.KEYS:
-   try:
-    before=self.run(['get',schema,key])
-    if before not in ('true','false'):raise ValueError('Accessibility preference returned an invalid value')
-    if before=='false':
-     self.run(['set',schema,key,'true'])
-     self.original.setdefault((schema,key),before)
-   except (OSError,ValueError,subprocess.SubprocessError) as error:errors.append(str(error))
-  return errors
- def restore(self):
-  errors=[]
-  for (schema,key),before in list(self.original.items()):
-   try:
-    current=self.run(['get',schema,key])
-    # Do not overwrite a preference that another application has since changed.
-    if current=='true':self.run(['set',schema,key,before])
-    elif current!='false':raise ValueError('Accessibility preference returned an invalid value')
-    del self.original[(schema,key)]
-   except (OSError,ValueError,subprocess.SubprocessError) as error:errors.append(str(error))
-  return errors
+    KEYS = (
+        ('org.gnome.desktop.interface', 'toolkit-accessibility'),
+        ('org.gnome.desktop.a11y.applications', 'screen-reader-enabled'),
+    )
+
+    def __init__(self, run=None):
+        self.run = run or self.command
+        self.original = {}
+
+    @staticmethod
+    def command(args):
+        result = subprocess.run(['gsettings', *args], capture_output=True, text=True, timeout=4)
+        if result.returncode:
+            raise ValueError(result.stderr.strip() or 'Accessibility preference could not be changed')
+        return result.stdout.strip()
+
+    def enable(self):
+        errors = []
+        for schema, key in self.KEYS:
+            try:
+                before = self.run(['get', schema, key])
+                if before not in ('true', 'false'):
+                    raise ValueError('Accessibility preference returned an invalid value')
+                if before == 'false':
+                    self.run(['set', schema, key, 'true'])
+                    self.original.setdefault((schema, key), before)
+            except (OSError, ValueError, subprocess.SubprocessError) as error:
+                errors.append(str(error))
+        return errors
+
+    def restore(self):
+        errors = []
+        for (schema, key), before in list(self.original.items()):
+            try:
+                current = self.run(['get', schema, key])
+                # Do not overwrite a preference that another application has since changed.
+                if current == 'true':
+                    self.run(['set', schema, key, before])
+                elif current != 'false':
+                    raise ValueError('Accessibility preference returned an invalid value')
+                del self.original[(schema, key)]
+            except (OSError, ValueError, subprocess.SubprocessError) as error:
+                errors.append(str(error))
+        return errors
+
 
 def main():
- base=pathlib.Path(os.environ.get('XDG_CONFIG_HOME',str(pathlib.Path.home()/'.config')))/'harbor'
- running=True;child=None;previous=None;last_status=None;lease=PreferenceLease()
- def stop(*args):
-  nonlocal running
-  running=False
- for sig in (signal.SIGTERM,signal.SIGINT):signal.signal(sig,stop)
- def status(text):
-  nonlocal last_status
-  if text==last_status:return
-  last_status=text;base.mkdir(parents=True,exist_ok=True);fd,p=tempfile.mkstemp(dir=base)
-  with os.fdopen(fd,'w') as f:json.dump({'status':text},f)
-  os.replace(p,base/'accessibility-status.json')
- def enabled():
-  c=configparser.ConfigParser()
-  try:c.read(base/'accessibility.ini');return c.getboolean('General','screenReaderEnabled',fallback=False)
-  except (OSError,ValueError,configparser.Error):return False
- def stop_reader():
-  nonlocal child
-  if child and child.poll() is None:
-   child.terminate()
-   try:child.wait(timeout=3)
-   except subprocess.TimeoutExpired:child.kill();child.wait()
-  child=None
- try:
-  while running:
-   want=enabled()
-   if want!=previous:
-    previous=want
-    if want and shutil.which('orca'):
-     errors=lease.enable()
-     try:child=subprocess.Popen(['orca'],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
-     except OSError:
-      lease.restore();status('Screen reader could not be started')
-     else:status('Screen reader starting'+('; accessibility preferences could not be configured' if errors else ''))
-    elif want:status('Orca is not installed')
-    else:
-     stop_reader();errors=lease.restore();status('Screen reader off'+('; previous accessibility preferences could not be restored' if errors else ''))
-   if child:
-    if child.poll() is not None:
-     child=None;errors=lease.restore();status('Screen reader stopped; check speech and accessibility services'+('; previous preferences could not be restored' if errors else ''))
-    elif last_status=='Screen reader starting':status('Orca is running')
-   time.sleep(1)
- finally:
-  stop_reader();errors=lease.restore();status('Harbor accessibility agent stopped'+('; previous preferences could not be restored' if errors else ''))
-if __name__=='__main__':main()
+    base = pathlib.Path(os.environ.get('XDG_CONFIG_HOME', str(pathlib.Path.home() / '.config'))) / 'harbor'
+    running = True
+    child = None
+    previous = None
+    last_status = None
+    lease = PreferenceLease()
+
+    def stop(*args):
+        nonlocal running
+        running = False
+
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        signal.signal(sig, stop)
+
+    def status(text):
+        nonlocal last_status
+        if text == last_status:
+            return
+        last_status = text
+        base.mkdir(parents=True, exist_ok=True)
+        fd, p = tempfile.mkstemp(dir=base)
+        with os.fdopen(fd, 'w') as f:
+            json.dump({'status': text}, f)
+        os.replace(p, base / 'accessibility-status.json')
+
+    def enabled():
+        c = configparser.ConfigParser()
+        try:
+            c.read(base / 'accessibility.ini')
+            return c.getboolean('General', 'screenReaderEnabled', fallback=False)
+        except (OSError, ValueError, configparser.Error):
+            return False
+
+    def stop_reader():
+        nonlocal child
+        if child and child.poll() is None:
+            child.terminate()
+            try:
+                child.wait(timeout=3)
+            except subprocess.TimeoutExpired:
+                child.kill()
+                child.wait()
+        child = None
+
+    try:
+        while running:
+            want = enabled()
+            if want != previous:
+                previous = want
+                if want and shutil.which('orca'):
+                    errors = lease.enable()
+                    try:
+                        child = subprocess.Popen(
+                            ['orca'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+                        )
+                    except OSError:
+                        lease.restore()
+                        status('Screen reader could not be started')
+                    else:
+                        status(
+                            'Screen reader starting'
+                            + ('; accessibility preferences could not be configured' if errors else '')
+                        )
+                elif want:
+                    status('Orca is not installed')
+                else:
+                    stop_reader()
+                    errors = lease.restore()
+                    status(
+                        'Screen reader off'
+                        + ('; previous accessibility preferences could not be restored' if errors else '')
+                    )
+            if child:
+                if child.poll() is not None:
+                    child = None
+                    errors = lease.restore()
+                    status(
+                        'Screen reader stopped; check speech and accessibility services'
+                        + ('; previous preferences could not be restored' if errors else '')
+                    )
+                elif last_status == 'Screen reader starting':
+                    status('Orca is running')
+            time.sleep(1)
+    finally:
+        stop_reader()
+        errors = lease.restore()
+        status(
+            'Harbor accessibility agent stopped'
+            + ('; previous preferences could not be restored' if errors else '')
+        )
+
+
+if __name__ == '__main__':
+    main()
