@@ -1,0 +1,136 @@
+#!/usr/bin/python3
+"""Opt-in Wayland application isolation. Never fall back to an ordinary launch."""
+import hashlib,json,os,pathlib,re,runpy,shlex,shutil,signal,socket,stat,subprocess,sys,time
+HELPER=runpy.run_path(str(pathlib.Path(__file__).with_name('harbor-user-settings')))
+CONFIG=pathlib.Path(os.environ.get('XDG_CONFIG_HOME',str(pathlib.Path.home()/'.config')))
+DATA=pathlib.Path(os.environ.get('XDG_DATA_HOME',str(pathlib.Path.home()/'.local/share')))
+FOLDERS={'documents':'Documents','downloads':'Downloads','pictures':'Pictures'}
+def defaults():return {'enabled':False,'network':False,'audio':False,'camera':False,'documents':'none','downloads':'none','pictures':'none'}
+def validate(p):
+ if not isinstance(p,dict) or set(p)-set(defaults()):raise ValueError('Invalid isolation policy')
+ result=defaults();result.update(p)
+ for k in ('enabled','network','audio','camera'):
+  if type(result[k]) is not bool:raise ValueError('Invalid permission value')
+ for k in FOLDERS:
+  if result[k] not in ('none','read','write'):raise ValueError('Choose no access, read only or read/write')
+ return result
+def key(app):
+ if not re.fullmatch(r'[A-Za-z0-9_][A-Za-z0-9_.+-]*\.desktop',app):raise ValueError('Invalid application identifier')
+ return hashlib.sha256(app.encode()).hexdigest()
+def profile_path(app):return CONFIG/'harbor/sandbox-profiles'/ (key(app)+'.json')
+def profile(app):
+ path=profile_path(app)
+ if not path.exists():return defaults()
+ return validate(json.loads(path.read_text()))
+def expand_exec(raw,entry,path):
+ args=shlex.split(raw,posix=True);out=[]
+ for arg in args:
+  if arg in ('%f','%F','%u','%U'):continue
+  if arg=='%i':
+   if entry.get('Icon'):out+=['--icon',entry['Icon']]
+   continue
+  arg=arg.replace('%%','\x01').replace('%c',entry.get('Name','')).replace('%k',path)
+  if '%' in arg:raise ValueError('This application uses unsupported desktop launch fields')
+  out.append(arg.replace('\x01','%'))
+ if not out:raise ValueError('No application command')
+ executable=shutil.which(out[0]) if not os.path.isabs(out[0]) else out[0]
+ if not executable:raise ValueError('Application executable is missing')
+ executable=str(pathlib.Path(executable).resolve())
+ if not executable.startswith('/usr/') or not pathlib.Path(executable).is_file():raise ValueError('Only system-installed /usr applications can use this launcher')
+ out[0]=executable;return out
+def apps():
+ rows={}
+ for app,(path,entry) in HELPER['application_entries']().items():
+  try:
+   key(app)
+   if entry.get('Hidden','false').lower()=='true' or entry.get('NoDisplay','false').lower()=='true' or entry.get('Terminal','false').lower()=='true' or entry.get('X-Flatpak'):continue
+   command=expand_exec(entry.get('Exec',''),entry,str(path))
+   if pathlib.Path(command[0]).name in ('flatpak','snap'):continue
+   rows[app]=(entry.get('Name',app),command)
+  except (ValueError,OSError):continue
+ return rows
+def status_path(app):
+ runtime=pathlib.Path(os.environ.get('XDG_RUNTIME_DIR','/nonexistent-harbor-runtime'))
+ return runtime/'harbor'/('sandbox-'+key(app)+'.json')
+def status(app,text,running=False):HELPER['atomic'](status_path(app),json.dumps({'message':text,'running':running,'time':time.time()}))
+def catalog():
+ rows=[]
+ for app,(name,command) in apps().items():
+  try:p=profile(app)
+  except (OSError,ValueError):p=defaults()
+  try:state=json.loads(status_path(app).read_text())
+  except (OSError,ValueError):state={}
+  rows.append({'id':app,'name':name,'policy':p,'status':state.get('message','')})
+ return {'available':bool(shutil.which('bwrap')),'wayland':bool(os.environ.get('WAYLAND_DISPLAY')),'applications':sorted(rows,key=lambda r:r['name'].lower())}
+def save(data):
+ app=data['id']
+ if app not in apps():raise ValueError('Choose a supported installed application')
+ p=validate(data['policy']);HELPER['atomic'](profile_path(app),json.dumps(p));return catalog()
+def build_command(app,argv,p):
+ p=validate(p);token=key(app);runtime=pathlib.Path(os.environ.get('XDG_RUNTIME_DIR',''));display=os.environ.get('WAYLAND_DISPLAY','')
+ if not runtime.is_absolute() or not re.fullmatch(r'[A-Za-z0-9_.-]+',display):raise ValueError('A native Wayland session is required')
+ wayland=runtime/display
+ if wayland.is_symlink() or not stat.S_ISSOCK(wayland.stat().st_mode):raise ValueError('Wayland socket is unavailable')
+ base=DATA/'harbor/sandboxes';home=base/token
+ if not DATA.is_absolute() or any(path.is_symlink() for path in (DATA,DATA/'harbor',base,home)):raise ValueError('Unsafe sandbox data directory')
+ home.mkdir(parents=True,exist_ok=True,mode=0o700)
+ if home.is_symlink() or not home.resolve().is_relative_to(DATA.resolve()):raise ValueError('Unsafe sandbox data directory')
+ target='/run/user/'+str(os.getuid())
+ cmd=['bwrap','--unshare-all','--die-with-parent','--new-session','--cap-drop','ALL','--clearenv','--ro-bind','/usr','/usr']
+ for path in ('/bin','/sbin','/lib','/lib64'):
+  if os.path.islink(path):cmd+=['--symlink',os.readlink(path),path]
+  elif os.path.isdir(path):cmd+=['--ro-bind',path,path]
+ # Expose selected public runtime configuration, never the complete /etc tree.
+ cmd+=['--dir','/etc']
+ for path in ('/etc/ld.so.cache','/etc/fonts','/etc/ssl/certs','/etc/alternatives','/etc/localtime','/etc/nsswitch.conf','/etc/hosts','/etc/resolv.conf'):
+  source=pathlib.Path(path)
+  if source.exists():
+   resolved=source.resolve()
+   # Resolve known system links without importing user data through /etc links.
+   if not (str(resolved).startswith('/etc/') or str(resolved).startswith('/usr/') or (path=='/etc/resolv.conf' and str(resolved).startswith('/run/'))):raise ValueError('Unsafe system configuration link')
+   cmd+=['--ro-bind',str(resolved),path]
+ cmd+=['--proc','/proc','--dev','/dev','--tmpfs','/tmp','--tmpfs','/home','--dir','/home/harbor','--bind',str(home),'/home/harbor','--dir',target,'--ro-bind',str(wayland),target+'/'+display]
+ if p['network']:cmd+=['--share-net']
+ if p['audio']:
+  pulse=runtime/'pulse/native'
+  if pulse.is_symlink() or not stat.S_ISSOCK(pulse.stat().st_mode):raise ValueError('PulseAudio-compatible socket is unavailable')
+  cmd+=['--dir',target+'/pulse','--ro-bind',str(pulse),target+'/pulse/native','--setenv','PULSE_SERVER','unix:'+target+'/pulse/native']
+ if p['camera']:
+  for device in sorted(pathlib.Path('/dev').glob('video[0-9]*')):
+   if re.fullmatch('video[0-9]+',device.name) and not device.is_symlink() and stat.S_ISCHR(device.stat().st_mode):cmd+=['--dev-bind',str(device),str(device)]
+ for name,folder in FOLDERS.items():
+  if p[name]=='none':continue
+  source=pathlib.Path.home()/folder
+  if source.is_symlink() or not source.is_dir() or not source.resolve().is_relative_to(pathlib.Path.home().resolve()):raise ValueError(folder+' is missing or is a symbolic link')
+  cmd+=['--ro-bind' if p[name]=='read' else '--bind',str(source),'/home/harbor/'+folder]
+ for k,v in {'HOME':'/home/harbor','PATH':'/usr/bin:/bin','XDG_CONFIG_HOME':'/home/harbor/.config','XDG_DATA_HOME':'/home/harbor/.local/share','XDG_CACHE_HOME':'/home/harbor/.cache','XDG_RUNTIME_DIR':target,'WAYLAND_DISPLAY':display,'QT_QPA_PLATFORM':'wayland','GDK_BACKEND':'wayland','QT_QUICK_BACKEND':'software','LIBGL_ALWAYS_SOFTWARE':'1','LANG':os.environ.get('LANG','C.UTF-8'),'LANGUAGE':os.environ.get('LANGUAGE','en')}.items():cmd+=['--setenv',k,v]
+ for k in ('LC_CTYPE','LC_MESSAGES','LC_TIME','LC_NUMERIC','LC_MONETARY','LC_MEASUREMENT'):
+  if k in os.environ:cmd+=['--setenv',k,os.environ[k]]
+ cmd+=['--chdir','/home/harbor','--',*argv];return cmd
+def launch(app):
+ try:
+  found=apps()
+  if app not in found:raise ValueError('Choose a supported installed application')
+  if not shutil.which('bwrap'):raise ValueError('Install bubblewrap to enable application isolation')
+  cmd=build_command(app,found[app][1],profile(app));status(app,'Starting isolated application…')
+  # Parent remains alive, so --die-with-parent covers a launcher crash as well.
+  child=subprocess.Popen(cmd,stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,close_fds=True)
+  def stop(*_):
+   if child.poll() is None:child.terminate()
+  signal.signal(signal.SIGTERM,stop);signal.signal(signal.SIGINT,stop)
+  try:code=child.wait(timeout=1)
+  except subprocess.TimeoutExpired:status(app,'Isolated process running',True);code=child.wait()
+  status(app,'Isolated application closed' if code==0 else 'Isolated launch failed; no ordinary fallback was used. Check that user namespaces and the selected permissions are supported.')
+  return code
+ except (OSError,ValueError,KeyError,subprocess.SubprocessError) as e:
+  status(app,'Isolation unavailable: '+str(e));print(str(e),file=sys.stderr);return 1
+def start(data):
+ app=data['id']
+ if app not in apps():raise ValueError('Choose a supported installed application')
+ build_command(app,apps()[app][1],profile(app))
+ status(app,'Starting isolated application…')
+ subprocess.Popen([str(pathlib.Path(__file__).resolve()),'launch',app],stdin=subprocess.DEVNULL,stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL,start_new_session=True,close_fds=True)
+ return catalog()
+if __name__=='__main__':
+ if len(sys.argv)==3 and sys.argv[1]=='launch':sys.exit(launch(sys.argv[2]))
+ sys.exit('Expected launch and an installed desktop application ID')
