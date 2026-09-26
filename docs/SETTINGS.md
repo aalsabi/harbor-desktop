@@ -1,4 +1,6 @@
-# System Settings — Harbor 0.5.0
+# System Settings — Harbor
+
+For the current 0.9.0 native controls and exact platform limits, see [Native Settings](NATIVE-SETTINGS.md). The sections below are historical release notes; their external-tool and missing-feature statements describe older versions, not 0.9.0.
 
 Open the Settings icon in the Dock. The redesigned window uses a searchable sidebar, original coloured category tiles, grouped controls, rounded fields, light/dark appearance and Arabic layout. It is inspired by macOS System Settings, not an Apple component or a claim of exact parity.
 

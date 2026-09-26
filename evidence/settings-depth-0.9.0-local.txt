@@ -1,0 +1,83 @@
+Test project /home/abdullahsa/Documents/Codex/2026-09-23/referenced-chatgpt-conversation-this-is-an/work/build
+      Start  1: core
+ 1/39 Test  #1: core .............................   Passed    0.16 sec
+      Start  2: notifications
+ 2/39 Test  #2: notifications ....................   Passed    0.14 sec
+      Start  3: apps
+ 3/39 Test  #3: apps .............................   Passed    0.22 sec
+      Start  4: global-menu
+ 4/39 Test  #4: global-menu ......................   Passed    0.19 sec
+      Start  5: files
+ 5/39 Test  #5: files ............................   Passed    0.12 sec
+      Start  6: files-ui
+ 6/39 Test  #6: files-ui .........................   Passed    1.32 sec
+      Start  7: files-menu
+ 7/39 Test  #7: files-menu .......................   Passed    0.29 sec
+      Start  8: settings-ui
+ 8/39 Test  #8: settings-ui ......................   Passed    2.36 sec
+      Start  9: system-state
+ 9/39 Test  #9: system-state .....................   Passed    0.03 sec
+      Start 10: system-actions
+10/39 Test #10: system-actions ...................   Passed    0.82 sec
+      Start 11: control-ui
+11/39 Test #11: control-ui .......................   Passed    1.78 sec
+      Start 12: keyboard-notify
+12/39 Test #12: keyboard-notify ..................   Passed    0.27 sec
+      Start 13: keyboard-indicator
+13/39 Test #13: keyboard-indicator ...............   Passed    0.42 sec
+      Start 14: input-menu
+14/39 Test #14: input-menu .......................   Passed    0.70 sec
+      Start 15: icons
+15/39 Test #15: icons ............................   Passed    0.36 sec
+      Start 16: launch
+16/39 Test #16: launch ...........................   Passed    0.82 sec
+      Start 17: dock-launch
+17/39 Test #17: dock-launch ......................   Passed    0.56 sec
+      Start 18: region
+18/39 Test #18: region ...........................   Passed    2.37 sec
+      Start 19: region-ui
+19/39 Test #19: region-ui ........................   Passed    3.45 sec
+      Start 20: panel-menus
+20/39 Test #20: panel-menus ......................   Passed    0.72 sec
+      Start 21: bluetooth
+21/39 Test #21: bluetooth ........................   Passed    0.51 sec
+      Start 22: date-time
+22/39 Test #22: date-time ........................   Passed    0.38 sec
+      Start 23: storage
+23/39 Test #23: storage ..........................   Passed    0.15 sec
+      Start 24: pointer-settings
+24/39 Test #24: pointer-settings .................   Passed    0.78 sec
+      Start 25: default-apps
+25/39 Test #25: default-apps .....................   Passed    0.10 sec
+      Start 26: printers
+26/39 Test #26: printers .........................   Passed    1.08 sec
+      Start 27: settings-expansion-ui
+27/39 Test #27: settings-expansion-ui ............   Passed    2.88 sec
+      Start 28: notification-preferences
+28/39 Test #28: notification-preferences .........   Passed    0.37 sec
+      Start 29: storage-analysis
+29/39 Test #29: storage-analysis .................   Passed    0.23 sec
+      Start 30: network-settings
+30/39 Test #30: network-settings .................   Passed    2.15 sec
+      Start 31: bluetooth-pairing
+31/39 Test #31: bluetooth-pairing ................   Passed    0.57 sec
+      Start 32: accounts
+32/39 Test #32: accounts .........................   Passed    2.27 sec
+      Start 33: updates
+33/39 Test #33: updates ..........................   Passed    0.76 sec
+      Start 34: native-hardware
+34/39 Test #34: native-hardware ..................   Passed    3.66 sec
+      Start 35: gesture-settings
+35/39 Test #35: gesture-settings .................   Passed    5.33 sec
+      Start 36: accessibility
+36/39 Test #36: accessibility ....................   Passed    1.08 sec
+      Start 37: printer-driver
+37/39 Test #37: printer-driver ...................   Passed    0.72 sec
+      Start 38: application-storage
+38/39 Test #38: application-storage ..............   Passed    0.50 sec
+      Start 39: focus-ui
+39/39 Test #39: focus-ui .........................   Passed    1.12 sec
+
+100% tests passed, 0 tests failed out of 39
+
+Total Test time (real) =  41.78 sec

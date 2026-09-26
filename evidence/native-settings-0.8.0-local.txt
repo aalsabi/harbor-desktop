@@ -1,0 +1,77 @@
+Test project /home/abdullahsa/Documents/Codex/2026-09-23/referenced-chatgpt-conversation-this-is-an/work/build
+      Start  1: core
+ 1/36 Test  #1: core .............................   Passed    0.15 sec
+      Start  2: notifications
+ 2/36 Test  #2: notifications ....................   Passed    0.14 sec
+      Start  3: apps
+ 3/36 Test  #3: apps .............................   Passed    0.21 sec
+      Start  4: global-menu
+ 4/36 Test  #4: global-menu ......................   Passed    0.13 sec
+      Start  5: files
+ 5/36 Test  #5: files ............................   Passed    0.08 sec
+      Start  6: files-ui
+ 6/36 Test  #6: files-ui .........................   Passed    0.93 sec
+      Start  7: files-menu
+ 7/36 Test  #7: files-menu .......................   Passed    0.24 sec
+      Start  8: settings-ui
+ 8/36 Test  #8: settings-ui ......................   Passed    1.74 sec
+      Start  9: system-state
+ 9/36 Test  #9: system-state .....................   Passed    0.03 sec
+      Start 10: system-actions
+10/36 Test #10: system-actions ...................   Passed    0.73 sec
+      Start 11: control-ui
+11/36 Test #11: control-ui .......................   Passed    1.46 sec
+      Start 12: keyboard-notify
+12/36 Test #12: keyboard-notify ..................   Passed    0.24 sec
+      Start 13: keyboard-indicator
+13/36 Test #13: keyboard-indicator ...............   Passed    0.43 sec
+      Start 14: input-menu
+14/36 Test #14: input-menu .......................   Passed    0.64 sec
+      Start 15: icons
+15/36 Test #15: icons ............................   Passed    0.36 sec
+      Start 16: launch
+16/36 Test #16: launch ...........................   Passed    0.70 sec
+      Start 17: dock-launch
+17/36 Test #17: dock-launch ......................   Passed    0.50 sec
+      Start 18: region
+18/36 Test #18: region ...........................   Passed    2.19 sec
+      Start 19: region-ui
+19/36 Test #19: region-ui ........................   Passed    2.63 sec
+      Start 20: panel-menus
+20/36 Test #20: panel-menus ......................   Passed    0.39 sec
+      Start 21: bluetooth
+21/36 Test #21: bluetooth ........................   Passed    0.51 sec
+      Start 22: date-time
+22/36 Test #22: date-time ........................   Passed    0.37 sec
+      Start 23: storage
+23/36 Test #23: storage ..........................   Passed    0.12 sec
+      Start 24: pointer-settings
+24/36 Test #24: pointer-settings .................   Passed    0.72 sec
+      Start 25: default-apps
+25/36 Test #25: default-apps .....................   Passed    0.09 sec
+      Start 26: printers
+26/36 Test #26: printers .........................   Passed    0.89 sec
+      Start 27: settings-expansion-ui
+27/36 Test #27: settings-expansion-ui ............   Passed    2.23 sec
+      Start 28: notification-preferences
+28/36 Test #28: notification-preferences .........   Passed    0.13 sec
+      Start 29: storage-analysis
+29/36 Test #29: storage-analysis .................   Passed    0.17 sec
+      Start 30: network-settings
+30/36 Test #30: network-settings .................   Passed    1.03 sec
+      Start 31: bluetooth-pairing
+31/36 Test #31: bluetooth-pairing ................   Passed    0.55 sec
+      Start 32: accounts
+32/36 Test #32: accounts .........................   Passed    1.51 sec
+      Start 33: updates
+33/36 Test #33: updates ..........................   Passed    0.69 sec
+      Start 34: native-hardware
+34/36 Test #34: native-hardware ..................   Passed    3.35 sec
+      Start 35: gesture-settings
+35/36 Test #35: gesture-settings .................   Passed    5.31 sec
+      Start 36: accessibility
+36/36 Test #36: accessibility ....................   Passed    0.99 sec
+
+100% tests passed, 0 tests failed out of 36
+
+Total Test time (real) =  32.61 sec

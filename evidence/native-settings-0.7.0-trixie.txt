@@ -1,0 +1,213 @@
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Could NOT find XKB (missing: XKB_LIBRARY XKB_INCLUDE_DIR) (Required is at least version "0.5.0")
+-- Configuring done (0.4s)
+-- Generating done (0.3s)
+-- Build files have been written to: /build
+[1/130] Automatic MOC for target harbor-core
+[2/128] Automatic MOC for target icons-test
+[3/127] Automatic MOC for target settings-ui-test
+[4/126] Automatic MOC for target control-ui-test
+[5/125] Automatic MOC for target input-menu-test
+[6/124] Automatic MOC for target dock-launch-test
+[7/123] Automatic MOC for target region-ui-test
+[8/122] Automatic MOC for target harbor-desktop-core
+[9/122] Automatic MOC for target bluetooth-test
+[10/122] Automatic MOC for target settings-expansion-ui-test
+[11/122] Automatic MOC for target panel-menus-test
+[12/122] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/DateTimeSettings.cpp.o
+[13/122] Building CXX object CMakeFiles/harbor-desktop-core.dir/harbor-desktop-core_autogen/mocs_compilation.cpp.o
+[14/122] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/Bluetooth.cpp.o
+[15/122] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/SystemServices.cpp.o
+[16/122] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/StorageSettings.cpp.o
+[17/122] Automatic MOC for target core-test
+[18/120] Automatic MOC for target region-test
+[19/118] Automatic RCC for resources.qrc
+[20/118] Automatic RCC for resources.qrc
+[21/118] Automatic RCC for resources.qrc
+[22/118] Automatic RCC for resources.qrc
+[23/118] Automatic RCC for resources.qrc
+[24/118] Automatic RCC for resources.qrc
+[25/118] Automatic RCC for resources.qrc
+[26/118] Automatic RCC for resources.qrc
+[27/118] Building CXX object CMakeFiles/settings-ui-test.dir/settings-ui-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[28/118] Building CXX object CMakeFiles/control-ui-test.dir/control-ui-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[29/118] Building CXX object CMakeFiles/input-menu-test.dir/input-menu-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[30/118] Building CXX object CMakeFiles/icons-test.dir/icons-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[31/118] Building CXX object CMakeFiles/dock-launch-test.dir/dock-launch-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[32/118] Building CXX object CMakeFiles/region-ui-test.dir/region-ui-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[33/118] Building CXX object CMakeFiles/panel-menus-test.dir/panel-menus-test_autogen/mocs_compilation.cpp.o
+[34/118] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/PointerSettings.cpp.o
+[35/118] Building CXX object CMakeFiles/panel-menus-test.dir/panel-menus-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[36/118] Building CXX object CMakeFiles/settings-expansion-ui-test.dir/settings-expansion-ui-test_autogen/mocs_compilation.cpp.o
+[37/118] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/Printers.cpp.o
+[38/118] Building CXX object CMakeFiles/settings-expansion-ui-test.dir/settings-expansion-ui-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[39/118] Building CXX object CMakeFiles/harbor-desktop-core.dir/src/core/DefaultApps.cpp.o
+[40/118] Linking CXX static library libharbor-desktop-core.a
+[41/118] Automatic MOC for target harbor-shell
+[42/118] Automatic MOC for target files-ui-test
+[43/117] Automatic MOC for target notifications-test
+[44/116] Automatic MOC for target apps-test
+[45/115] Automatic MOC for target menu-test
+[46/114] Automatic MOC for target files-test
+[47/113] Automatic MOC for target files-menu-test
+[48/112] Automatic MOC for target system-state-test
+[49/111] Automatic MOC for target system-actions-test
+[50/110] Automatic MOC for target keyboard-notify-test
+[51/109] Automatic MOC for target keyboard-indicator-test
+[52/108] Automatic MOC for target launch-test
+[53/107] Building CXX object CMakeFiles/bluetooth-test.dir/bluetooth-test_autogen/mocs_compilation.cpp.o
+[54/107] Automatic MOC for target date-time-test
+[55/107] Automatic MOC for target storage-test
+[56/107] Automatic MOC for target pointer-settings-test
+[57/107] Automatic MOC for target default-apps-test
+[58/107] Automatic RCC for resources.qrc
+[59/107] Automatic RCC for resources.qrc
+[60/107] Building CXX object CMakeFiles/panel-menus-test.dir/tests/panel_menus_test.cpp.o
+[61/107] Automatic MOC for target printers-test
+[62/107] Building CXX object CMakeFiles/settings-expansion-ui-test.dir/tests/settings_expansion_ui_test.cpp.o
+[63/107] Building CXX object CMakeFiles/harbor-shell.dir/harbor-shell_autogen/mocs_compilation.cpp.o
+[64/107] Building CXX object CMakeFiles/harbor-shell.dir/harbor-shell_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[65/107] Building CXX object CMakeFiles/files-ui-test.dir/files-ui-test_autogen/EWIEGA46WW/qrc_resources.cpp.o
+[66/107] Building CXX object CMakeFiles/harbor-shell.dir/src/kwin/WindowMenu.cpp.o
+[67/107] Building CXX object CMakeFiles/harbor-shell.dir/src/core/Icons.cpp.o
+[68/107] Building CXX object CMakeFiles/harbor-shell.dir/src/shell/main.cpp.o
+[69/107] Building CXX object CMakeFiles/date-time-test.dir/date-time-test_autogen/mocs_compilation.cpp.o
+[70/107] Building CXX object CMakeFiles/bluetooth-test.dir/src/core/Bluetooth.cpp.o
+[71/107] Building CXX object CMakeFiles/storage-test.dir/storage-test_autogen/mocs_compilation.cpp.o
+[72/107] Building CXX object CMakeFiles/system-actions-test.dir/tests/system_actions_test.cpp.o
+[73/107] Building CXX object CMakeFiles/pointer-settings-test.dir/pointer-settings-test_autogen/mocs_compilation.cpp.o
+[74/107] Building CXX object CMakeFiles/bluetooth-test.dir/tests/bluetooth_test.cpp.o
+[75/107] Building CXX object CMakeFiles/default-apps-test.dir/default-apps-test_autogen/mocs_compilation.cpp.o
+[76/107] Building CXX object CMakeFiles/date-time-test.dir/tests/date_time_test.cpp.o
+[77/107] Building CXX object CMakeFiles/printers-test.dir/printers-test_autogen/mocs_compilation.cpp.o
+[78/107] Building CXX object CMakeFiles/storage-test.dir/tests/storage_test.cpp.o
+[79/107] Linking CXX executable harbor-shell
+[80/107] Linking CXX executable notifications-test
+[81/107] Linking CXX executable apps-test
+[82/107] Linking CXX executable menu-test
+[83/107] Building CXX object CMakeFiles/default-apps-test.dir/tests/default_apps_test.cpp.o
+[84/107] Linking CXX executable files-test
+[85/107] Linking CXX executable files-menu-test
+[86/107] Linking CXX executable files-ui-test
+[87/107] Linking CXX executable system-state-test
+[88/107] Linking CXX executable settings-ui-test
+[89/107] Linking CXX executable system-actions-test
+[90/107] Linking CXX executable keyboard-notify-test
+[91/107] Linking CXX executable control-ui-test
+[92/107] Linking CXX executable keyboard-indicator-test
+[93/107] Linking CXX executable input-menu-test
+[94/107] Building CXX object CMakeFiles/pointer-settings-test.dir/tests/pointer_settings_test.cpp.o
+[95/107] Linking CXX executable icons-test
+[96/107] Linking CXX executable launch-test
+[97/107] Building CXX object CMakeFiles/printers-test.dir/tests/printers_test.cpp.o
+[98/107] Linking CXX executable dock-launch-test
+[99/107] Linking CXX executable bluetooth-test
+[100/107] Linking CXX executable region-ui-test
+[101/107] Linking CXX executable panel-menus-test
+[102/107] Linking CXX executable storage-test
+[103/107] Linking CXX executable date-time-test
+[104/107] Linking CXX executable pointer-settings-test
+[105/107] Linking CXX executable default-apps-test
+[106/107] Linking CXX executable printers-test
+[107/107] Linking CXX executable settings-expansion-ui-test
+Test project /build
+      Start  1: core
+ 1/27 Test  #1: core .............................   Passed    0.14 sec
+      Start  2: notifications
+ 2/27 Test  #2: notifications ....................   Passed    0.12 sec
+      Start  3: apps
+ 3/27 Test  #3: apps .............................   Passed    0.04 sec
+      Start  4: global-menu
+ 4/27 Test  #4: global-menu ......................   Passed    0.09 sec
+      Start  5: files
+ 5/27 Test  #5: files ............................   Passed    0.05 sec
+      Start  6: files-ui
+ 6/27 Test  #6: files-ui .........................   Passed    0.62 sec
+      Start  7: files-menu
+ 7/27 Test  #7: files-menu .......................   Passed    0.20 sec
+      Start  8: settings-ui
+ 8/27 Test  #8: settings-ui ......................   Passed    1.17 sec
+      Start  9: system-state
+ 9/27 Test  #9: system-state .....................   Passed    0.01 sec
+      Start 10: system-actions
+10/27 Test #10: system-actions ...................   Passed    0.48 sec
+      Start 11: control-ui
+11/27 Test #11: control-ui .......................   Passed    0.39 sec
+      Start 12: keyboard-notify
+12/27 Test #12: keyboard-notify ..................   Passed    0.14 sec
+      Start 13: keyboard-indicator
+13/27 Test #13: keyboard-indicator ...............   Passed    0.33 sec
+      Start 14: input-menu
+14/27 Test #14: input-menu .......................   Passed    0.27 sec
+      Start 15: icons
+15/27 Test #15: icons ............................   Passed    0.21 sec
+      Start 16: launch
+16/27 Test #16: launch ...........................   Passed    0.63 sec
+      Start 17: dock-launch
+17/27 Test #17: dock-launch ......................   Passed    0.24 sec
+      Start 18: region
+18/27 Test #18: region ...........................   Passed    0.47 sec
+      Start 19: region-ui
+19/27 Test #19: region-ui ........................   Passed    1.78 sec
+      Start 20: panel-menus
+20/27 Test #20: panel-menus ......................   Passed    0.15 sec
+      Start 21: bluetooth
+21/27 Test #21: bluetooth ........................   Passed    0.50 sec
+      Start 22: date-time
+22/27 Test #22: date-time ........................   Passed    0.37 sec
+      Start 23: storage
+23/27 Test #23: storage ..........................   Passed    0.11 sec
+      Start 24: pointer-settings
+24/27 Test #24: pointer-settings .................   Passed    0.66 sec
+      Start 25: default-apps
+25/27 Test #25: default-apps .....................   Passed    0.03 sec
+      Start 26: printers
+26/27 Test #26: printers .........................   Passed    0.23 sec
+      Start 27: settings-expansion-ui
+27/27 Test #27: settings-expansion-ui ............   Passed    1.52 sec
+
+100% tests passed, 0 tests failed out of 27
+
+Total Test time (real) =  10.94 sec
+......................................
+----------------------------------------------------------------------
+Ran 38 tests in 8.047s
+
+OK
+CPack: Create package using DEB
+CPack: Install projects
+CPack: - Install project: HarborDesktop []
+CPack: Create package
+CPackDeb: - Generating dependency list
+CPack: - package: /build/harbor-desktop-0.7.0-Linux.deb generated.
+{"installedLocaleGeneration": true, "verifiedUTF8": ["ar_SA.UTF-8", "en_US.UTF-8"], "persistentLocaleGen": true, "idempotent": true, "invalidAndUnprivilegedRejected": true, "defaultLocaleUnchanged": true}
+File 'setcap' has no capablity to remove
+..
+----------------------------------------------------------------------
+Ran 2 tests in 14.913s
+
+OK
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"kwinWindowEnumeration": true, "activate": true, "close": true, "panelsOpened": 6, "notificationDelivered": true, "initialWindowCount": 2, "filesMenuExported": true}
+QThreadStorage: Thread 0x5567b20094c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"twoScreenRouting": {"desktop": ["20", "22"], "menubar": ["20", "22"], "dock": ["20", "22"]}, "passed": true}
+QThreadStorage: Thread 0x55ac321454c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+{"keyboardLayoutsLoaded": true, "keyboardSwitch": true, "keyboardReload": true}
+QThreadStorage: Thread 0x55fa55a094c0 exited after QThreadStorage 7 destroyed
+Accepting client connections on sockets: QList("wayland-0")
+kwin_core: Failed to load cursor theme "default"
+kwin_core: Failed to load cursor theme "default"
+kwin_xwl: /tmp/.X11-unix does not exist. Please check your installation
+kwin_xwl: Failed to establish X11 socket
+QThreadStorage: Thread 0x55bd9b0e24c0 exited after QThreadStorage 7 destroyed
+{"installedSessionStartup": true, "settingsWindowManaged": true, "gracefulLogout": true}
+PACKAGE_INSTALL_RUNTIME_REMOVE_PASS

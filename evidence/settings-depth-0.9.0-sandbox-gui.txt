@@ -1,0 +1,1 @@
+{"exposed": true, "hostBusAbsent": true, "isolatedHome": true, "privateVirtualKWin": true, "realBubblewrap": true, "wayland": true}
