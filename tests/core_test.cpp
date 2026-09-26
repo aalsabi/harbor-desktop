@@ -60,7 +60,7 @@ private slots:
         QVERIFY(translation.rightToLeft());
         QCOMPARE(QCoreApplication::translate("Settings", "Wi-Fi"), QString::fromUtf8("واي فاي"));
         QCOMPARE(QCoreApplication::translate("Settings", "Battery"), QString::fromUtf8("الطاقة"));
-        QCOMPARE(QCoreApplication::translate("Settings", "Battery", "battery status"),
+        QCOMPARE(QCoreApplication::translate("BatterySection", "Battery", "battery status"),
                  QString::fromUtf8("البطارية"));
         p.setLanguage("en");
         QCOMPARE(changed.count(), 2);

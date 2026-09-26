@@ -2,6 +2,37 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ar">
 <context>
+    <name>AboutSection</name>
+    <message>
+        <source>Version </source>
+        <translation>الإصدار </translation>
+    </message>
+    <message>
+        <source>Window system</source>
+        <translation>نظام النوافذ</translation>
+    </message>
+    <message>
+        <source>Interface</source>
+        <translation>الواجهة</translation>
+    </message>
+    <message>
+        <source>License</source>
+        <translation>الترخيص</translation>
+    </message>
+    <message>
+        <source>Operating system</source>
+        <translation>نظام التشغيل</translation>
+    </message>
+    <message>
+        <source>Architecture</source>
+        <translation>البنية</translation>
+    </message>
+    <message>
+        <source>An independent open-source desktop with original artwork. Plasma Shell is not used.</source>
+        <translation>سطح مكتب مستقل مفتوح المصدر بأصول أصلية. لا يستخدم Plasma Shell.</translation>
+    </message>
+</context>
+<context>
     <name>AccessibilityPage</name>
     <message>
         <source>Vision and screen reading</source>
@@ -54,6 +85,25 @@
     <message>
         <source>Refresh</source>
         <translation>تحديث</translation>
+    </message>
+</context>
+<context>
+    <name>AccessibilitySection</name>
+    <message>
+        <source>Reduce motion</source>
+        <translation>تقليل الحركة</translation>
+    </message>
+    <message>
+        <source>Reduce animation in Harbor</source>
+        <translation>تقليل الحركات في Harbor</translation>
+    </message>
+    <message>
+        <source>Reduce transparency</source>
+        <translation>تقليل الشفافية</translation>
+    </message>
+    <message>
+        <source>These controls apply to Harbor. Screen-reader, magnifier and assistive-input configuration is not included yet.</source>
+        <translation>تخص هذه الخيارات Harbor. إعدادات قارئ الشاشة والمكبّر والإدخال المساعد غير مدمجة بعد.</translation>
     </message>
 </context>
 <context>
@@ -267,6 +317,29 @@
     <message>
         <source>Working… Complete the system authorization prompt if requested.</source>
         <translation>جارٍ التنفيذ… أكمل طلب مصادقة النظام إن ظهر.</translation>
+    </message>
+</context>
+<context>
+    <name>AppearanceSection</name>
+    <message>
+        <source>Appearance</source>
+        <translation>المظهر</translation>
+    </message>
+    <message>
+        <source>Light</source>
+        <translation>فاتح</translation>
+    </message>
+    <message>
+        <source>Dark</source>
+        <translation>داكن</translation>
+    </message>
+    <message>
+        <source>Accent colour</source>
+        <translation>لون التمييز</translation>
+    </message>
+    <message>
+        <source>Appearance applies to Harbor windows and desktop panels. Other apps use their own themes.</source>
+        <translation>يطبّق المظهر على نوافذ Harbor والبانل. للتطبيقات الأخرى ثيماتها الخاصة.</translation>
     </message>
 </context>
 <context>
@@ -550,6 +623,50 @@
     <message>
         <source>Refresh applications</source>
         <translation>تحديث التطبيقات</translation>
+    </message>
+</context>
+<context>
+    <name>BatterySection</name>
+    <message>
+        <source>Battery</source>
+        <comment>battery status</comment>
+        <translation>البطارية</translation>
+    </message>
+    <message>
+        <source>Charging</source>
+        <translation>جارٍ الشحن</translation>
+    </message>
+    <message>
+        <source>On battery / fully charged</source>
+        <translation>على البطارية / مكتملة الشحن</translation>
+    </message>
+    <message>
+        <source>Energy mode</source>
+        <translation>وضع الطاقة</translation>
+    </message>
+    <message>
+        <source>Current mode: </source>
+        <translation>الوضع الحالي: </translation>
+    </message>
+    <message>
+        <source>Unavailable</source>
+        <translation>غير متاح</translation>
+    </message>
+    <message>
+        <source>Low Power</source>
+        <translation>توفير الطاقة</translation>
+    </message>
+    <message>
+        <source>Balanced</source>
+        <translation>متوازن</translation>
+    </message>
+    <message>
+        <source>Performance</source>
+        <translation>الأداء</translation>
+    </message>
+    <message>
+        <source>Available modes depend on your hardware and power service.</source>
+        <translation>تعتمد الأوضاع المتاحة على جهازك وخدمة إدارة الطاقة.</translation>
     </message>
 </context>
 <context>
@@ -983,6 +1100,33 @@
     </message>
 </context>
 <context>
+    <name>DesktopDockSection</name>
+    <message>
+        <source>Harbor • Original artwork</source>
+        <translation>Harbor • خلفية أصلية</translation>
+    </message>
+    <message>
+        <source>Wallpaper</source>
+        <translation>الخلفية</translation>
+    </message>
+    <message>
+        <source>Dock icon size</source>
+        <translation>حجم أيقونات Dock</translation>
+    </message>
+    <message>
+        <source>Panel opacity</source>
+        <translation>عتامة البانل</translation>
+    </message>
+    <message>
+        <source>Pinned applications</source>
+        <translation>التطبيقات المثبتة في Dock</translation>
+    </message>
+    <message>
+        <source>Right-click an app in the launcher to pin or unpin it. Press and hold a pinned Dock icon to remove it.</source>
+        <translation>اضغط بزر الفأرة الأيمن على تطبيق في قائمة التطبيقات لتثبيته أو إلغاء تثبيته. اضغط مطوّلًا على أيقونته في Dock لإزالتها.</translation>
+    </message>
+</context>
+<context>
     <name>DisplaySettings</name>
     <message>
         <source>No monitor exposing DDC/CI brightness was found. Check monitor DDC/CI settings and I²C permissions.</source>
@@ -1094,6 +1238,13 @@
     <message>
         <source>Detect brightness controls</source>
         <translation>كشف أدوات السطوع</translation>
+    </message>
+</context>
+<context>
+    <name>DisplaysSection</name>
+    <message>
+        <source>Brightness</source>
+        <translation>السطوع</translation>
     </message>
 </context>
 <context>
@@ -1228,6 +1379,53 @@
     <message>
         <source>Cancel</source>
         <translation>إلغاء</translation>
+    </message>
+</context>
+<context>
+    <name>GeneralSection</name>
+    <message>
+        <source>General</source>
+        <translation>عام</translation>
+    </message>
+    <message>
+        <source>Manage your desktop, language and system information.</source>
+        <translation>إدارة سطح المكتب واللغة ومعلومات النظام.</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>حول</translation>
+    </message>
+    <message>
+        <source>Software Update</source>
+        <translation>تحديث البرامج</translation>
+    </message>
+    <message>
+        <source>Date &amp; Time</source>
+        <translation>التاريخ والوقت</translation>
+    </message>
+    <message>
+        <source>Storage</source>
+        <translation>التخزين</translation>
+    </message>
+    <message>
+        <source>Default Applications</source>
+        <translation>التطبيقات الافتراضية</translation>
+    </message>
+    <message>
+        <source>Language &amp; Region</source>
+        <translation>اللغة والمنطقة</translation>
+    </message>
+    <message>
+        <source>Keyboard input sources</source>
+        <translation>لغات الكتابة</translation>
+    </message>
+    <message>
+        <source>Session</source>
+        <translation>الجلسة</translation>
+    </message>
+    <message>
+        <source>Save your work before signing out or powering off.</source>
+        <translation>احفظ عملك قبل تسجيل الخروج أو إيقاف التشغيل.</translation>
     </message>
 </context>
 <context>
@@ -1455,6 +1653,97 @@
     <message>
         <source>Could not select the input source. Refresh and try again.</source>
         <translation type="unfinished">تعذّر اختيار لغة الكتابة. حدّث القائمة وحاول مجددًا.</translation>
+    </message>
+</context>
+<context>
+    <name>KeyboardSection</name>
+    <message>
+        <source>Arabic</source>
+        <translation>العربية</translation>
+    </message>
+    <message>
+        <source>English (US)</source>
+        <translation>الإنجليزية (الولايات المتحدة)</translation>
+    </message>
+    <message>
+        <source>Text Input</source>
+        <translation>إدخال النص</translation>
+    </message>
+    <message>
+        <source>Input Sources</source>
+        <translation>لغات الكتابة</translation>
+    </message>
+    <message>
+        <source>Edit…</source>
+        <translation>تحرير…</translation>
+    </message>
+    <message>
+        <source>Use the input menu in the menu bar to change your typing language.</source>
+        <translation>استخدم قائمة لغة الكتابة في الشريط العلوي لتغيير لغة الإدخال.</translation>
+    </message>
+    <message>
+        <source>Type here to test your keyboard…</source>
+        <translation>اكتب هنا لتجربة لوحة المفاتيح…</translation>
+    </message>
+    <message>
+        <source>Add input source</source>
+        <translation>إضافة لغة كتابة</translation>
+    </message>
+    <message>
+        <source>Remove input source</source>
+        <translation>إزالة لغة الكتابة</translation>
+    </message>
+    <message>
+        <source>Default input source</source>
+        <translation>لغة الكتابة الافتراضية</translation>
+    </message>
+    <message>
+        <source>Available from the input menu</source>
+        <translation>متاحة من قائمة لغة الكتابة</translation>
+    </message>
+    <message>
+        <source>Make Default</source>
+        <translation>تعيين كافتراضية</translation>
+    </message>
+    <message>
+        <source>Add up to four input sources. The first source is your default.</source>
+        <translation>أضف حتى أربع لغات كتابة. اللغة الأولى هي الافتراضية.</translation>
+    </message>
+    <message>
+        <source>Switch input source</source>
+        <translation>تبديل لغة الكتابة</translation>
+    </message>
+    <message>
+        <source>None</source>
+        <translation>بدون</translation>
+    </message>
+    <message>
+        <source>Super is the Windows or Command key. Existing layout variants are preserved.</source>
+        <translation>Super هو مفتاح Windows أو Command. تُحفظ تنويعات التخطيط الحالية.</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>إلغاء</translation>
+    </message>
+    <message>
+        <source>Done</source>
+        <translation>تم</translation>
+    </message>
+    <message>
+        <source>Add Input Source</source>
+        <translation>إضافة لغة كتابة</translation>
+    </message>
+    <message>
+        <source>Search languages</source>
+        <translation>البحث عن لغة</translation>
+    </message>
+    <message>
+        <source>No input sources found</source>
+        <translation>لم يتم العثور على لغات كتابة</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>إضافة</translation>
     </message>
 </context>
 <context>
@@ -3134,273 +3423,12 @@
         <translation>لا توجد نتائج</translation>
     </message>
     <message>
-        <source>Manage your desktop, language and system information.</source>
-        <translation>إدارة سطح المكتب واللغة ومعلومات النظام.</translation>
-    </message>
-    <message>
         <source>About</source>
         <translation>حول</translation>
     </message>
     <message>
         <source>Software Update</source>
         <translation>تحديث البرامج</translation>
-    </message>
-    <message>
-        <source>Keyboard input sources</source>
-        <translation>لغات الكتابة</translation>
-    </message>
-    <message>
-        <source>Session</source>
-        <translation>الجلسة</translation>
-    </message>
-    <message>
-        <source>Save your work before signing out or powering off.</source>
-        <translation>احفظ عملك قبل تسجيل الخروج أو إيقاف التشغيل.</translation>
-    </message>
-    <message>
-        <source>Light</source>
-        <translation>فاتح</translation>
-    </message>
-    <message>
-        <source>Dark</source>
-        <translation>داكن</translation>
-    </message>
-    <message>
-        <source>Accent colour</source>
-        <translation>لون التمييز</translation>
-    </message>
-    <message>
-        <source>Appearance applies to Harbor windows and desktop panels. Other apps use their own themes.</source>
-        <translation>يطبّق المظهر على نوافذ Harbor والبانل. للتطبيقات الأخرى ثيماتها الخاصة.</translation>
-    </message>
-    <message>
-        <source>Output</source>
-        <translation>الإخراج</translation>
-    </message>
-    <message>
-        <source>Output volume</source>
-        <translation>مستوى الصوت</translation>
-    </message>
-    <message>
-        <source>Mute</source>
-        <translation>كتم الصوت</translation>
-    </message>
-    <message>
-        <source>Output device</source>
-        <translation>جهاز الإخراج</translation>
-    </message>
-    <message>
-        <source>Input device</source>
-        <translation>جهاز الإدخال</translation>
-    </message>
-    <message>
-        <source>Input volume</source>
-        <translation>مستوى صوت الميكروفون</translation>
-    </message>
-    <message>
-        <source>Mute microphone</source>
-        <translation>كتم الميكروفون</translation>
-    </message>
-    <message>
-        <source>Reduce motion</source>
-        <translation>تقليل الحركة</translation>
-    </message>
-    <message>
-        <source>Reduce animation in Harbor</source>
-        <translation>تقليل الحركات في Harbor</translation>
-    </message>
-    <message>
-        <source>Reduce transparency</source>
-        <translation>تقليل الشفافية</translation>
-    </message>
-    <message>
-        <source>These controls apply to Harbor. Screen-reader, magnifier and assistive-input configuration is not included yet.</source>
-        <translation>تخص هذه الخيارات Harbor. إعدادات قارئ الشاشة والمكبّر والإدخال المساعد غير مدمجة بعد.</translation>
-    </message>
-    <message>
-        <source>Harbor • Original artwork</source>
-        <translation>Harbor • خلفية أصلية</translation>
-    </message>
-    <message>
-        <source>Wallpaper</source>
-        <translation>الخلفية</translation>
-    </message>
-    <message>
-        <source>Dock icon size</source>
-        <translation>حجم أيقونات Dock</translation>
-    </message>
-    <message>
-        <source>Panel opacity</source>
-        <translation>عتامة البانل</translation>
-    </message>
-    <message>
-        <source>Pinned applications</source>
-        <translation>التطبيقات المثبتة في Dock</translation>
-    </message>
-    <message>
-        <source>Right-click an app in the launcher to pin or unpin it. Press and hold a pinned Dock icon to remove it.</source>
-        <translation>اضغط بزر الفأرة الأيمن على تطبيق في قائمة التطبيقات لتثبيته أو إلغاء تثبيته. اضغط مطوّلًا على أيقونته في Dock لإزالتها.</translation>
-    </message>
-    <message>
-        <source>Brightness</source>
-        <translation>السطوع</translation>
-    </message>
-    <message>
-        <source>Arabic</source>
-        <translation>العربية</translation>
-    </message>
-    <message>
-        <source>English (US)</source>
-        <translation>الإنجليزية (الولايات المتحدة)</translation>
-    </message>
-    <message>
-        <source>Text Input</source>
-        <translation>إدخال النص</translation>
-    </message>
-    <message>
-        <source>Input Sources</source>
-        <translation>لغات الكتابة</translation>
-    </message>
-    <message>
-        <source>Edit…</source>
-        <translation>تحرير…</translation>
-    </message>
-    <message>
-        <source>Use the input menu in the menu bar to change your typing language.</source>
-        <translation>استخدم قائمة لغة الكتابة في الشريط العلوي لتغيير لغة الإدخال.</translation>
-    </message>
-    <message>
-        <source>Type here to test your keyboard…</source>
-        <translation>اكتب هنا لتجربة لوحة المفاتيح…</translation>
-    </message>
-    <message>
-        <source>Add input source</source>
-        <translation>إضافة لغة كتابة</translation>
-    </message>
-    <message>
-        <source>Remove input source</source>
-        <translation>إزالة لغة الكتابة</translation>
-    </message>
-    <message>
-        <source>Default input source</source>
-        <translation>لغة الكتابة الافتراضية</translation>
-    </message>
-    <message>
-        <source>Available from the input menu</source>
-        <translation>متاحة من قائمة لغة الكتابة</translation>
-    </message>
-    <message>
-        <source>Make Default</source>
-        <translation>تعيين كافتراضية</translation>
-    </message>
-    <message>
-        <source>Add up to four input sources. The first source is your default.</source>
-        <translation>أضف حتى أربع لغات كتابة. اللغة الأولى هي الافتراضية.</translation>
-    </message>
-    <message>
-        <source>Switch input source</source>
-        <translation>تبديل لغة الكتابة</translation>
-    </message>
-    <message>
-        <source>None</source>
-        <translation>بدون</translation>
-    </message>
-    <message>
-        <source>Super is the Windows or Command key. Existing layout variants are preserved.</source>
-        <translation>Super هو مفتاح Windows أو Command. تُحفظ تنويعات التخطيط الحالية.</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>إلغاء</translation>
-    </message>
-    <message>
-        <source>Done</source>
-        <translation>تم</translation>
-    </message>
-    <message>
-        <source>Add Input Source</source>
-        <translation>إضافة لغة كتابة</translation>
-    </message>
-    <message>
-        <source>Search languages</source>
-        <translation>البحث عن لغة</translation>
-    </message>
-    <message>
-        <source>No input sources found</source>
-        <translation>لم يتم العثور على لغات كتابة</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>إضافة</translation>
-    </message>
-    <message>
-        <source>Battery</source>
-        <comment>battery status</comment>
-        <translation>البطارية</translation>
-    </message>
-    <message>
-        <source>Charging</source>
-        <translation>جارٍ الشحن</translation>
-    </message>
-    <message>
-        <source>On battery / fully charged</source>
-        <translation>على البطارية / مكتملة الشحن</translation>
-    </message>
-    <message>
-        <source>Energy mode</source>
-        <translation>وضع الطاقة</translation>
-    </message>
-    <message>
-        <source>Current mode: </source>
-        <translation>الوضع الحالي: </translation>
-    </message>
-    <message>
-        <source>Unavailable</source>
-        <translation>غير متاح</translation>
-    </message>
-    <message>
-        <source>Low Power</source>
-        <translation>توفير الطاقة</translation>
-    </message>
-    <message>
-        <source>Balanced</source>
-        <translation>متوازن</translation>
-    </message>
-    <message>
-        <source>Performance</source>
-        <translation>الأداء</translation>
-    </message>
-    <message>
-        <source>Available modes depend on your hardware and power service.</source>
-        <translation>تعتمد الأوضاع المتاحة على جهازك وخدمة إدارة الطاقة.</translation>
-    </message>
-    <message>
-        <source>Version </source>
-        <translation>الإصدار </translation>
-    </message>
-    <message>
-        <source>Window system</source>
-        <translation>نظام النوافذ</translation>
-    </message>
-    <message>
-        <source>Interface</source>
-        <translation>الواجهة</translation>
-    </message>
-    <message>
-        <source>License</source>
-        <translation>الترخيص</translation>
-    </message>
-    <message>
-        <source>Operating system</source>
-        <translation>نظام التشغيل</translation>
-    </message>
-    <message>
-        <source>Architecture</source>
-        <translation>البنية</translation>
-    </message>
-    <message>
-        <source>An independent open-source desktop with original artwork. Plasma Shell is not used.</source>
-        <translation>سطح مكتب مستقل مفتوح المصدر بأصول أصلية. لا يستخدم Plasma Shell.</translation>
     </message>
 </context>
 <context>
@@ -3564,6 +3592,37 @@
     <message>
         <source>Updates installed. Check again for remaining updates.</source>
         <translation type="unfinished">ثُبّتت التحديثات. تحقق مجددًا من التحديثات المتبقية.</translation>
+    </message>
+</context>
+<context>
+    <name>SoundSection</name>
+    <message>
+        <source>Output</source>
+        <translation>الإخراج</translation>
+    </message>
+    <message>
+        <source>Output volume</source>
+        <translation>مستوى الصوت</translation>
+    </message>
+    <message>
+        <source>Mute</source>
+        <translation>كتم الصوت</translation>
+    </message>
+    <message>
+        <source>Output device</source>
+        <translation>جهاز الإخراج</translation>
+    </message>
+    <message>
+        <source>Input device</source>
+        <translation>جهاز الإدخال</translation>
+    </message>
+    <message>
+        <source>Input volume</source>
+        <translation>مستوى صوت الميكروفون</translation>
+    </message>
+    <message>
+        <source>Mute microphone</source>
+        <translation>كتم الميكروفون</translation>
     </message>
 </context>
 <context>
