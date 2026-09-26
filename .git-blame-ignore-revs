@@ -1,3 +1,5 @@
 # Bulk formatting commits; use: git config blame.ignoreRevsFile .git-blame-ignore-revs
 # Apply clang-format and ruff formatting
 ef1e2fa627df8faa10c44bd6ce0e4e893f04157c
+# Apply QML formatting
+799e6e651430901cd884b88b90dec9ef0ee25bf1
