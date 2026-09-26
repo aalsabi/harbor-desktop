@@ -320,6 +320,220 @@
     </message>
 </context>
 <context>
+    <name>AddLanguageDialog</name>
+    <message>
+        <source>Add a preferred language</source>
+        <translation>إضافة لغة مفضلة</translation>
+    </message>
+    <message>
+        <source>Search languages</source>
+        <translation>البحث عن لغة</translation>
+    </message>
+    <message>
+        <source>No matching languages</source>
+        <translation>لا توجد لغات مطابقة</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>إلغاء</translation>
+    </message>
+    <message>
+        <source>Add</source>
+        <translation>إضافة</translation>
+    </message>
+</context>
+<context>
+    <name>AdvancedRegionDialog</name>
+    <message>
+        <source>Advanced Language &amp; Region</source>
+        <translation>إعدادات اللغة والمنطقة المتقدمة</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>عام</translation>
+    </message>
+    <message>
+        <source>Dates</source>
+        <translation>التواريخ</translation>
+    </message>
+    <message>
+        <source>Times</source>
+        <translation>الأوقات</translation>
+    </message>
+    <message>
+        <source>Format language</source>
+        <translation>لغة التنسيق</translation>
+    </message>
+    <message>
+        <source>Number separators</source>
+        <translation>فواصل الأعداد</translation>
+    </message>
+    <message>
+        <source>Grouping</source>
+        <translation>المجموعات</translation>
+    </message>
+    <message>
+        <source>Number grouping separator</source>
+        <translation>فاصل مجموعات الأعداد</translation>
+    </message>
+    <message>
+        <source>Decimal</source>
+        <translation>العشري</translation>
+    </message>
+    <message>
+        <source>Number decimal separator</source>
+        <translation>الفاصل العشري للأعداد</translation>
+    </message>
+    <message>
+        <source>Currency</source>
+        <translation>العملة</translation>
+    </message>
+    <message>
+        <source>Currency grouping separator</source>
+        <translation>فاصل مجموعات العملة</translation>
+    </message>
+    <message>
+        <source>Currency decimal separator</source>
+        <translation>الفاصل العشري للعملة</translation>
+    </message>
+    <message>
+        <source>Measurement units</source>
+        <translation>وحدات القياس</translation>
+    </message>
+    <message>
+        <source>Metric</source>
+        <translation>متري</translation>
+    </message>
+    <message>
+        <source>US</source>
+        <translation>أمريكي</translation>
+    </message>
+    <message>
+        <source>UK</source>
+        <translation>بريطاني</translation>
+    </message>
+    <message>
+        <source>Select a format field, then insert a component below or type a custom pattern. Previews update as you edit.</source>
+        <translation>حدد حقل تنسيق ثم أدرج مكونًا من الأسفل أو اكتب نمطًا مخصصًا. تتحدث المعاينة أثناء التحرير.</translation>
+    </message>
+    <message>
+        <source>Short</source>
+        <translation>قصير</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>متوسط</translation>
+    </message>
+    <message>
+        <source>Long</source>
+        <translation>طويل</translation>
+    </message>
+    <message>
+        <source>Full</source>
+        <translation>كامل</translation>
+    </message>
+    <message>
+        <source>Date format </source>
+        <translation>تنسيق التاريخ </translation>
+    </message>
+    <message>
+        <source>Time format </source>
+        <translation>تنسيق الوقت </translation>
+    </message>
+    <message>
+        <source>Insert a component</source>
+        <translation>إدراج مكون</translation>
+    </message>
+    <message>
+        <source>Day</source>
+        <translation>اليوم</translation>
+    </message>
+    <message>
+        <source>Weekday</source>
+        <translation>يوم الأسبوع</translation>
+    </message>
+    <message>
+        <source>Month number</source>
+        <translation>رقم الشهر</translation>
+    </message>
+    <message>
+        <source>Month name</source>
+        <translation>اسم الشهر</translation>
+    </message>
+    <message>
+        <source>Year</source>
+        <translation>السنة</translation>
+    </message>
+    <message>
+        <source>Hour 24</source>
+        <translation>ساعة 24</translation>
+    </message>
+    <message>
+        <source>Hour 12</source>
+        <translation>ساعة 12</translation>
+    </message>
+    <message>
+        <source>Minute</source>
+        <translation>الدقيقة</translation>
+    </message>
+    <message>
+        <source>Second</source>
+        <translation>الثانية</translation>
+    </message>
+    <message>
+        <source>AM/PM</source>
+        <translation>ص/م</translation>
+    </message>
+    <message>
+        <source>Millisecond</source>
+        <translation>جزء الألف</translation>
+    </message>
+    <message>
+        <source>Time zone</source>
+        <translation>المنطقة الزمنية</translation>
+    </message>
+    <message>
+        <source>Zone name</source>
+        <translation>اسم المنطقة الزمنية</translation>
+    </message>
+    <message>
+        <source>Insert </source>
+        <translation>إدراج </translation>
+    </message>
+    <message>
+        <source>Use single quotes around literal words. For example: d MMMM yyyy or hh:mm AP. A 12-hour time format needs AP.</source>
+        <translation>ضع الكلمات الحرفية بين علامتي اقتباس مفردتين. مثال: d MMMM yyyy أو hh:mm AP. يحتاج تنسيق 12 ساعة إلى AP.</translation>
+    </message>
+    <message>
+        <source>Before noon</source>
+        <translation>قبل الظهر</translation>
+    </message>
+    <message>
+        <source>AM label</source>
+        <translation>رمز ما قبل الظهر</translation>
+    </message>
+    <message>
+        <source>After noon</source>
+        <translation>بعد الظهر</translation>
+    </message>
+    <message>
+        <source>PM label</source>
+        <translation>رمز ما بعد الظهر</translation>
+    </message>
+    <message>
+        <source>Restore Defaults</source>
+        <translation>استعادة الافتراضي</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>إلغاء</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>موافق</translation>
+    </message>
+</context>
+<context>
     <name>AppearanceSection</name>
     <message>
         <source>Appearance</source>
@@ -1429,6 +1643,29 @@
     </message>
 </context>
 <context>
+    <name>GenerateLocalesDialog</name>
+    <message>
+        <source>Generate regional settings?</source>
+        <translation>توليد الإعدادات الإقليمية؟</translation>
+    </message>
+    <message>
+        <source>The required locales are not generated on this computer. Choose OK to generate them and apply your preferences. Administrator authentication is required.</source>
+        <translation>الإعدادات الإقليمية المطلوبة غير مولّدة على هذا الجهاز. اضغط موافق لتوليدها وتطبيق تفضيلاتك. سيطلب النظام مصادقة المسؤول.</translation>
+    </message>
+    <message>
+        <source>Waiting for authentication or generating locales…</source>
+        <translation>بانتظار المصادقة أو توليد الإعدادات…</translation>
+    </message>
+    <message>
+        <source>Cancel</source>
+        <translation>إلغاء</translation>
+    </message>
+    <message>
+        <source>OK</source>
+        <translation>موافق</translation>
+    </message>
+</context>
+<context>
     <name>GestureSettings</name>
     <message>
         <source>KWin could not initialize the gesture handlers. Custom gestures remain disabled.</source>
@@ -1895,214 +2132,6 @@
     <message>
         <source>Apply</source>
         <translation>تطبيق</translation>
-    </message>
-    <message>
-        <source>Generate regional settings?</source>
-        <translation>توليد الإعدادات الإقليمية؟</translation>
-    </message>
-    <message>
-        <source>The required locales are not generated on this computer. Choose OK to generate them and apply your preferences. Administrator authentication is required.</source>
-        <translation>الإعدادات الإقليمية المطلوبة غير مولّدة على هذا الجهاز. اضغط موافق لتوليدها وتطبيق تفضيلاتك. سيطلب النظام مصادقة المسؤول.</translation>
-    </message>
-    <message>
-        <source>Waiting for authentication or generating locales…</source>
-        <translation>بانتظار المصادقة أو توليد الإعدادات…</translation>
-    </message>
-    <message>
-        <source>Cancel</source>
-        <translation>إلغاء</translation>
-    </message>
-    <message>
-        <source>OK</source>
-        <translation>موافق</translation>
-    </message>
-    <message>
-        <source>Add a preferred language</source>
-        <translation>إضافة لغة مفضلة</translation>
-    </message>
-    <message>
-        <source>Search languages</source>
-        <translation>البحث عن لغة</translation>
-    </message>
-    <message>
-        <source>No matching languages</source>
-        <translation>لا توجد لغات مطابقة</translation>
-    </message>
-    <message>
-        <source>Add</source>
-        <translation>إضافة</translation>
-    </message>
-    <message>
-        <source>Advanced Language &amp; Region</source>
-        <translation>إعدادات اللغة والمنطقة المتقدمة</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>عام</translation>
-    </message>
-    <message>
-        <source>Dates</source>
-        <translation>التواريخ</translation>
-    </message>
-    <message>
-        <source>Times</source>
-        <translation>الأوقات</translation>
-    </message>
-    <message>
-        <source>Format language</source>
-        <translation>لغة التنسيق</translation>
-    </message>
-    <message>
-        <source>Number separators</source>
-        <translation>فواصل الأعداد</translation>
-    </message>
-    <message>
-        <source>Grouping</source>
-        <translation>المجموعات</translation>
-    </message>
-    <message>
-        <source>Number grouping separator</source>
-        <translation>فاصل مجموعات الأعداد</translation>
-    </message>
-    <message>
-        <source>Decimal</source>
-        <translation>العشري</translation>
-    </message>
-    <message>
-        <source>Number decimal separator</source>
-        <translation>الفاصل العشري للأعداد</translation>
-    </message>
-    <message>
-        <source>Currency grouping separator</source>
-        <translation>فاصل مجموعات العملة</translation>
-    </message>
-    <message>
-        <source>Currency decimal separator</source>
-        <translation>الفاصل العشري للعملة</translation>
-    </message>
-    <message>
-        <source>Measurement units</source>
-        <translation>وحدات القياس</translation>
-    </message>
-    <message>
-        <source>Metric</source>
-        <translation>متري</translation>
-    </message>
-    <message>
-        <source>US</source>
-        <translation>أمريكي</translation>
-    </message>
-    <message>
-        <source>UK</source>
-        <translation>بريطاني</translation>
-    </message>
-    <message>
-        <source>Select a format field, then insert a component below or type a custom pattern. Previews update as you edit.</source>
-        <translation>حدد حقل تنسيق ثم أدرج مكونًا من الأسفل أو اكتب نمطًا مخصصًا. تتحدث المعاينة أثناء التحرير.</translation>
-    </message>
-    <message>
-        <source>Short</source>
-        <translation>قصير</translation>
-    </message>
-    <message>
-        <source>Medium</source>
-        <translation>متوسط</translation>
-    </message>
-    <message>
-        <source>Long</source>
-        <translation>طويل</translation>
-    </message>
-    <message>
-        <source>Full</source>
-        <translation>كامل</translation>
-    </message>
-    <message>
-        <source>Date format </source>
-        <translation>تنسيق التاريخ </translation>
-    </message>
-    <message>
-        <source>Time format </source>
-        <translation>تنسيق الوقت </translation>
-    </message>
-    <message>
-        <source>Insert a component</source>
-        <translation>إدراج مكون</translation>
-    </message>
-    <message>
-        <source>Day</source>
-        <translation>اليوم</translation>
-    </message>
-    <message>
-        <source>Weekday</source>
-        <translation>يوم الأسبوع</translation>
-    </message>
-    <message>
-        <source>Month number</source>
-        <translation>رقم الشهر</translation>
-    </message>
-    <message>
-        <source>Month name</source>
-        <translation>اسم الشهر</translation>
-    </message>
-    <message>
-        <source>Year</source>
-        <translation>السنة</translation>
-    </message>
-    <message>
-        <source>Hour 24</source>
-        <translation>ساعة 24</translation>
-    </message>
-    <message>
-        <source>Hour 12</source>
-        <translation>ساعة 12</translation>
-    </message>
-    <message>
-        <source>Minute</source>
-        <translation>الدقيقة</translation>
-    </message>
-    <message>
-        <source>Second</source>
-        <translation>الثانية</translation>
-    </message>
-    <message>
-        <source>AM/PM</source>
-        <translation>ص/م</translation>
-    </message>
-    <message>
-        <source>Millisecond</source>
-        <translation>جزء الألف</translation>
-    </message>
-    <message>
-        <source>Time zone</source>
-        <translation>المنطقة الزمنية</translation>
-    </message>
-    <message>
-        <source>Zone name</source>
-        <translation>اسم المنطقة الزمنية</translation>
-    </message>
-    <message>
-        <source>Insert </source>
-        <translation>إدراج </translation>
-    </message>
-    <message>
-        <source>Use single quotes around literal words. For example: d MMMM yyyy or hh:mm AP. A 12-hour time format needs AP.</source>
-        <translation>ضع الكلمات الحرفية بين علامتي اقتباس مفردتين. مثال: d MMMM yyyy أو hh:mm AP. يحتاج تنسيق 12 ساعة إلى AP.</translation>
-    </message>
-    <message>
-        <source>Before noon</source>
-        <translation>قبل الظهر</translation>
-    </message>
-    <message>
-        <source>AM label</source>
-        <translation>رمز ما قبل الظهر</translation>
-    </message>
-    <message>
-        <source>After noon</source>
-        <translation>بعد الظهر</translation>
-    </message>
-    <message>
-        <source>PM label</source>
-        <translation>رمز ما بعد الظهر</translation>
     </message>
 </context>
 <context>

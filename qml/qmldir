@@ -1,1 +1,2 @@
 singleton SettingsTheme SettingsTheme.qml
+singleton RegionTheme RegionTheme.qml

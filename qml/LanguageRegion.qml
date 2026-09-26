@@ -14,9 +14,6 @@ ColumnLayout {
     property string status: ""
     property bool ready: false
     readonly property bool arabic: Prefs.language === "ar"
-    readonly property color ink: Prefs.dark ? "#eeeeef" : "#26262a"
-    readonly property color muted: Prefs.dark ? "#aaaab2" : "#696971"
-    readonly property color line: Prefs.dark ? "#505057" : "#d2d2d8"
     readonly property var sample: ready ? Region.preview(draft) : ({})
     readonly property var advancedSample: advanced.visible ? Region.preview(advancedDraft) : ({})
     property var activePatternField: null
@@ -95,7 +92,7 @@ ColumnLayout {
     function restoreAdvanced() {
         var defaults = Region.defaults(advancedDraft.region);
         var next = copy(advancedDraft);
-        var keys = tabs.currentIndex === 1 ? ["dateFormats"] : tabs.currentIndex === 2 ? ["timeFormats", "am", "pm", "hour24"] : ["formatLanguage", "numberGroup", "numberDecimal", "currency", "currencyGroup", "currencyDecimal", "measurement"];
+        var keys = advanced.tabIndex === 1 ? ["dateFormats"] : advanced.tabIndex === 2 ? ["timeFormats", "am", "pm", "hour24"] : ["formatLanguage", "numberGroup", "numberDecimal", "currency", "currencyGroup", "currencyDecimal", "measurement"];
         keys.forEach(function (key) {
             next[key] = defaults[key];
         });
@@ -103,12 +100,12 @@ ColumnLayout {
     }
     function openAdvanced() {
         advancedDraft = copy(draft);
-        tabs.currentIndex = 0;
+        advanced.tabIndex = 0;
         activePatternField = null;
         advanced.open();
     }
     function setPattern(index, value) {
-        var key = tabs.currentIndex === 1 ? "dateFormats" : "timeFormats";
+        var key = advanced.tabIndex === 1 ? "dateFormats" : "timeFormats";
         var values = (advancedDraft[key] || []).slice();
         values[index] = value;
         stageAdvanced(key, values);
@@ -169,136 +166,12 @@ ColumnLayout {
         ready = true;
     }
 
-    component Note: HarborLabel {
-        Layout.fillWidth: true
-        wrapMode: Text.WordWrap
-        color: root.muted
-        font.pixelSize: 12
-    }
-    component Heading: HarborLabel {
-        font.bold: true
-        font.pixelSize: 13
-        Layout.fillWidth: true
-        wrapMode: Text.WordWrap
-    }
-    component Choice: ComboBox {
-        id: choice
-        property var choices: []
-        property string selected: ""
-        signal chosen(string value)
-        model: choices
-        textRole: "name"
-        valueRole: "code"
-        Layout.fillWidth: true
-        implicitHeight: 30
-        currentIndex: {
-            for (var i = 0; i < choices.length; i++)
-                if (String(choices[i].code) === selected)
-                    return i;
-            return -1;
-        }
-        onActivated: chosen(String(currentValue))
-        Accessible.name: displayText
-        leftPadding: root.arabic ? 32 : 10
-        rightPadding: root.arabic ? 10 : 32
-        contentItem: Text {
-            text: choice.displayText
-            color: root.ink
-            font.pixelSize: 13
-            verticalAlignment: Text.AlignVCenter
-            elide: Text.ElideRight
-            horizontalAlignment: root.arabic ? Text.AlignRight : Text.AlignLeft
-        }
-        indicator: Text {
-            x: root.arabic ? 10 : choice.width - width - 10
-            y: (choice.height - height) / 2
-            text: "⌄"
-            color: root.muted
-            font.pixelSize: 17
-        }
-        background: Rectangle {
-            radius: 6
-            color: Prefs.dark ? "#3c3c42" : "#ffffff"
-            border.color: choice.activeFocus ? Prefs.accent : root.line
-        }
-        delegate: ItemDelegate {
-            id: option
-            required property int index
-            required property var modelData
-            width: choice.width
-            height: 34
-            highlighted: choice.highlightedIndex === index
-            contentItem: Text {
-                text: option.modelData.name
-                color: option.highlighted ? "white" : root.ink
-                font.pixelSize: 13
-                verticalAlignment: Text.AlignVCenter
-                elide: Text.ElideRight
-            }
-            background: Rectangle {
-                radius: 4
-                color: option.highlighted ? Prefs.accent : "transparent"
-            }
-        }
-        popup: Popup {
-            y: choice.height + 4
-            width: choice.width
-            padding: 5
-            implicitHeight: Math.min(contentItem.implicitHeight + 10, 280)
-            background: Rectangle {
-                radius: 7
-                color: Prefs.dark ? "#323238" : "#ffffff"
-                border.color: root.line
-            }
-            contentItem: ListView {
-                clip: true
-                implicitHeight: contentHeight
-                model: choice.popup.visible ? choice.delegateModel : null
-                currentIndex: choice.highlightedIndex
-                ScrollBar.vertical: ScrollBar {}
-            }
-        }
-    }
-    component ThemedDialog: Dialog {
-        id: themedDialog
-        padding: 18
-        spacing: 12
-        background: Rectangle {
-            radius: 12
-            color: Prefs.dark ? "#29292e" : "#f7f7f9"
-            border.color: root.line
-        }
-        header: HarborLabel {
-            text: themedDialog.title
-            font.bold: true
-            font.pixelSize: 14
-            padding: 18
-            bottomPadding: 6
-            wrapMode: Text.WordWrap
-            horizontalAlignment: root.arabic ? Text.AlignRight : Text.AlignLeft
-        }
-    }
-    component SegmentTab: TabButton {
-        id: segment
-        implicitHeight: 30
-        contentItem: Text {
-            text: segment.text
-            font.pixelSize: 13
-            color: segment.checked ? "white" : root.ink
-            horizontalAlignment: Text.AlignHCenter
-            verticalAlignment: Text.AlignVCenter
-        }
-        background: Rectangle {
-            radius: 6
-            color: segment.checked ? Prefs.accent : "transparent"
-        }
-    }
     component Pane: Frame {
         padding: 14
         background: Rectangle {
             color: Prefs.dark ? "#2e2e33" : "#f7f7f9"
             radius: 8
-            border.color: root.line
+            border.color: RegionTheme.line
         }
     }
 
@@ -313,17 +186,17 @@ ColumnLayout {
             Layout.preferredWidth: root.width >= 600 ? root.width * 0.47 : root.width
             contentItem: ColumnLayout {
                 spacing: 9
-                Heading {
+                RegionHeading {
                     text: qsTr("Preferred languages")
                 }
-                Note {
+                RegionNote {
                     text: qsTr("Menu languages, not keyboard layouts. Keep only English for English-only menus.")
                 }
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 184
                     color: Prefs.dark ? "#222226" : "white"
-                    border.color: root.line
+                    border.color: RegionTheme.line
                     radius: 4
                     ListView {
                         id: preferred
@@ -351,13 +224,13 @@ ColumnLayout {
                                 Text {
                                     width: parent.width
                                     text: root.languageTitle(modelData)
-                                    color: languageRow.highlighted ? "white" : root.ink
+                                    color: languageRow.highlighted ? "white" : RegionTheme.ink
                                     elide: Text.ElideRight
                                     font.pixelSize: 13
                                 }
                                 Text {
                                     text: index === 0 ? qsTr("Primary") : qsTr("Alternative")
-                                    color: languageRow.highlighted ? "#eeffffff" : root.muted
+                                    color: languageRow.highlighted ? "#eeffffff" : RegionTheme.muted
                                     font.pixelSize: 11
                                 }
                             }
@@ -372,7 +245,7 @@ ColumnLayout {
                         Layout.preferredWidth: 34
                         Accessible.name: qsTr("Add language")
                         onClicked: {
-                            languageSearch.text = "";
+                            addDialog.searchText = "";
                             addDialog.selectedCode = "";
                             addDialog.open();
                         }
@@ -414,20 +287,20 @@ ColumnLayout {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignTop
             spacing: 10
-            Heading {
+            RegionHeading {
                 text: qsTr("Region")
             }
-            Choice {
+            RegionChoice {
                 objectName: "regionChoice"
                 choices: Region.regions
                 selected: root.draft.region || ""
                 Accessible.name: qsTr("Region")
                 onChosen: root.changeRegion(value)
             }
-            Heading {
+            RegionHeading {
                 text: qsTr("First day of the week")
             }
-            Choice {
+            RegionChoice {
                 choices: [
                     {
                         code: "1",
@@ -462,10 +335,10 @@ ColumnLayout {
                 Accessible.name: qsTr("First day of the week")
                 onChosen: root.stage("firstDay", Number(value))
             }
-            Heading {
+            RegionHeading {
                 text: qsTr("Calendar")
             }
-            Choice {
+            RegionChoice {
                 choices: Region.calendars
                 selected: root.draft.calendar || "Gregorian"
                 Accessible.name: qsTr("Calendar")
@@ -473,9 +346,9 @@ ColumnLayout {
             }
             CheckBox {
                 objectName: "hour24"
-                palette.windowText: root.ink
-                palette.text: root.ink
-                palette.buttonText: root.ink
+                palette.windowText: RegionTheme.ink
+                palette.text: RegionTheme.ink
+                palette.buttonText: RegionTheme.ink
                 text: qsTr("Use 24-hour time")
                 checked: root.draft.hour24 === true
                 onClicked: root.setHour24(checked)
@@ -486,7 +359,7 @@ ColumnLayout {
         Layout.fillWidth: true
         contentItem: ColumnLayout {
             spacing: 7
-            Heading {
+            RegionHeading {
                 text: qsTr("Region preview")
             }
             GridLayout {
@@ -496,7 +369,7 @@ ColumnLayout {
                 rowSpacing: 6
                 HarborLabel {
                     text: qsTr("Date")
-                    color: root.muted
+                    color: RegionTheme.muted
                 }
                 HarborLabel {
                     Layout.fillWidth: true
@@ -505,7 +378,7 @@ ColumnLayout {
                 }
                 HarborLabel {
                     text: qsTr("Time")
-                    color: root.muted
+                    color: RegionTheme.muted
                 }
                 HarborLabel {
                     Layout.fillWidth: true
@@ -514,7 +387,7 @@ ColumnLayout {
                 }
                 HarborLabel {
                     text: qsTr("Number")
-                    color: root.muted
+                    color: RegionTheme.muted
                 }
                 HarborLabel {
                     Layout.fillWidth: true
@@ -523,7 +396,7 @@ ColumnLayout {
                 }
                 HarborLabel {
                     text: qsTr("Week")
-                    color: root.muted
+                    color: RegionTheme.muted
                 }
                 HarborLabel {
                     Layout.fillWidth: true
@@ -532,7 +405,7 @@ ColumnLayout {
                 }
                 HarborLabel {
                     text: qsTr("Units")
-                    color: root.muted
+                    color: RegionTheme.muted
                 }
                 HarborLabel {
                     Layout.fillWidth: true
@@ -541,7 +414,7 @@ ColumnLayout {
                 }
                 HarborLabel {
                     text: qsTr("Currency")
-                    color: root.muted
+                    color: RegionTheme.muted
                 }
                 HarborLabel {
                     Layout.fillWidth: true
@@ -551,15 +424,15 @@ ColumnLayout {
             }
         }
     }
-    Note {
+    RegionNote {
         visible: !!root.sample.error
         text: root.sample.error || ""
     }
-    Note {
+    RegionNote {
         visible: Region.localeNotice.length > 0
         text: Region.localeNotice
     }
-    Note {
+    RegionNote {
         text: qsTr("Harbor is translated into English and Arabic. Preferred languages and region apply to other applications after your next login. Custom date, time and number formats apply within Harbor.")
     }
     RowLayout {
@@ -581,7 +454,7 @@ ColumnLayout {
     Rectangle {
         Layout.fillWidth: true
         implicitHeight: 1
-        color: root.line
+        color: RegionTheme.line
     }
     RowLayout {
         Layout.fillWidth: true
@@ -610,496 +483,24 @@ ColumnLayout {
             onClicked: root.applyChanges()
         }
     }
-    Note {
+    RegionNote {
         objectName: "regionStatus"
         visible: text.length > 0
         text: root.status
         Accessible.role: Accessible.StaticText
     }
 
-    ThemedDialog {
+    GenerateLocalesDialog {
         id: generateDialog
-        objectName: "generateLocalesDialog"
-        parent: Overlay.overlay
-        anchors.centerIn: parent
-        width: Math.min(500, parent ? parent.width - 32 : 500)
-        modal: true
-        closePolicy: Region.busy ? Popup.NoAutoClose : Popup.CloseOnEscape
-        title: qsTr("Generate regional settings?")
-        contentItem: ColumnLayout {
-            spacing: 12
-            LayoutMirroring.enabled: root.arabic
-            LayoutMirroring.childrenInherit: true
-            Note {
-                text: qsTr("The required locales are not generated on this computer. Choose OK to generate them and apply your preferences. Administrator authentication is required.")
-            }
-            HarborLabel {
-                Layout.fillWidth: true
-                wrapMode: Text.WrapAnywhere
-                text: root.requiredLocales.join(" · ")
-                LayoutMirroring.enabled: false
-            }
-            RowLayout {
-                visible: Region.busy
-                BusyIndicator {
-                    running: Region.busy
-                    implicitWidth: 28
-                    implicitHeight: 28
-                }
-                Note {
-                    text: qsTr("Waiting for authentication or generating locales…")
-                }
-            }
-            Note {
-                objectName: "generationError"
-                visible: root.status.length > 0
-                text: root.status
-            }
-        }
-        footer: Item {
-            implicitHeight: 60
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: 16
-                spacing: 8
-                Item {
-                    Layout.fillWidth: true
-                }
-                HarborButton {
-                    objectName: "cancelGeneration"
-                    text: qsTr("Cancel")
-                    enabled: !Region.busy
-                    onClicked: generateDialog.close()
-                }
-                HarborButton {
-                    objectName: "confirmGeneration"
-                    text: qsTr("OK")
-                    prominent: true
-                    enabled: !Region.busy
-                    onClicked: {
-                        root.status = "";
-                        Region.generateAndApply(root.generationDraft);
-                    }
-                }
-            }
-        }
+        page: root
     }
 
-    ThemedDialog {
+    AddLanguageDialog {
         id: addDialog
-        objectName: "addLanguageDialog"
-        parent: Overlay.overlay
-        anchors.centerIn: parent
-        width: Math.min(480, parent ? parent.width - 32 : 480)
-        height: Math.min(540, parent ? parent.height - 32 : 540)
-        modal: true
-        closePolicy: Popup.CloseOnEscape
-        title: qsTr("Add a preferred language")
-        property string selectedCode: ""
-        contentItem: ColumnLayout {
-            LayoutMirroring.enabled: root.arabic
-            LayoutMirroring.childrenInherit: true
-            spacing: 10
-            HarborField {
-                id: languageSearch
-                objectName: "languageSearch"
-                Layout.fillWidth: true
-                placeholderText: qsTr("Search languages")
-                Accessible.name: placeholderText
-            }
-            ListView {
-                id: availableLanguages
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                clip: true
-                model: Region.languages.filter(function (l) {
-                    var q = languageSearch.text.toLowerCase();
-                    return (root.draft.languages || []).indexOf(l.code) < 0 && (l.name + " " + l.nativeName + " " + l.code).toLowerCase().indexOf(q) >= 0;
-                })
-                ScrollBar.vertical: ScrollBar {}
-                delegate: ItemDelegate {
-                    id: availableLanguage
-                    required property var modelData
-                    width: ListView.view.width
-                    height: 44
-                    text: root.languageTitle(modelData.code)
-                    highlighted: addDialog.selectedCode === modelData.code
-                    contentItem: Text {
-                        text: availableLanguage.text
-                        color: availableLanguage.highlighted ? "white" : root.ink
-                        verticalAlignment: Text.AlignVCenter
-                        elide: Text.ElideRight
-                        font.pixelSize: 13
-                    }
-                    background: Rectangle {
-                        radius: 5
-                        color: availableLanguage.highlighted ? Prefs.accent : availableLanguage.hovered ? (Prefs.dark ? "#414149" : "#e7e7ed") : "transparent"
-                    }
-                    onClicked: addDialog.selectedCode = modelData.code
-                }
-                HarborLabel {
-                    anchors.centerIn: parent
-                    visible: availableLanguages.count === 0
-                    text: qsTr("No matching languages")
-                }
-            }
-        }
-        footer: Frame {
-            padding: 16
-            background: Item {}
-            contentItem: RowLayout {
-                spacing: 8
-                Item {
-                    Layout.fillWidth: true
-                }
-                HarborButton {
-                    text: qsTr("Cancel")
-                    onClicked: addDialog.close()
-                }
-                HarborButton {
-                    objectName: "confirmAddLanguage"
-                    text: qsTr("Add")
-                    prominent: true
-                    enabled: addDialog.selectedCode.length > 0
-                    onClicked: {
-                        var a = root.draft.languages.slice();
-                        a.push(addDialog.selectedCode);
-                        root.stage("languages", a);
-                        root.selectedLanguage = a.length - 1;
-                        addDialog.close();
-                    }
-                }
-            }
-        }
+        page: root
     }
-    ThemedDialog {
+    AdvancedRegionDialog {
         id: advanced
-        objectName: "advancedRegionDialog"
-        parent: Overlay.overlay
-        anchors.centerIn: parent
-        width: Math.min(680, parent ? parent.width - 32 : 680)
-        height: Math.min(690, parent ? parent.height - 32 : 690)
-        modal: true
-        closePolicy: Popup.CloseOnEscape
-        title: qsTr("Advanced Language & Region")
-        contentItem: ColumnLayout {
-            LayoutMirroring.enabled: root.arabic
-            LayoutMirroring.childrenInherit: true
-            spacing: 14
-            Note {
-                visible: !!root.advancedSample.error
-                text: root.advancedSample.error || ""
-            }
-            TabBar {
-                id: tabs
-                objectName: "advancedRegionTabs"
-                Layout.fillWidth: true
-                implicitHeight: 36
-                padding: 3
-                spacing: 2
-                background: Rectangle {
-                    radius: 9
-                    color: Prefs.dark ? "#3a3a40" : "#e7e7ec"
-                    border.color: root.line
-                }
-                SegmentTab {
-                    text: qsTr("General")
-                }
-                SegmentTab {
-                    text: qsTr("Dates")
-                }
-                SegmentTab {
-                    text: qsTr("Times")
-                }
-                onCurrentIndexChanged: root.activePatternField = null
-            }
-            ScrollView {
-                id: advancedScroll
-                Layout.fillWidth: true
-                Layout.fillHeight: true
-                contentWidth: availableWidth
-                clip: true
-                ColumnLayout {
-                    width: advancedScroll.availableWidth
-                    spacing: 14
-                    ColumnLayout {
-                        visible: tabs.currentIndex === 0
-                        Layout.fillWidth: true
-                        spacing: 10
-                        Heading {
-                            text: qsTr("Format language")
-                        }
-                        Choice {
-                            choices: Region.languages
-                            selected: root.advancedDraft.formatLanguage || "en"
-                            Accessible.name: qsTr("Format language")
-                            onChosen: root.stageAdvanced("formatLanguage", value)
-                        }
-                        Heading {
-                            text: qsTr("Number separators")
-                        }
-                        GridLayout {
-                            columns: 2
-                            Layout.fillWidth: true
-                            columnSpacing: 12
-                            HarborLabel {
-                                text: qsTr("Grouping")
-                            }
-                            HarborField {
-                                objectName: "numberGroup"
-                                Layout.fillWidth: true
-                                text: root.advancedDraft.numberGroup || ""
-                                maximumLength: 4
-                                Accessible.name: qsTr("Number grouping separator")
-                                onTextEdited: root.stageAdvanced("numberGroup", text)
-                            }
-                            HarborLabel {
-                                text: qsTr("Decimal")
-                            }
-                            HarborField {
-                                objectName: "numberDecimal"
-                                Layout.fillWidth: true
-                                text: root.advancedDraft.numberDecimal || ""
-                                maximumLength: 4
-                                Accessible.name: qsTr("Number decimal separator")
-                                onTextEdited: root.stageAdvanced("numberDecimal", text)
-                            }
-                        }
-                        Note {
-                            text: root.advancedSample.number || ""
-                        }
-                        Heading {
-                            text: qsTr("Currency")
-                        }
-                        GridLayout {
-                            columns: 2
-                            Layout.fillWidth: true
-                            columnSpacing: 12
-                            HarborLabel {
-                                text: qsTr("Currency")
-                            }
-                            Choice {
-                                objectName: "currencyCode"
-                                choices: Region.currencies
-                                selected: root.advancedDraft.currency || ""
-                                Accessible.name: qsTr("Currency")
-                                onChosen: root.stageAdvanced("currency", value)
-                            }
-                            HarborLabel {
-                                text: qsTr("Grouping")
-                            }
-                            HarborField {
-                                Layout.fillWidth: true
-                                text: root.advancedDraft.currencyGroup || ""
-                                maximumLength: 4
-                                Accessible.name: qsTr("Currency grouping separator")
-                                onTextEdited: root.stageAdvanced("currencyGroup", text)
-                            }
-                            HarborLabel {
-                                text: qsTr("Decimal")
-                            }
-                            HarborField {
-                                Layout.fillWidth: true
-                                text: root.advancedDraft.currencyDecimal || ""
-                                maximumLength: 4
-                                Accessible.name: qsTr("Currency decimal separator")
-                                onTextEdited: root.stageAdvanced("currencyDecimal", text)
-                            }
-                        }
-                        Note {
-                            text: root.advancedSample.currency || ""
-                        }
-                        Heading {
-                            text: qsTr("Measurement units")
-                        }
-                        Choice {
-                            choices: [
-                                {
-                                    code: "metric",
-                                    name: qsTr("Metric")
-                                },
-                                {
-                                    code: "us",
-                                    name: qsTr("US")
-                                },
-                                {
-                                    code: "uk",
-                                    name: qsTr("UK")
-                                }
-                            ]
-                            selected: root.advancedDraft.measurement || "metric"
-                            Accessible.name: qsTr("Measurement units")
-                            onChosen: root.stageAdvanced("measurement", value)
-                        }
-                        Note {
-                            text: root.advancedSample.measurementExample || ""
-                        }
-                    }
-                    ColumnLayout {
-                        visible: tabs.currentIndex > 0
-                        Layout.fillWidth: true
-                        spacing: 10
-                        Note {
-                            text: qsTr("Select a format field, then insert a component below or type a custom pattern. Previews update as you edit.")
-                        }
-                        Repeater {
-                            model: 4
-                            delegate: ColumnLayout {
-                                id: formatRow
-                                required property int index
-                                Layout.fillWidth: true
-                                spacing: 4
-                                Heading {
-                                    text: [qsTr("Short"), qsTr("Medium"), qsTr("Long"), qsTr("Full")][index]
-                                }
-                                HarborField {
-                                    property int patternIndex: formatRow.index
-                                    objectName: "formatPattern" + patternIndex
-                                    Layout.fillWidth: true
-                                    LayoutMirroring.enabled: false
-                                    text: ((tabs.currentIndex === 1 ? root.advancedDraft.dateFormats : root.advancedDraft.timeFormats) || [])[patternIndex] || ""
-                                    Accessible.name: (tabs.currentIndex === 1 ? qsTr("Date format ") : qsTr("Time format ")) + (patternIndex + 1)
-                                    onActiveFocusChanged: if (activeFocus)
-                                        root.activePatternField = this
-                                    onTextEdited: root.setPattern(patternIndex, text)
-                                }
-                                Note {
-                                    text: ((tabs.currentIndex === 1 ? root.advancedSample.dates : root.advancedSample.times) || [])[index] || ""
-                                }
-                            }
-                        }
-                        Heading {
-                            text: qsTr("Insert a component")
-                        }
-                        Flow {
-                            Layout.fillWidth: true
-                            spacing: 6
-                            Repeater {
-                                model: tabs.currentIndex === 1 ? [
-                                    {
-                                        token: "d",
-                                        name: qsTr("Day")
-                                    },
-                                    {
-                                        token: "dddd",
-                                        name: qsTr("Weekday")
-                                    },
-                                    {
-                                        token: "M",
-                                        name: qsTr("Month number")
-                                    },
-                                    {
-                                        token: "MMMM",
-                                        name: qsTr("Month name")
-                                    },
-                                    {
-                                        token: "yyyy",
-                                        name: qsTr("Year")
-                                    }
-                                ] : [
-                                    {
-                                        token: "HH",
-                                        name: qsTr("Hour 24")
-                                    },
-                                    {
-                                        token: "hh",
-                                        name: qsTr("Hour 12")
-                                    },
-                                    {
-                                        token: "mm",
-                                        name: qsTr("Minute")
-                                    },
-                                    {
-                                        token: "ss",
-                                        name: qsTr("Second")
-                                    },
-                                    {
-                                        token: "AP",
-                                        name: qsTr("AM/PM")
-                                    },
-                                    {
-                                        token: "zzz",
-                                        name: qsTr("Millisecond")
-                                    },
-                                    {
-                                        token: "t",
-                                        name: qsTr("Time zone")
-                                    },
-                                    {
-                                        token: "tttt",
-                                        name: qsTr("Zone name")
-                                    }
-                                ]
-                                delegate: HarborButton {
-                                    required property var modelData
-                                    text: modelData.name + " · " + modelData.token
-                                    enabled: root.activePatternField !== null
-                                    Accessible.name: qsTr("Insert ") + modelData.name
-                                    onClicked: root.insertToken(modelData.token)
-                                }
-                            }
-                        }
-                        Note {
-                            text: qsTr("Use single quotes around literal words. For example: d MMMM yyyy or hh:mm AP. A 12-hour time format needs AP.")
-                        }
-                        GridLayout {
-                            visible: tabs.currentIndex === 2
-                            Layout.fillWidth: true
-                            columns: 2
-                            columnSpacing: 12
-                            HarborLabel {
-                                text: qsTr("Before noon")
-                            }
-                            HarborField {
-                                Layout.fillWidth: true
-                                text: root.advancedDraft.am || ""
-                                Accessible.name: qsTr("AM label")
-                                onTextEdited: root.stageAdvanced("am", text)
-                            }
-                            HarborLabel {
-                                text: qsTr("After noon")
-                            }
-                            HarborField {
-                                Layout.fillWidth: true
-                                text: root.advancedDraft.pm || ""
-                                Accessible.name: qsTr("PM label")
-                                onTextEdited: root.stageAdvanced("pm", text)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        footer: Frame {
-            padding: 16
-            background: Item {}
-            contentItem: RowLayout {
-                spacing: 8
-                Item {
-                    Layout.fillWidth: true
-                }
-                HarborButton {
-                    objectName: "restoreAdvanced"
-                    text: qsTr("Restore Defaults")
-                    onClicked: root.restoreAdvanced()
-                }
-                HarborButton {
-                    objectName: "cancelAdvanced"
-                    text: qsTr("Cancel")
-                    onClicked: advanced.close()
-                }
-                HarborButton {
-                    objectName: "acceptAdvanced"
-                    text: qsTr("OK")
-                    prominent: true
-                    enabled: !root.advancedSample.error
-                    onClicked: {
-                        root.draft = root.copy(root.advancedDraft);
-                        root.status = "";
-                        advanced.close();
-                    }
-                }
-            }
-        }
+        page: root
     }
 }
