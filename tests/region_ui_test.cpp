@@ -1,5 +1,6 @@
 #include <QtTest>
 #include <QQuickView>
+#include <QQmlEngine>
 #include <QQuickItem>
 #include <QQuickStyle>
 #include <QQmlContext>
@@ -7,6 +8,7 @@
 #include <QJSValue>
 #include <QKeyEvent>
 #include "core/Preferences.h"
+#include "core/Translation.h"
 #include "core/Region.h"
 class RegionUIMock : public QObject {
     Q_OBJECT
@@ -73,6 +75,8 @@ private slots:
         RegionForUI region(temp.path());
         RegionUIMock mock;
         QQuickView view;
+        Translation translation(prefs);
+        connect(&translation, &Translation::changed, view.engine(), &QQmlEngine::retranslate);
         auto ctx = view.rootContext();
         ctx->setContextProperty("Prefs", &prefs);
         ctx->setContextProperty("Region", &region);

@@ -2,7 +2,7 @@
 set -eu
 # Test harness only: intentionally operates inside a disposable Docker container.
 test -f /.dockerenv || { echo "Run only inside the documented Docker test container" >&2; exit 2; }
-apt-get install -y --no-install-recommends locales pkexec libkf6windowsystem-dev file libcap2-bin breeze-cursor-theme python3-gi gir1.2-nm-1.0 network-manager-openvpn-gnome bubblewrap >/build/extra-deps.log 2>&1
+apt-get install -y --no-install-recommends qt6-tools-dev qt6-l10n-tools locales pkexec libkf6windowsystem-dev file libcap2-bin breeze-cursor-theme python3-gi gir1.2-nm-1.0 network-manager-openvpn-gnome bubblewrap >/build/extra-deps.log 2>&1
 cmake -S /src -B /build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
 cmake --build /build -j4
 ctest --test-dir /build --output-on-failure

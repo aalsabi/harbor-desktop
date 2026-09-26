@@ -13,7 +13,6 @@ ColumnLayout {
  spacing:18
  LayoutMirroring.enabled:Prefs.language==="ar"
  LayoutMirroring.childrenInherit:true
- function t(en,ar){return Prefs.language==="ar"?ar:en}
  Component.onCompleted:PointerSettings.setActive(true)
  Component.onDestruction:PointerSettings.setActive(false)
  component Label:Text {Layout.fillWidth:true;color:root.ink;font.pixelSize:13;wrapMode:Text.WordWrap}
@@ -23,15 +22,15 @@ ColumnLayout {
   Layout.fillWidth:true;implicitHeight:body.implicitHeight+28;radius:10;color:root.card;border.color:root.line
   ColumnLayout{id:body;anchors.fill:parent;anchors.margins:14;spacing:12}
  }
- Note{text:root.deviceType==="touchpad"?root.t("Adjust scrolling, tracking and gestures for each touchpad.","اضبط التمرير وسرعة المؤشر وإيماءات كل لوحة لمس."):root.t("Adjust scrolling and tracking for each connected mouse.","اضبط التمرير وسرعة المؤشر لكل فأرة متصلة.")}
+ Note{text:root.deviceType==="touchpad"?qsTr("Adjust scrolling, tracking and gestures for each touchpad."):qsTr("Adjust scrolling and tracking for each connected mouse.")}
  Group {
   visible:!PointerSettings.available||root.devices.length===0
-  Label{text:!PointerSettings.available?root.t("Pointer settings are unavailable in this session.","إعدادات المؤشر غير متاحة في هذه الجلسة."):root.deviceType==="touchpad"?root.t("No touchpad connected","لا توجد لوحة لمس متصلة"):root.t("No mouse connected","لا توجد فأرة متصلة")}
-  HarborButton{text:root.t("Refresh","تحديث");enabled:!PointerSettings.busy;onClicked:PointerSettings.refresh()}
+  Label{text:!PointerSettings.available?qsTr("Pointer settings are unavailable in this session."):root.deviceType==="touchpad"?qsTr("No touchpad connected"):qsTr("No mouse connected")}
+  HarborButton{text:qsTr("Refresh");enabled:!PointerSettings.busy;onClicked:PointerSettings.refresh()}
  }
  Group {
   visible:PointerSettings.error.length>0
-  Label{text:root.t("Could not update pointer settings","تعذّر تحديث إعدادات المؤشر");font.bold:true}
+  Label{text:qsTr("Could not update pointer settings");font.bold:true}
   Note{text:PointerSettings.error}
  }
  Repeater {
@@ -40,11 +39,11 @@ ColumnLayout {
    id:deviceCard
    required property var modelData
    Label{text:deviceCard.modelData.name||deviceCard.modelData.sysName;font.bold:true;font.pixelSize:15}
-   Note{visible:deviceCard.modelData.enabled===false;text:root.t("This device is currently disabled by the system.","هذا الجهاز معطّل حاليًا بواسطة النظام.")}
+   Note{visible:deviceCard.modelData.enabled===false;text:qsTr("This device is currently disabled by the system.")}
    ColumnLayout {
     Layout.fillWidth:true
     visible:deviceCard.modelData.can_pointerAcceleration===true
-    Label{text:root.t("Tracking speed","سرعة المؤشر")}
+    Label{text:qsTr("Tracking speed")}
     Slider {
      id:speed
      objectName:"pointer-speed-"+deviceCard.modelData.sysName
@@ -52,7 +51,7 @@ ColumnLayout {
      property real requestedValue:0
      value:deviceCard.modelData.pointerAcceleration||0
      enabled:!PointerSettings.busy
-     Accessible.name:root.t("Tracking speed","سرعة المؤشر")
+     Accessible.name:qsTr("Tracking speed")
      onMoved:{requestedValue=value;if(!pressed)keyboardCommit.restart()}
      onPressedChanged:{
       if(pressed){requestedValue=value;keyboardCommit.stop();PointerSettings.setActive(false)}
@@ -60,27 +59,27 @@ ColumnLayout {
      }
      Timer{id:keyboardCommit;interval:180;onTriggered:PointerSettings.setSetting(deviceCard.modelData.sysName,"pointerAcceleration",speed.requestedValue)}
     }
-    RowLayout{Layout.fillWidth:true;Note{text:root.t("Slow","بطيء")}Note{text:root.t("Fast","سريع");horizontalAlignment:Text.AlignRight}}
+    RowLayout{Layout.fillWidth:true;Note{text:qsTr("Slow")}Note{text:qsTr("Fast");horizontalAlignment:Text.AlignRight}}
    }
    Repeater {
-    model:[{key:"naturalScroll",en:"Natural scrolling",ar:"التمرير الطبيعي"},{key:"leftHanded",en:"Left-handed buttons",ar:"أزرار لليد اليسرى"},{key:"tapToClick",en:"Tap to click",ar:"النقر باللمس"},{key:"tapAndDrag",en:"Tap and drag",ar:"النقر والسحب"},{key:"disableWhileTyping",en:"Ignore touchpad while typing",ar:"تجاهل لوحة اللمس أثناء الكتابة"}]
+    model:[{key:"naturalScroll",en:QT_TR_NOOP("Natural scrolling")},{key:"leftHanded",en:QT_TR_NOOP("Left-handed buttons")},{key:"tapToClick",en:QT_TR_NOOP("Tap to click")},{key:"tapAndDrag",en:QT_TR_NOOP("Tap and drag")},{key:"disableWhileTyping",en:QT_TR_NOOP("Ignore touchpad while typing")}]
     delegate:RowLayout {
      id:settingRow
      required property var modelData
      Layout.fillWidth:true
      visible:deviceCard.modelData["can_"+settingRow.modelData.key]===true
-     Label{text:root.t(settingRow.modelData.en,settingRow.modelData.ar)}
+     Label{text:qsTr(settingRow.modelData.en)}
      Switch {
       objectName:"pointer-"+settingRow.modelData.key+"-"+deviceCard.modelData.sysName
       checked:deviceCard.modelData[settingRow.modelData.key]===true
       enabled:!PointerSettings.busy&&(settingRow.modelData.key!=="tapAndDrag"||deviceCard.modelData.tapToClick===true)
-      Accessible.name:root.t(settingRow.modelData.en,settingRow.modelData.ar)
+      Accessible.name:qsTr(settingRow.modelData.en)
       onClicked:{PointerSettings.setSetting(deviceCard.modelData.sysName,settingRow.modelData.key,checked);checked=Qt.binding(function(){return deviceCard.modelData[settingRow.modelData.key]===true})}
      }
     }
    }
-   Note{visible:!deviceCard.modelData.can_pointerAcceleration&&!deviceCard.modelData.can_naturalScroll&&!deviceCard.modelData.can_leftHanded&&!deviceCard.modelData.can_tapToClick&&!deviceCard.modelData.can_disableWhileTyping;text:root.t("This device does not expose adjustable pointer settings.","هذا الجهاز لا يتيح إعدادات مؤشر قابلة للتعديل.")}
+   Note{visible:!deviceCard.modelData.can_pointerAcceleration&&!deviceCard.modelData.can_naturalScroll&&!deviceCard.modelData.can_leftHanded&&!deviceCard.modelData.can_tapToClick&&!deviceCard.modelData.can_disableWhileTyping;text:qsTr("This device does not expose adjustable pointer settings.")}
   }
  }
- Note{visible:root.devices.length>0;text:root.t("Changes apply immediately and are saved by the system.","تُطبّق التغييرات فورًا ويحفظها النظام.")}
+ Note{visible:root.devices.length>0;text:qsTr("Changes apply immediately and are saved by the system.")}
 }

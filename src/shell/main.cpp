@@ -134,18 +134,12 @@ int main(int argc, char** argv) {
         if (!preview)
             menu.setSource(windows.menuService(), windows.menuPath());
     });
-    Translation translation;
-    translation.arabic = preferences.language() == "ar";
-    app.installTranslator(&translation);
-    app.setLayoutDirection(translation.arabic ? Qt::RightToLeft : Qt::LeftToRight);
+    Translation translation(preferences);
+    app.setLayoutDirection(translation.rightToLeft() ? Qt::RightToLeft : Qt::LeftToRight);
     QQmlEngine engine;
-    QObject::connect(&preferences, &Preferences::changed, &engine, [&] {
-        bool ar = preferences.language() == "ar";
-        if (ar != translation.arabic) {
-            translation.arabic = ar;
-            app.setLayoutDirection(ar ? Qt::RightToLeft : Qt::LeftToRight);
-            engine.retranslate();
-        }
+    QObject::connect(&translation, &Translation::changed, &engine, [&] {
+        app.setLayoutDirection(translation.rightToLeft() ? Qt::RightToLeft : Qt::LeftToRight);
+        engine.retranslate();
     });
     engine.addImageProvider("icons", new Icons);
     auto ctx = engine.rootContext();

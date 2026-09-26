@@ -2,6 +2,7 @@
 #include <QTemporaryDir>
 #include "core/Preferences.h"
 #include "core/Command.h"
+#include "core/Translation.h"
 class CoreTest : public QObject {
     Q_OBJECT
 private slots:
@@ -46,6 +47,24 @@ private slots:
         QTRY_VERIFY_WITH_TIMEOUT(change.count() > 0, 3000);
         QCOMPARE(p.dark(), false);
         QCOMPARE(p.language(), QString("ar"));
+    }
+    void arabicTranslationFollowsPreference() {
+        QTemporaryDir d;
+        Preferences p(d.filePath("settings.ini"));
+        p.setLanguage("en");
+        Translation translation(p);
+        QSignalSpy changed(&translation, &Translation::changed);
+        QCOMPARE(QCoreApplication::translate("Settings", "Wi-Fi"), QString("Wi-Fi"));
+        p.setLanguage("ar");
+        QCOMPARE(changed.count(), 1);
+        QVERIFY(translation.rightToLeft());
+        QCOMPARE(QCoreApplication::translate("Settings", "Wi-Fi"), QString::fromUtf8("واي فاي"));
+        QCOMPARE(QCoreApplication::translate("Settings", "Battery"), QString::fromUtf8("الطاقة"));
+        QCOMPARE(QCoreApplication::translate("Settings", "Battery", "battery status"),
+                 QString::fromUtf8("البطارية"));
+        p.setLanguage("en");
+        QCOMPARE(changed.count(), 2);
+        QCOMPARE(QCoreApplication::translate("Settings", "Wi-Fi"), QString("Wi-Fi"));
     }
     void shellMetacharactersAreLiteral() {
         Command c;

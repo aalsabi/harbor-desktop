@@ -3,10 +3,21 @@ project(HarborDesktop VERSION 0.9.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Quick QuickControls2 DBus Network Test Svg)
-add_library(harbor-core src/core/Preferences.cpp src/core/Command.cpp)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Quick QuickControls2 DBus Network Test Svg LinguistTools)
+add_library(harbor-core src/core/Preferences.cpp src/core/Command.cpp src/core/Translation.cpp)
 target_include_directories(harbor-core PUBLIC src)
 target_link_libraries(harbor-core PUBLIC Qt6::Core)
+
+# Interface translations. `cmake --build <dir> --target update_translations` refreshes the
+# .ts files from the sources; edit them with Qt Linguist. The compiled .qm files are embedded
+# under :/i18n so the shell and the UI tests load the same catalogue.
+set(HARBOR_TS_FILES translations/harbor_ar.ts)
+file(GLOB HARBOR_TR_SOURCES CONFIGURE_DEPENDS qml/*.qml src/*/*.cpp src/*/*.h)
+qt_add_lupdate(TS_FILES ${HARBOR_TS_FILES} SOURCES ${HARBOR_TR_SOURCES}
+    LUPDATE_TARGET update_translations NO_GLOBAL_TARGET OPTIONS -locations none -no-obsolete)
+qt_add_lrelease(TS_FILES ${HARBOR_TS_FILES} QM_FILES_OUTPUT_VARIABLE HARBOR_QM_FILES NO_GLOBAL_TARGET)
+qt_add_resources(harbor-core harbor_translations PREFIX /i18n BASE ${CMAKE_CURRENT_BINARY_DIR}
+    FILES ${HARBOR_QM_FILES})
 enable_testing()
 add_executable(core-test tests/core_test.cpp)
 target_link_libraries(core-test PRIVATE harbor-core Qt6::Test)

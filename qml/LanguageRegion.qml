@@ -22,7 +22,6 @@ ColumnLayout {
  property var activePatternField: null
  LayoutMirroring.enabled: arabic
  LayoutMirroring.childrenInherit: true
- function t(en, ar) { return arabic ? ar : en }
  function copy(value) { return JSON.parse(JSON.stringify(value)) }
  function stage(key, value) { var next=copy(draft); next[key]=value; draft=next; status="" }
  function stageAdvanced(key, value) { var next=copy(advancedDraft); next[key]=value; advancedDraft=next }
@@ -52,7 +51,7 @@ ColumnLayout {
  }
  function restoreMain() {
   var next=copy(Region.defaults(draft.region));next.languages=draft.languages.slice();draft=next
-  status=t("Defaults restored in this draft. Choose Apply to save.","تمت استعادة الإعدادات الافتراضية في المسودة. اختر تطبيق لحفظها.")
+  status=qsTr("Defaults restored in this draft. Choose Apply to save.")
  }
  function restoreAdvanced() {
   var defaults=Region.defaults(advancedDraft.region);var next=copy(advancedDraft)
@@ -75,7 +74,7 @@ ColumnLayout {
   draft=copy(Region.state)
   var supported=draft.languages.find(function(code){return code.split(/[-_]/)[0]==="ar" || code.split(/[-_]/)[0]==="en"})
   if(supported)Prefs.language=supported.split(/[-_]/)[0]
-  status=t("Preferences saved. Sign out and back in to apply them to other applications.","تم حفظ التفضيلات. سجّل الخروج والدخول لتطبيقها على البرامج الأخرى.")
+  status=qsTr("Preferences saved. Sign out and back in to apply them to other applications.")
  }
  function applyChanges() {
   if(Region.busy)return
@@ -83,13 +82,13 @@ ColumnLayout {
   if(plan.error){status=plan.error;return}
   if(plan.locales.length){generationDraft=copy(draft);requiredLocales=plan.locales;status="";generateDialog.open();return}
   if(Region.apply(draft))saved()
-  else status=Region.message || t("The settings could not be applied.","تعذر تطبيق الإعدادات.")
+  else status=Region.message || qsTr("The settings could not be applied.")
  }
  Connections {
   target:Region
   function onGenerationFinished(success){
    if(success){generateDialog.close();root.saved()}
-   else root.status=Region.message || root.t("Generation was cancelled or failed. Your settings were not changed.","أُلغي التوليد أو تعذّر. لم تتغير إعداداتك.")
+   else root.status=Region.message || qsTr("Generation was cancelled or failed. Your settings were not changed.")
   }
  }
  Component.onCompleted: { draft=copy(Region.state); ready=true }
@@ -149,8 +148,8 @@ ColumnLayout {
    Layout.preferredWidth:root.width>=600?root.width*0.47:root.width
    contentItem:ColumnLayout {
     spacing:9
-    Heading {text:root.t("Preferred languages","اللغات المفضلة")}
-    Note {text:root.t("Menu languages, not keyboard layouts. Keep only English for English-only menus.","هذه لغات القوائم وليست لغات الكتابة. أبقِ الإنجليزية وحدها لقوائم إنجليزية فقط.")}
+    Heading {text:qsTr("Preferred languages")}
+    Note {text:qsTr("Menu languages, not keyboard layouts. Keep only English for English-only menus.")}
     Rectangle {
      Layout.fillWidth:true;Layout.preferredHeight:184;color:Prefs.dark?"#222226":"white";border.color:root.line;radius:4
      ListView {
@@ -162,75 +161,75 @@ ColumnLayout {
        required property string modelData;required property int index
        width:ListView.view.width;height:48;highlighted:index===root.selectedLanguage
        onClicked:root.selectedLanguage=index
-       Accessible.name:root.languageTitle(modelData)+(index===0?root.t(", Primary","، الأساسية"):"")
+       Accessible.name:root.languageTitle(modelData)+(index===0?qsTr(", Primary"):"")
        background:Rectangle {color:languageRow.highlighted?Prefs.accent:"transparent"}
        contentItem:Column {
         spacing:2
         Text {width:parent.width;text:root.languageTitle(modelData);color:languageRow.highlighted?"white":root.ink;elide:Text.ElideRight;font.pixelSize:13}
-        Text {text:index===0?root.t("Primary","الأساسية"):root.t("Alternative","بديلة");color:languageRow.highlighted?"#eeffffff":root.muted;font.pixelSize:11}
+        Text {text:index===0?qsTr("Primary"):qsTr("Alternative");color:languageRow.highlighted?"#eeffffff":root.muted;font.pixelSize:11}
        }
       }
      }
     }
     RowLayout {
      spacing:5
-     HarborButton {objectName:"addLanguage";text:"+";Layout.preferredWidth:34;Accessible.name:root.t("Add language","إضافة لغة");onClicked:{languageSearch.text="";addDialog.selectedCode="";addDialog.open()}}
-     HarborButton {objectName:"removeLanguage";text:"−";Layout.preferredWidth:34;enabled:(root.draft.languages || []).length>1;Accessible.name:root.t("Remove selected language","إزالة اللغة المحددة");onClicked:{var a=root.draft.languages.slice();a.splice(root.selectedLanguage,1);root.stage("languages",a);root.selectedLanguage=Math.min(root.selectedLanguage,a.length-1)}}
+     HarborButton {objectName:"addLanguage";text:"+";Layout.preferredWidth:34;Accessible.name:qsTr("Add language");onClicked:{languageSearch.text="";addDialog.selectedCode="";addDialog.open()}}
+     HarborButton {objectName:"removeLanguage";text:"−";Layout.preferredWidth:34;enabled:(root.draft.languages || []).length>1;Accessible.name:qsTr("Remove selected language");onClicked:{var a=root.draft.languages.slice();a.splice(root.selectedLanguage,1);root.stage("languages",a);root.selectedLanguage=Math.min(root.selectedLanguage,a.length-1)}}
      Item {Layout.fillWidth:true}
-     HarborButton {text:"↑";Layout.preferredWidth:34;enabled:root.selectedLanguage>0;Accessible.name:root.t("Move selected language up","نقل اللغة إلى أعلى");onClicked:root.moveLanguage(-1)}
-     HarborButton {text:"↓";Layout.preferredWidth:34;enabled:root.selectedLanguage<(root.draft.languages || []).length-1;Accessible.name:root.t("Move selected language down","نقل اللغة إلى أسفل");onClicked:root.moveLanguage(1)}
+     HarborButton {text:"↑";Layout.preferredWidth:34;enabled:root.selectedLanguage>0;Accessible.name:qsTr("Move selected language up");onClicked:root.moveLanguage(-1)}
+     HarborButton {text:"↓";Layout.preferredWidth:34;enabled:root.selectedLanguage<(root.draft.languages || []).length-1;Accessible.name:qsTr("Move selected language down");onClicked:root.moveLanguage(1)}
     }
    }
   }
   ColumnLayout {
    Layout.fillWidth:true;Layout.alignment:Qt.AlignTop;spacing:10
-   Heading {text:root.t("Region","المنطقة")}
-   Choice {objectName:"regionChoice";choices:Region.regions;selected:root.draft.region || "";Accessible.name:root.t("Region","المنطقة");onChosen:root.changeRegion(value)}
-   Heading {text:root.t("First day of the week","أول أيام الأسبوع")}
-   Choice {choices:[{code:"1",name:root.t("Monday","الاثنين")},{code:"2",name:root.t("Tuesday","الثلاثاء")},{code:"3",name:root.t("Wednesday","الأربعاء")},{code:"4",name:root.t("Thursday","الخميس")},{code:"5",name:root.t("Friday","الجمعة")},{code:"6",name:root.t("Saturday","السبت")},{code:"7",name:root.t("Sunday","الأحد")}];selected:String(root.draft.firstDay || 1);Accessible.name:root.t("First day of the week","أول أيام الأسبوع");onChosen:root.stage("firstDay",Number(value))}
-   Heading {text:root.t("Calendar","التقويم")}
-   Choice {choices:Region.calendars;selected:root.draft.calendar || "Gregorian";Accessible.name:root.t("Calendar","التقويم");onChosen:root.stage("calendar",value)}
-   CheckBox {objectName:"hour24";palette.windowText:root.ink;palette.text:root.ink;palette.buttonText:root.ink;text:root.t("Use 24-hour time","استخدام الوقت بنظام 24 ساعة");checked:root.draft.hour24===true;onClicked:root.setHour24(checked)}
+   Heading {text:qsTr("Region")}
+   Choice {objectName:"regionChoice";choices:Region.regions;selected:root.draft.region || "";Accessible.name:qsTr("Region");onChosen:root.changeRegion(value)}
+   Heading {text:qsTr("First day of the week")}
+   Choice {choices:[{code:"1",name:qsTr("Monday")},{code:"2",name:qsTr("Tuesday")},{code:"3",name:qsTr("Wednesday")},{code:"4",name:qsTr("Thursday")},{code:"5",name:qsTr("Friday")},{code:"6",name:qsTr("Saturday")},{code:"7",name:qsTr("Sunday")}];selected:String(root.draft.firstDay || 1);Accessible.name:qsTr("First day of the week");onChosen:root.stage("firstDay",Number(value))}
+   Heading {text:qsTr("Calendar")}
+   Choice {choices:Region.calendars;selected:root.draft.calendar || "Gregorian";Accessible.name:qsTr("Calendar");onChosen:root.stage("calendar",value)}
+   CheckBox {objectName:"hour24";palette.windowText:root.ink;palette.text:root.ink;palette.buttonText:root.ink;text:qsTr("Use 24-hour time");checked:root.draft.hour24===true;onClicked:root.setHour24(checked)}
   }
  }
  Pane {
   Layout.fillWidth:true
   contentItem:ColumnLayout {
    spacing:7
-   Heading {text:root.t("Region preview","معاينة تنسيق المنطقة")}
+   Heading {text:qsTr("Region preview")}
    GridLayout {
     Layout.fillWidth:true;columns:2;columnSpacing:16;rowSpacing:6
-    HarborLabel {text:root.t("Date","التاريخ");color:root.muted}
+    HarborLabel {text:qsTr("Date");color:root.muted}
     HarborLabel {Layout.fillWidth:true;wrapMode:Text.WrapAnywhere;text:root.sample.date || ""}
-    HarborLabel {text:root.t("Time","الوقت");color:root.muted}
+    HarborLabel {text:qsTr("Time");color:root.muted}
     HarborLabel {Layout.fillWidth:true;wrapMode:Text.WrapAnywhere;text:root.sample.time || ""}
-    HarborLabel {text:root.t("Number","العدد");color:root.muted}
+    HarborLabel {text:qsTr("Number");color:root.muted}
     HarborLabel {Layout.fillWidth:true;wrapMode:Text.WrapAnywhere;text:root.sample.number || ""}
-    HarborLabel {text:root.t("Week","الأسبوع");color:root.muted}
+    HarborLabel {text:qsTr("Week");color:root.muted}
     HarborLabel {Layout.fillWidth:true;wrapMode:Text.WordWrap;text:(root.sample.weekdays || []).join(" · ")}
-    HarborLabel {text:root.t("Units","الوحدات");color:root.muted}
+    HarborLabel {text:qsTr("Units");color:root.muted}
     HarborLabel {Layout.fillWidth:true;wrapMode:Text.WordWrap;text:root.sample.measurementExample || ""}
-    HarborLabel {text:root.t("Currency","العملة");color:root.muted}
+    HarborLabel {text:qsTr("Currency");color:root.muted}
     HarborLabel {Layout.fillWidth:true;wrapMode:Text.WrapAnywhere;text:root.sample.currency || ""}
    }
   }
  }
  Note {visible:!!root.sample.error;text:root.sample.error || ""}
  Note {visible:Region.localeNotice.length>0;text:Region.localeNotice}
- Note {text:root.t("Harbor is translated into English and Arabic. Preferred languages and region apply to other applications after your next login. Custom date, time and number formats apply within Harbor.","تتوفر واجهة Harbor بالعربية والإنجليزية. تسري اللغات المفضلة والمنطقة على التطبيقات الأخرى بعد تسجيل الدخول التالي. تنسيقات التاريخ والوقت والأرقام المخصصة خاصة بـ Harbor.")}
+ Note {text:qsTr("Harbor is translated into English and Arabic. Preferred languages and region apply to other applications after your next login. Custom date, time and number formats apply within Harbor.")}
  RowLayout {
   Layout.fillWidth:true;spacing:8
-  HarborButton {text:root.t("Keyboard Preferences…","تفضيلات لوحة المفاتيح…");onClicked:root.keyboardRequested()}
+  HarborButton {text:qsTr("Keyboard Preferences…");onClicked:root.keyboardRequested()}
   Item {Layout.fillWidth:true}
-  HarborButton {objectName:"advancedRegion";text:root.t("Advanced…","متقدم…");onClicked:root.openAdvanced()}
+  HarborButton {objectName:"advancedRegion";text:qsTr("Advanced…");onClicked:root.openAdvanced()}
  }
  Rectangle {Layout.fillWidth:true;implicitHeight:1;color:root.line}
  RowLayout {
   Layout.fillWidth:true
-  HarborButton {objectName:"restoreRegion";text:root.t("Restore Defaults","استعادة الافتراضي");onClicked:root.restoreMain()}
+  HarborButton {objectName:"restoreRegion";text:qsTr("Restore Defaults");onClicked:root.restoreMain()}
   Item {Layout.fillWidth:true}
-  HarborButton {objectName:"revertRegion";text:root.t("Revert","تراجع");onClicked:{root.draft=root.copy(Region.state);root.selectedLanguage=0;root.status=""}}
-  HarborButton {objectName:"applyRegion";text:root.t("Apply","تطبيق");prominent:true;enabled:!root.sample.error&&!Region.busy;onClicked:root.applyChanges()}
+  HarborButton {objectName:"revertRegion";text:qsTr("Revert");onClicked:{root.draft=root.copy(Region.state);root.selectedLanguage=0;root.status=""}}
+  HarborButton {objectName:"applyRegion";text:qsTr("Apply");prominent:true;enabled:!root.sample.error&&!Region.busy;onClicked:root.applyChanges()}
  }
  Note {objectName:"regionStatus";visible:text.length>0;text:root.status;Accessible.role:Accessible.StaticText}
 
@@ -239,20 +238,20 @@ ColumnLayout {
   parent:Overlay.overlay;anchors.centerIn:parent
   width:Math.min(500,parent?parent.width-32:500)
   modal:true;closePolicy:Region.busy?Popup.NoAutoClose:Popup.CloseOnEscape
-  title:root.t("Generate regional settings?","توليد الإعدادات الإقليمية؟")
+  title:qsTr("Generate regional settings?")
   contentItem:ColumnLayout {
    spacing:12;LayoutMirroring.enabled:root.arabic;LayoutMirroring.childrenInherit:true
-   Note {text:root.t("The required locales are not generated on this computer. Choose OK to generate them and apply your preferences. Administrator authentication is required.","الإعدادات الإقليمية المطلوبة غير مولّدة على هذا الجهاز. اضغط موافق لتوليدها وتطبيق تفضيلاتك. سيطلب النظام مصادقة المسؤول.")}
+   Note {text:qsTr("The required locales are not generated on this computer. Choose OK to generate them and apply your preferences. Administrator authentication is required.")}
    HarborLabel {Layout.fillWidth:true;wrapMode:Text.WrapAnywhere;text:root.requiredLocales.join(" · ");LayoutMirroring.enabled:false}
-   RowLayout {visible:Region.busy;BusyIndicator{running:Region.busy;implicitWidth:28;implicitHeight:28}Note{text:root.t("Waiting for authentication or generating locales…","بانتظار المصادقة أو توليد الإعدادات…")}}
+   RowLayout {visible:Region.busy;BusyIndicator{running:Region.busy;implicitWidth:28;implicitHeight:28}Note{text:qsTr("Waiting for authentication or generating locales…")}}
    Note {objectName:"generationError";visible:root.status.length>0;text:root.status}
   }
   footer:Item {
    implicitHeight:60
    RowLayout {anchors.fill:parent;anchors.margins:16;spacing:8
     Item {Layout.fillWidth:true}
-    HarborButton {objectName:"cancelGeneration";text:root.t("Cancel","إلغاء");enabled:!Region.busy;onClicked:generateDialog.close()}
-    HarborButton {objectName:"confirmGeneration";text:root.t("OK","موافق");prominent:true;enabled:!Region.busy;onClicked:{root.status="";Region.generateAndApply(root.generationDraft)}}
+    HarborButton {objectName:"cancelGeneration";text:qsTr("Cancel");enabled:!Region.busy;onClicked:generateDialog.close()}
+    HarborButton {objectName:"confirmGeneration";text:qsTr("OK");prominent:true;enabled:!Region.busy;onClicked:{root.status="";Region.generateAndApply(root.generationDraft)}}
    }
   }
  }
@@ -262,12 +261,12 @@ ColumnLayout {
   parent:Overlay.overlay;anchors.centerIn:parent
   width:Math.min(480,parent?parent.width-32:480);height:Math.min(540,parent?parent.height-32:540)
   modal:true;closePolicy:Popup.CloseOnEscape
-  title:root.t("Add a preferred language","إضافة لغة مفضلة")
+  title:qsTr("Add a preferred language")
   property string selectedCode:""
   contentItem:ColumnLayout {
    LayoutMirroring.enabled:root.arabic;LayoutMirroring.childrenInherit:true
    spacing:10
-   HarborField {id:languageSearch;objectName:"languageSearch";Layout.fillWidth:true;placeholderText:root.t("Search languages","البحث عن لغة");Accessible.name:placeholderText}
+   HarborField {id:languageSearch;objectName:"languageSearch";Layout.fillWidth:true;placeholderText:qsTr("Search languages");Accessible.name:placeholderText}
    ListView {
     id:availableLanguages;Layout.fillWidth:true;Layout.fillHeight:true;clip:true
     model:Region.languages.filter(function(l){var q=languageSearch.text.toLowerCase();return (root.draft.languages || []).indexOf(l.code)<0 && (l.name+" "+l.nativeName+" "+l.code).toLowerCase().indexOf(q)>=0})
@@ -280,7 +279,7 @@ ColumnLayout {
      background:Rectangle {radius:5;color:availableLanguage.highlighted?Prefs.accent:availableLanguage.hovered?(Prefs.dark?"#414149":"#e7e7ed"):"transparent"}
      onClicked:addDialog.selectedCode=modelData.code
     }
-    HarborLabel {anchors.centerIn:parent;visible:availableLanguages.count===0;text:root.t("No matching languages","لا توجد لغات مطابقة")}
+    HarborLabel {anchors.centerIn:parent;visible:availableLanguages.count===0;text:qsTr("No matching languages")}
    }
   }
   footer:Frame {
@@ -288,8 +287,8 @@ ColumnLayout {
    contentItem:RowLayout {
    spacing:8
    Item {Layout.fillWidth:true}
-   HarborButton {text:root.t("Cancel","إلغاء");onClicked:addDialog.close()}
-   HarborButton {objectName:"confirmAddLanguage";text:root.t("Add","إضافة");prominent:true;enabled:addDialog.selectedCode.length>0;onClicked:{var a=root.draft.languages.slice();a.push(addDialog.selectedCode);root.stage("languages",a);root.selectedLanguage=a.length-1;addDialog.close()}}
+   HarborButton {text:qsTr("Cancel");onClicked:addDialog.close()}
+   HarborButton {objectName:"confirmAddLanguage";text:qsTr("Add");prominent:true;enabled:addDialog.selectedCode.length>0;onClicked:{var a=root.draft.languages.slice();a.push(addDialog.selectedCode);root.stage("languages",a);root.selectedLanguage=a.length-1;addDialog.close()}}
      }
   }
  }
@@ -298,7 +297,7 @@ ColumnLayout {
   parent:Overlay.overlay;anchors.centerIn:parent
   width:Math.min(680,parent?parent.width-32:680);height:Math.min(690,parent?parent.height-32:690)
   modal:true;closePolicy:Popup.CloseOnEscape
-  title:root.t("Advanced Language & Region","إعدادات اللغة والمنطقة المتقدمة")
+  title:qsTr("Advanced Language & Region")
   contentItem:ColumnLayout {
    LayoutMirroring.enabled:root.arabic;LayoutMirroring.childrenInherit:true
    spacing:14
@@ -306,9 +305,9 @@ ColumnLayout {
    TabBar {
     id:tabs;objectName:"advancedRegionTabs";Layout.fillWidth:true;implicitHeight:36;padding:3;spacing:2
     background:Rectangle {radius:9;color:Prefs.dark?"#3a3a40":"#e7e7ec";border.color:root.line}
-    SegmentTab {text:root.t("General","عام")}
-    SegmentTab {text:root.t("Dates","التواريخ")}
-    SegmentTab {text:root.t("Times","الأوقات")}
+    SegmentTab {text:qsTr("General")}
+    SegmentTab {text:qsTr("Dates")}
+    SegmentTab {text:qsTr("Times")}
     onCurrentIndexChanged:root.activePatternField=null
    }
    ScrollView {
@@ -317,68 +316,68 @@ ColumnLayout {
      width:advancedScroll.availableWidth;spacing:14
      ColumnLayout {
       visible:tabs.currentIndex===0;Layout.fillWidth:true;spacing:10
-      Heading {text:root.t("Format language","لغة التنسيق")}
-      Choice {choices:Region.languages;selected:root.advancedDraft.formatLanguage || "en";Accessible.name:root.t("Format language","لغة التنسيق");onChosen:root.stageAdvanced("formatLanguage",value)}
-      Heading {text:root.t("Number separators","فواصل الأعداد")}
+      Heading {text:qsTr("Format language")}
+      Choice {choices:Region.languages;selected:root.advancedDraft.formatLanguage || "en";Accessible.name:qsTr("Format language");onChosen:root.stageAdvanced("formatLanguage",value)}
+      Heading {text:qsTr("Number separators")}
       GridLayout {
        columns:2;Layout.fillWidth:true;columnSpacing:12
-       HarborLabel {text:root.t("Grouping","المجموعات")}
-       HarborField {objectName:"numberGroup";Layout.fillWidth:true;text:root.advancedDraft.numberGroup || "";maximumLength:4;Accessible.name:root.t("Number grouping separator","فاصل مجموعات الأعداد");onTextEdited:root.stageAdvanced("numberGroup",text)}
-       HarborLabel {text:root.t("Decimal","العشري")}
-       HarborField {objectName:"numberDecimal";Layout.fillWidth:true;text:root.advancedDraft.numberDecimal || "";maximumLength:4;Accessible.name:root.t("Number decimal separator","الفاصل العشري للأعداد");onTextEdited:root.stageAdvanced("numberDecimal",text)}
+       HarborLabel {text:qsTr("Grouping")}
+       HarborField {objectName:"numberGroup";Layout.fillWidth:true;text:root.advancedDraft.numberGroup || "";maximumLength:4;Accessible.name:qsTr("Number grouping separator");onTextEdited:root.stageAdvanced("numberGroup",text)}
+       HarborLabel {text:qsTr("Decimal")}
+       HarborField {objectName:"numberDecimal";Layout.fillWidth:true;text:root.advancedDraft.numberDecimal || "";maximumLength:4;Accessible.name:qsTr("Number decimal separator");onTextEdited:root.stageAdvanced("numberDecimal",text)}
       }
       Note {text:root.advancedSample.number || ""}
-      Heading {text:root.t("Currency","العملة")}
+      Heading {text:qsTr("Currency")}
       GridLayout {
        columns:2;Layout.fillWidth:true;columnSpacing:12
-       HarborLabel {text:root.t("Currency","العملة")}
-       Choice {objectName:"currencyCode";choices:Region.currencies;selected:root.advancedDraft.currency || "";Accessible.name:root.t("Currency","العملة");onChosen:root.stageAdvanced("currency",value)}
-       HarborLabel {text:root.t("Grouping","المجموعات")}
-       HarborField {Layout.fillWidth:true;text:root.advancedDraft.currencyGroup || "";maximumLength:4;Accessible.name:root.t("Currency grouping separator","فاصل مجموعات العملة");onTextEdited:root.stageAdvanced("currencyGroup",text)}
-       HarborLabel {text:root.t("Decimal","العشري")}
-       HarborField {Layout.fillWidth:true;text:root.advancedDraft.currencyDecimal || "";maximumLength:4;Accessible.name:root.t("Currency decimal separator","الفاصل العشري للعملة");onTextEdited:root.stageAdvanced("currencyDecimal",text)}
+       HarborLabel {text:qsTr("Currency")}
+       Choice {objectName:"currencyCode";choices:Region.currencies;selected:root.advancedDraft.currency || "";Accessible.name:qsTr("Currency");onChosen:root.stageAdvanced("currency",value)}
+       HarborLabel {text:qsTr("Grouping")}
+       HarborField {Layout.fillWidth:true;text:root.advancedDraft.currencyGroup || "";maximumLength:4;Accessible.name:qsTr("Currency grouping separator");onTextEdited:root.stageAdvanced("currencyGroup",text)}
+       HarborLabel {text:qsTr("Decimal")}
+       HarborField {Layout.fillWidth:true;text:root.advancedDraft.currencyDecimal || "";maximumLength:4;Accessible.name:qsTr("Currency decimal separator");onTextEdited:root.stageAdvanced("currencyDecimal",text)}
       }
       Note {text:root.advancedSample.currency || ""}
-      Heading {text:root.t("Measurement units","وحدات القياس")}
-      Choice {choices:[{code:"metric",name:root.t("Metric","متري")},{code:"us",name:root.t("US","أمريكي")},{code:"uk",name:root.t("UK","بريطاني")}];selected:root.advancedDraft.measurement || "metric";Accessible.name:root.t("Measurement units","وحدات القياس");onChosen:root.stageAdvanced("measurement",value)}
+      Heading {text:qsTr("Measurement units")}
+      Choice {choices:[{code:"metric",name:qsTr("Metric")},{code:"us",name:qsTr("US")},{code:"uk",name:qsTr("UK")}];selected:root.advancedDraft.measurement || "metric";Accessible.name:qsTr("Measurement units");onChosen:root.stageAdvanced("measurement",value)}
       Note {text:root.advancedSample.measurementExample || ""}
      }
      ColumnLayout {
       visible:tabs.currentIndex>0;Layout.fillWidth:true;spacing:10
-      Note {text:root.t("Select a format field, then insert a component below or type a custom pattern. Previews update as you edit.","حدد حقل تنسيق ثم أدرج مكونًا من الأسفل أو اكتب نمطًا مخصصًا. تتحدث المعاينة أثناء التحرير.")}
+      Note {text:qsTr("Select a format field, then insert a component below or type a custom pattern. Previews update as you edit.")}
       Repeater {
        model:4
        delegate:ColumnLayout {
         id:formatRow
         required property int index;Layout.fillWidth:true;spacing:4
-        Heading {text:[root.t("Short","قصير"),root.t("Medium","متوسط"),root.t("Long","طويل"),root.t("Full","كامل")][index]}
+        Heading {text:[qsTr("Short"),qsTr("Medium"),qsTr("Long"),qsTr("Full")][index]}
         HarborField {
          property int patternIndex:formatRow.index
          objectName:"formatPattern"+patternIndex
          Layout.fillWidth:true;LayoutMirroring.enabled:false
          text:((tabs.currentIndex===1?root.advancedDraft.dateFormats:root.advancedDraft.timeFormats)||[])[patternIndex] || ""
-         Accessible.name:(tabs.currentIndex===1?root.t("Date format ","تنسيق التاريخ "):root.t("Time format ","تنسيق الوقت "))+(patternIndex+1)
+         Accessible.name:(tabs.currentIndex===1?qsTr("Date format "):qsTr("Time format "))+(patternIndex+1)
          onActiveFocusChanged:if(activeFocus)root.activePatternField=this
          onTextEdited:root.setPattern(patternIndex,text)
         }
         Note {text:((tabs.currentIndex===1?root.advancedSample.dates:root.advancedSample.times)||[])[index] || ""}
        }
       }
-      Heading {text:root.t("Insert a component","إدراج مكون")}
+      Heading {text:qsTr("Insert a component")}
       Flow {
        Layout.fillWidth:true;spacing:6
        Repeater {
-        model:tabs.currentIndex===1?[{token:"d",name:root.t("Day","اليوم")},{token:"dddd",name:root.t("Weekday","يوم الأسبوع")},{token:"M",name:root.t("Month number","رقم الشهر")},{token:"MMMM",name:root.t("Month name","اسم الشهر")},{token:"yyyy",name:root.t("Year","السنة")}]:[{token:"HH",name:root.t("Hour 24","ساعة 24")},{token:"hh",name:root.t("Hour 12","ساعة 12")},{token:"mm",name:root.t("Minute","الدقيقة")},{token:"ss",name:root.t("Second","الثانية")},{token:"AP",name:root.t("AM/PM","ص/م")},{token:"zzz",name:root.t("Millisecond","جزء الألف")},{token:"t",name:root.t("Time zone","المنطقة الزمنية")},{token:"tttt",name:root.t("Zone name","اسم المنطقة الزمنية")}]
-        delegate:HarborButton {required property var modelData;text:modelData.name+" · "+modelData.token;enabled:root.activePatternField!==null;Accessible.name:root.t("Insert ","إدراج ")+modelData.name;onClicked:root.insertToken(modelData.token)}
+        model:tabs.currentIndex===1?[{token:"d",name:qsTr("Day")},{token:"dddd",name:qsTr("Weekday")},{token:"M",name:qsTr("Month number")},{token:"MMMM",name:qsTr("Month name")},{token:"yyyy",name:qsTr("Year")}]:[{token:"HH",name:qsTr("Hour 24")},{token:"hh",name:qsTr("Hour 12")},{token:"mm",name:qsTr("Minute")},{token:"ss",name:qsTr("Second")},{token:"AP",name:qsTr("AM/PM")},{token:"zzz",name:qsTr("Millisecond")},{token:"t",name:qsTr("Time zone")},{token:"tttt",name:qsTr("Zone name")}]
+        delegate:HarborButton {required property var modelData;text:modelData.name+" · "+modelData.token;enabled:root.activePatternField!==null;Accessible.name:qsTr("Insert ")+modelData.name;onClicked:root.insertToken(modelData.token)}
        }
       }
-      Note {text:root.t("Use single quotes around literal words. For example: d MMMM yyyy or hh:mm AP. A 12-hour time format needs AP.","ضع الكلمات الحرفية بين علامتي اقتباس مفردتين. مثال: d MMMM yyyy أو hh:mm AP. يحتاج تنسيق 12 ساعة إلى AP.")}
+      Note {text:qsTr("Use single quotes around literal words. For example: d MMMM yyyy or hh:mm AP. A 12-hour time format needs AP.")}
       GridLayout {
        visible:tabs.currentIndex===2;Layout.fillWidth:true;columns:2;columnSpacing:12
-       HarborLabel {text:root.t("Before noon","قبل الظهر")}
-       HarborField {Layout.fillWidth:true;text:root.advancedDraft.am || "";Accessible.name:root.t("AM label","رمز ما قبل الظهر");onTextEdited:root.stageAdvanced("am",text)}
-       HarborLabel {text:root.t("After noon","بعد الظهر")}
-       HarborField {Layout.fillWidth:true;text:root.advancedDraft.pm || "";Accessible.name:root.t("PM label","رمز ما بعد الظهر");onTextEdited:root.stageAdvanced("pm",text)}
+       HarborLabel {text:qsTr("Before noon")}
+       HarborField {Layout.fillWidth:true;text:root.advancedDraft.am || "";Accessible.name:qsTr("AM label");onTextEdited:root.stageAdvanced("am",text)}
+       HarborLabel {text:qsTr("After noon")}
+       HarborField {Layout.fillWidth:true;text:root.advancedDraft.pm || "";Accessible.name:qsTr("PM label");onTextEdited:root.stageAdvanced("pm",text)}
       }
      }
     }
@@ -389,9 +388,9 @@ ColumnLayout {
    contentItem:RowLayout {
    spacing:8
    Item {Layout.fillWidth:true}
-   HarborButton {objectName:"restoreAdvanced";text:root.t("Restore Defaults","استعادة الافتراضي");onClicked:root.restoreAdvanced()}
-   HarborButton {objectName:"cancelAdvanced";text:root.t("Cancel","إلغاء");onClicked:advanced.close()}
-   HarborButton {objectName:"acceptAdvanced";text:root.t("OK","موافق");prominent:true;enabled:!root.advancedSample.error;onClicked:{root.draft=root.copy(root.advancedDraft);root.status="";advanced.close()}}
+   HarborButton {objectName:"restoreAdvanced";text:qsTr("Restore Defaults");onClicked:root.restoreAdvanced()}
+   HarborButton {objectName:"cancelAdvanced";text:qsTr("Cancel");onClicked:advanced.close()}
+   HarborButton {objectName:"acceptAdvanced";text:qsTr("OK");prominent:true;enabled:!root.advancedSample.error;onClicked:{root.draft=root.copy(root.advancedDraft);root.status="";advanced.close()}}
      }
   }
  }

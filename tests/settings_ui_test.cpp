@@ -1,10 +1,12 @@
 #include <QtTest>
 #include <QQuickView>
+#include <QQmlEngine>
 #include <QQuickItem>
 #include <QQuickStyle>
 #include <QQmlContext>
 #include <QTemporaryDir>
 #include "core/Preferences.h"
+#include "core/Translation.h"
 class SettingsMock : public QObject {
     Q_OBJECT
     Q_PROPERTY(QVariantMap state MEMBER state NOTIFY changed)
@@ -49,6 +51,8 @@ private slots:
                                                    QVariantMap{{"id", "de"}, {"name", "German"}},
                                                    QVariantMap{{"id", "es"}, {"name", "Spanish"}}}}};
         QQuickView view;
+        Translation translation(prefs);
+        connect(&translation, &Translation::changed, view.engine(), &QQmlEngine::retranslate);
         auto ctx = view.rootContext();
         ctx->setContextProperty("Prefs", &prefs);
         ctx->setContextProperty("System", &system);

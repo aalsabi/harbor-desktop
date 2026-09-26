@@ -28,7 +28,7 @@
 
 ثبت اعتماديات البناء:
 
-    sudo apt install build-essential cmake pkg-config qt6-base-dev qt6-declarative-dev qt6-svg-dev liblayershellqtinterface-dev libkf6windowsystem-dev kwayland-dev libglib2.0-dev dbus-x11 python3 file
+    sudo apt install build-essential cmake pkg-config qt6-base-dev qt6-declarative-dev qt6-svg-dev qt6-tools-dev qt6-l10n-tools liblayershellqtinterface-dev libkf6windowsystem-dev kwayland-dev libglib2.0-dev dbus-x11 python3 file
 
 ثم من جذر المصدر:
 

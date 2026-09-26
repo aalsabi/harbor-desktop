@@ -6,6 +6,7 @@
 #include <QQmlEngine>
 #include <QTemporaryDir>
 #include "core/Preferences.h"
+#include "core/Translation.h"
 class PageFixture : public QObject {
     Q_OBJECT
     Q_PROPERTY(QVariantList applications MEMBER extra NOTIFY changed)
@@ -132,6 +133,8 @@ private slots:
                                       {"used", qint64(200000000000)},
                                       {"available", qint64(290000000000)}}};
         QQuickView view;
+        Translation translation(prefs);
+        connect(&translation, &Translation::changed, view.engine(), &QQmlEngine::retranslate);
         QStringList warnings;
         connect(view.engine(), &QQmlEngine::warnings, this, [&](const QList<QQmlError>& es) {
             for (const auto& e : es)
