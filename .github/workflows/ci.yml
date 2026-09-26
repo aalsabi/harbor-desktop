@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    name: Formatting
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      # Keep in step with docs/INSTALL.md; other versions may format differently.
+      - run: pip install ruff==0.16.9 clang-format==23.1.1
+      - run: ./scripts/format.sh --check
+
+  debian:
+    name: Debian 13 build, tests and package
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Build the Debian 13 image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: scripts/Dockerfile.trixie
+          tags: harbor-build:trixie
+          load: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Build, test, package, install and remove
+        run: |
+          mkdir -p "$RUNNER_TEMP/build"
+          docker run --rm -v "$PWD:/src:ro" -v "$RUNNER_TEMP/build:/build" harbor-build:trixie \
+            sh -c 'sh /src/scripts/validate-trixie.sh && sh /src/scripts/check-translations.sh'
+      - name: Keep build logs and screenshots
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: debian-build
+          path: |
+            ${{ runner.temp }}/build/*.log
+            ${{ runner.temp }}/build/*.png
+            ${{ runner.temp }}/build/Testing/Temporary/LastTest.log
+          if-no-files-found: ignore

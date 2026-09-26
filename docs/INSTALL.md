@@ -47,12 +47,16 @@
 
 يُنسَّق C++ بـclang-format حسب ملف .clang-format، ويُنسَّق Python بـruff حسب ملف ruff.toml، بما فيه السكربتات التي بلا امتداد. ثبّت الأداتين ثم شغّل التنسيق قبل كل commit:
 
-    pipx install ruff clang-format
+    pipx install ruff==0.16.9 clang-format==23.1.1
     ./scripts/format.sh
 
 للتحقق دون تعديل الملفات، كما في CI:
 
     ./scripts/format.sh --check
+
+### CI
+
+ملف .github/workflows/ci.yml يشغّل مع كل push وpull request فحص التنسيق، ثم يبني صورة Debian 13 من scripts/Dockerfile.trixie ويشغّل داخلها scripts/validate-trixie.sh (البناء والاختبارات والحزمة والتثبيت والإزالة) وscripts/check-translations.sh الذي يفشل إذا أضيف نص للواجهة دون تحديث ملفات الترجمة. عند الفشل تُحفظ السجلات ولقطات الشاشة كـartifact.
 
 ## الإعدادات والخدمات
 
