@@ -1,0 +1,41 @@
+#!/bin/sh
+# Local stand-in for GitHub branch protection (unavailable for private repositories on the Free plan).
+# Enable once per clone:  git config core.hooksPath scripts/git-hooks
+#
+# Every push: formatting must pass (scripts/format.sh --check).
+# Pushes to main: no deletion, no force push, and the commit must already have passed both CI jobs
+# on GitHub, so push it to a working branch first and wait for CI.
+# This is advisory: `git push --no-verify` skips it.
+set -eu
+PROTECTED=refs/heads/main
+CHECKS="Formatting|Debian 13 build, tests and package"
+ZERO=0000000000000000000000000000000000000000
+root=$(git rev-parse --show-toplevel)
+
+fail() {
+    printf 'pre-push: %s\n' "$1" >&2
+    exit 1
+}
+
+for tool in ruff clang-format; do
+    command -v "$tool" >/dev/null 2>&1 || fail "$tool is not installed; see docs/INSTALL.md (Code formatting)."
+done
+"$root/scripts/format.sh" --check >/dev/null 2>&1 ||
+    fail "formatting check failed. Run ./scripts/format.sh, commit, then push again."
+
+while read -r local_ref local_sha remote_ref remote_sha; do
+    [ "$remote_ref" = "$PROTECTED" ] || continue
+    [ "$local_sha" != "$ZERO" ] || fail "deleting main is not allowed."
+    if [ "$remote_sha" != "$ZERO" ] && ! git merge-base --is-ancestor "$remote_sha" "$local_sha" 2>/dev/null; then
+        fail "force-pushing main is not allowed."
+    fi
+    command -v gh >/dev/null 2>&1 || fail "gh is required to confirm CI for main (sudo apt install gh)."
+    repo=$(gh repo view --json nameWithOwner -q .nameWithOwner) || fail "could not identify the GitHub repository."
+    passed=$(gh api "repos/$repo/commits/$local_sha/check-runs?per_page=100" \
+        -q ".check_runs[] | select(.conclusion == \"success\") | .name" 2>/dev/null |
+        grep -Ex "$CHECKS" | sort -u | wc -l) || passed=0
+    [ "$passed" -eq 2 ] || fail "commit $(git rev-parse --short "$local_sha") has not passed CI on GitHub.
+Push it to a working branch first (git push origin HEAD:<branch>), wait for both CI jobs to pass,
+then push main again. Status: gh run list --commit $local_sha"
+done
+exit 0

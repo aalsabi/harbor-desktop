@@ -58,6 +58,14 @@
 
 ملف .github/workflows/ci.yml يشغّل مع كل push وpull request فحص التنسيق، ثم يبني صورة Debian 13 من scripts/Dockerfile.trixie ويشغّل داخلها scripts/validate-trixie.sh (البناء والاختبارات والحزمة والتثبيت والإزالة) وscripts/check-translations.sh الذي يفشل إذا أضيف نص للواجهة دون تحديث ملفات الترجمة. عند الفشل تُحفظ السجلات ولقطات الشاشة كـartifact.
 
+### حماية main محليًا
+
+حماية الفروع في GitHub غير متاحة للمستودعات الخاصة في الخطة المجانية، لذلك يوفّر scripts/git-hooks/pre-push بديلًا محليًا. فعّله مرة واحدة في كل نسخة من المستودع:
+
+    git config core.hooksPath scripts/git-hooks
+
+بعدها يرفض git push أي دفع يفشل في فحص التنسيق، ويرفض حذف main أو الدفع القسري إليه، ولا يقبل دفع commit إلى main إلا إذا نجحت عليه وظيفتا CI في GitHub. لذلك ادفع التغيير أولًا إلى فرع عمل، وانتظر نجاح CI، ثم ادفع نفس الـcommit إلى main. يتطلب ذلك gh مسجّل الدخول. هذه الحماية استرشادية: git push --no-verify يتجاوزها.
+
 ## الإعدادات والخدمات
 
 - تفضيلات Harbor: ~/.config/harbor/settings.ini أو المسار المكافئ تحت XDG_CONFIG_HOME.
