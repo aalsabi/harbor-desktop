@@ -1,0 +1,9 @@
+#include "UserSettings.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QStandardPaths>
+#include <QTimer>
+UserSettings::UserSettings(QObject*parent):QObject(parent){connect(&command,&Command::busyChanged,this,&UserSettings::changed);connect(&command,&Command::finished,this,[this](bool ok,QString out){auto response=QJsonDocument::fromJson(out.toUtf8()).object();if(!ok||!response.value("ok").toBool()){problem=response.value("error").toString(out);emit changed();next();return;}QString key=current.startsWith("sandbox-")?"sandbox":current.startsWith("startup")?"startup":current.startsWith("permission")?"permission":current;values[key]=response.value("data").toObject().toVariantMap();problem.clear();emit changed();next();});}
+void UserSettings::request(QString op,QVariantMap data){if(command.busy()){if(QStringList{"sandbox-list","startup","privacy","permission","package-sizes"}.contains(op)){for(auto &entry:queued)if(entry.first==op){entry.second=data;return;}if(queued.size()<16)queued.enqueue({op,data});}else{problem=tr("Wait for the current operation to finish.");emit changed();}return;}if(!QStringList{"sandbox-list","sandbox-save","sandbox-start","startup","startup-set","startup-add","privacy","permission","permission-set","package-sizes"}.contains(op))return;auto tool=QStandardPaths::findExecutable("harbor-user-settings");if(tool.isEmpty()){problem=tr("Install the updated Harbor package to enable these settings.");emit changed();return;}current=op;problem.clear();command.run(tool,{op,QString::fromUtf8(QJsonDocument(QJsonObject::fromVariantMap(data)).toJson(QJsonDocument::Compact))},30000);emit changed();}
+
+void UserSettings::next(){if(queued.isEmpty())return;QTimer::singleShot(0,this,[this]{if(command.busy()||queued.isEmpty())return;auto entry=queued.dequeue();request(entry.first,entry.second);});}

@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.22)
-project(HarborDesktop VERSION 0.6.2 LANGUAGES CXX)
+project(HarborDesktop VERSION 0.9.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
-find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Quick QuickControls2 DBus Test Svg)
+find_package(Qt6 6.8 REQUIRED COMPONENTS Core Gui Quick QuickControls2 DBus Network Test Svg)
 add_library(harbor-core src/core/Preferences.cpp src/core/Command.cpp)
 target_include_directories(harbor-core PUBLIC src)
 target_link_libraries(harbor-core PUBLIC Qt6::Core)
@@ -17,7 +17,7 @@ find_package(LayerShellQt REQUIRED)
 find_package(KWayland REQUIRED)
 add_library(harbor-desktop-core src/core/Applications.cpp src/core/SystemServices.cpp src/kwin/WindowModel.cpp)
 target_include_directories(harbor-desktop-core PUBLIC src)
-target_link_libraries(harbor-desktop-core PUBLIC harbor-core Qt6::Gui Qt6::DBus Plasma::KWaylandClient PkgConfig::GIO)
+target_link_libraries(harbor-desktop-core PUBLIC harbor-core Qt6::Gui Qt6::DBus Qt6::Network Plasma::KWaylandClient PkgConfig::GIO)
 add_executable(harbor-shell src/shell/main.cpp src/shell/Controller.h resources.qrc)
 target_link_libraries(harbor-shell PRIVATE harbor-desktop-core Qt6::Quick Qt6::QuickControls2 Qt6::Svg LayerShellQt::Interface)
 install(TARGETS harbor-shell RUNTIME DESTINATION bin)
@@ -44,13 +44,13 @@ install(FILES LICENSE README.md THIRD_PARTY_NOTICES.md DESTINATION share/doc/har
 install(DIRECTORY docs/ DESTINATION share/doc/harbor-desktop/docs)
 set(CPACK_GENERATOR DEB)
 set(CPACK_PACKAGE_NAME harbor-desktop)
-set(CPACK_PACKAGE_VERSION 0.6.2)
+set(CPACK_PACKAGE_VERSION 0.9.0)
 set(CPACK_PACKAGE_CONTACT "Harbor Desktop contributors")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Harbor Desktop contributors")
 set(CPACK_DEBIAN_PACKAGE_SECTION x11)
 set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "python3, locales, pkexec, xkb-data, libglib2.0-bin, xwayland, kwin-wayland, kwin-style-breeze, dbus-user-session, qt6-wayland, qt6-svg-plugins, qml6-module-qtquick, qml6-module-qtquick-window, qml6-module-qtquick-controls, qml6-module-qtquick-layouts, qml6-module-qtquick-templates, qml6-module-qtqml-workerscript")
-set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "dolphin, konsole, xdg-utils, breeze-cursor-theme, accountsservice, network-manager, network-manager-gnome, wireplumber, pipewire, pipewire-pulse, bluez, blueman, pavucontrol, brightnessctl, power-profiles-daemon, kscreen, polkit-kde-agent-1, xdg-desktop-portal-kde, xdg-desktop-portal-gtk, xwayland, fonts-noto-core")
+set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "dolphin, konsole, xdg-utils, breeze-cursor-theme, accountsservice, libcrypt1, packagekit, bubblewrap, avahi-daemon, cups, cups-pk-helper, pulseaudio-utils, ddcutil, swayidle, orca, at-spi2-core, network-manager, network-manager-gnome, network-manager-openvpn-gnome, python3-gi, gir1.2-nm-1.0, wireplumber, pipewire, pipewire-pulse, bluez, blueman, pavucontrol, cups-client, brightnessctl, power-profiles-daemon, kscreen, polkit-kde-agent-1, xdg-desktop-portal-kde, xdg-desktop-portal-gtk, xwayland, fonts-noto-core")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Independent Qt desktop shell and settings for KWin Wayland")
 include(CPack)
 target_sources(harbor-desktop-core PRIVATE src/core/Accounts.cpp)
@@ -132,3 +132,107 @@ set_tests_properties(region-ui PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen
 
 install(PROGRAMS scripts/harbor-generate-locales DESTINATION libexec)
 install(FILES config/polkit/org.harbor.locale.policy DESTINATION share/polkit-1/actions)
+
+add_executable(panel-menus-test tests/panel_menus_test.cpp resources.qrc)
+target_link_libraries(panel-menus-test PRIVATE harbor-core Qt6::Test Qt6::Quick Qt6::QuickControls2)
+add_test(NAME panel-menus COMMAND panel-menus-test)
+set_tests_properties(panel-menus PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
+
+target_sources(harbor-desktop-core PRIVATE src/core/Bluetooth.cpp)
+
+add_executable(bluetooth-test tests/bluetooth_test.cpp src/core/Bluetooth.cpp)
+target_include_directories(bluetooth-test PRIVATE src)
+target_link_libraries(bluetooth-test PRIVATE Qt6::Core Qt6::DBus Qt6::Test)
+add_test(NAME bluetooth COMMAND dbus-run-session -- $<TARGET_FILE:bluetooth-test>)
+
+# Native System Settings pages; services are queried only when opened.
+target_sources(harbor-desktop-core PRIVATE
+ src/core/DateTimeSettings.cpp
+ src/core/StorageSettings.cpp
+ src/core/PointerSettings.cpp
+ src/core/DefaultApps.cpp
+ src/core/Printers.cpp
+)
+add_executable(date-time-test tests/date_time_test.cpp)
+target_link_libraries(date-time-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME date-time COMMAND dbus-run-session -- $<TARGET_FILE:date-time-test>)
+add_executable(storage-test tests/storage_test.cpp)
+target_link_libraries(storage-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME storage COMMAND $<TARGET_FILE:storage-test>)
+add_executable(pointer-settings-test tests/pointer_settings_test.cpp)
+target_link_libraries(pointer-settings-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME pointer-settings COMMAND dbus-run-session -- $<TARGET_FILE:pointer-settings-test>)
+add_executable(default-apps-test tests/default_apps_test.cpp)
+target_link_libraries(default-apps-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME default-apps COMMAND $<TARGET_FILE:default-apps-test>)
+add_executable(printers-test tests/printers_test.cpp)
+target_link_libraries(printers-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME printers COMMAND dbus-run-session -- $<TARGET_FILE:printers-test>)
+add_executable(settings-expansion-ui-test tests/settings_expansion_ui_test.cpp resources.qrc)
+target_link_libraries(settings-expansion-ui-test PRIVATE harbor-core Qt6::Test Qt6::Quick Qt6::QuickControls2)
+add_test(NAME settings-expansion-ui COMMAND settings-expansion-ui-test)
+set_tests_properties(settings-expansion-ui PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
+
+# Complete native control integrations
+target_sources(harbor-desktop-core PRIVATE
+ src/core/NotificationPreferences.cpp
+ src/core/UserSettings.cpp
+ src/core/AccessibilitySettings.cpp
+ src/core/NetworkSettings.cpp
+ src/core/DisplaySettings.cpp
+ src/core/AudioStreams.cpp
+ src/core/PowerSettings.cpp
+ src/core/GestureSettings.cpp
+ src/core/SoftwareUpdate.cpp
+ src/core/PrinterDrivers.cpp
+ src/core/ApplicationStorage.cpp
+)
+add_executable(notification-preferences-test tests/notification_preferences_test.cpp)
+target_link_libraries(notification-preferences-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME notification-preferences COMMAND $<TARGET_FILE:notification-preferences-test>)
+add_executable(storage-analysis-test tests/storage_analysis_test.cpp)
+target_link_libraries(storage-analysis-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME storage-analysis COMMAND $<TARGET_FILE:storage-analysis-test>)
+add_executable(network-settings-test tests/network_settings_test.cpp)
+target_link_libraries(network-settings-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME network-settings COMMAND dbus-run-session -- $<TARGET_FILE:network-settings-test>)
+add_executable(bluetooth-pairing-test tests/bluetooth_pairing_test.cpp)
+target_link_libraries(bluetooth-pairing-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME bluetooth-pairing COMMAND dbus-run-session -- $<TARGET_FILE:bluetooth-pairing-test>)
+add_executable(accounts-test tests/accounts_test.cpp)
+target_link_libraries(accounts-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME accounts COMMAND dbus-run-session -- $<TARGET_FILE:accounts-test>)
+add_executable(updates-test tests/update_test.cpp)
+target_link_libraries(updates-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME updates COMMAND dbus-run-session -- $<TARGET_FILE:updates-test>)
+add_executable(native-hardware-test tests/native_hardware_test.cpp)
+target_link_libraries(native-hardware-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME native-hardware COMMAND $<TARGET_FILE:native-hardware-test>)
+install(PROGRAMS scripts/harbor-user-settings scripts/harbor-sandbox scripts/harbor-autostart scripts/harbor-accessibility-agent scripts/harbor-power-agent scripts/harbor-display-layout-guard DESTINATION bin)
+install(PROGRAMS scripts/harbor-charge-limit scripts/harbor-network-import DESTINATION libexec)
+install(FILES config/polkit/org.harbor.charge.policy DESTINATION share/polkit-1/actions)
+
+add_executable(gesture-settings-test tests/gesture_settings_test.cpp)
+target_link_libraries(gesture-settings-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME gesture-settings COMMAND dbus-run-session -- $<TARGET_FILE:gesture-settings-test>)
+add_executable(accessibility-test tests/accessibility_test.cpp)
+target_link_libraries(accessibility-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME accessibility COMMAND dbus-run-session -- $<TARGET_FILE:accessibility-test>)
+
+add_executable(gesture-kwin-probe tests/gesture_kwin_probe.cpp)
+target_link_libraries(gesture-kwin-probe PRIVATE harbor-desktop-core Qt6::Core Qt6::DBus)
+
+add_executable(printer-driver-test tests/printer_driver_test.cpp)
+target_link_libraries(printer-driver-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME printer-driver COMMAND dbus-run-session -- $<TARGET_FILE:printer-driver-test>)
+
+add_executable(application-storage-test tests/application_storage_test.cpp)
+target_link_libraries(application-storage-test PRIVATE harbor-desktop-core Qt6::Test)
+add_test(NAME application-storage COMMAND $<TARGET_FILE:application-storage-test>)
+add_executable(focus-ui-test tests/focus_ui_test.cpp resources.qrc)
+target_link_libraries(focus-ui-test PRIVATE harbor-desktop-core Qt6::Test Qt6::Quick Qt6::QuickControls2)
+add_test(NAME focus-ui COMMAND $<TARGET_FILE:focus-ui-test>)
+set_tests_properties(focus-ui PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen;QT_QUICK_BACKEND=software")
+
+add_executable(sandbox-gui-probe tests/sandbox_gui_probe.cpp)
+target_link_libraries(sandbox-gui-probe PRIVATE Qt6::Gui)

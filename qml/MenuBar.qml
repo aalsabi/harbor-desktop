@@ -17,7 +17,7 @@ Rectangle {
  }
  Rectangle {anchors.bottom:parent.bottom;width:parent.width;height:1;color:Prefs.dark?"#40516a":"#c5d1df"}
  RowLayout { anchors.fill: parent; anchors.leftMargin: 18; anchors.rightMargin: 18; spacing: 8
-  PanelButton { text: Prefs.language==="ar" ? "◈  هاربور" : "◈  Harbor"; font.bold: true; onClicked: UI.open("launcher"); Accessible.name: "Applications" }
+  PanelButton { text: Prefs.language==="ar" ? "◈  هاربور" : "◈  Harbor"; font.bold: true; onClicked: UI.open("harbor"); Accessible.name: "Harbor menu" }
 
   Text { text: Windows.activeTitle;visible:text!=="Harbor"; Layout.maximumWidth: 160; elide: Text.ElideRight; color: Prefs.dark ? "#eef4ff" : "#435b70"; font.pixelSize: 12 }
   Flickable {
@@ -36,7 +36,8 @@ Rectangle {
   }
   PanelButton { text: "⌕"; onClicked: UI.open("launcher"); Accessible.name: "Search applications" }
   PanelButton { text: Prefs.language==="ar" ? "النوافذ" : "Windows"; onClicked: UI.open("windows") }
-  PanelButton {text:"● "+Notifications.items.length;onClicked:UI.open("notifications");Accessible.name:"Notifications"}
+  PanelButton {text:"● "+(Notifications.attentionCount===undefined?Notifications.items.length:Notifications.attentionCount);onClicked:UI.open("notifications");Accessible.name:"Notifications"}
+  PanelButton {objectName:"bluetooth-indicator";text:"ᛒ"+(System.state.bluetoothStatus==="Connected"?" •":"");opacity:System.state.bluetoothPowered?1:0.5;Accessible.name:"Bluetooth "+(System.state.bluetoothStatus||"Off");onClicked:UI.open("bluetooth")}
   PanelButton { text: "☷"; onClicked: UI.open("control"); Accessible.name: "Control center" }
   Text { id: clock; width:Math.min(implicitWidth,240);elide:Text.ElideRight;Accessible.name:text; color: Prefs.dark ? "#eef4ff" : "#163047"; font.pixelSize: 12; text: typeof Region!=="undefined"?Region.clockText():Qt.formatDateTime(new Date(),"ddd d MMM   hh:mm"); Timer { interval: 1000; running: true; repeat: true; onTriggered: clock.text=typeof Region!=="undefined"?Region.clockText():Qt.formatDateTime(new Date(),"ddd d MMM   hh:mm") } }
  }

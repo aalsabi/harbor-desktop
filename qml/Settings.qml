@@ -15,17 +15,28 @@ Rectangle {
   {key:"Wi-Fi",ar:"واي فاي",icon:"◔",color:Prefs.accent,id:"wifi",group:0,tags:"wireless internet شبكة"},
   {key:"Bluetooth",ar:"بلوتوث",icon:"ᛒ",color:Prefs.accent,id:"bluetooth",group:0,tags:"devices أجهزة"},
   {key:"Network",ar:"الشبكة",icon:"◎",color:"#2488d8",id:"network",group:0,tags:"internet ethernet"},
+  {key:"Notifications & Focus",ar:"الإشعارات والتركيز",icon:"●",color:"#ed4b66",id:"notifications",group:1,tags:"do not disturb focus تنبيهات عدم الإزعاج"},
   {key:"Sound",ar:"الصوت",icon:"♪",color:"#ed4b66",id:"sound",group:1,tags:"volume audio صوت"},
   {key:"General",ar:"عام",icon:"⚙",color:"#8a8b90",id:"general",group:2,tags:"about updates language تحديث لغة"},
   {key:"Language & Region",ar:"اللغة والمنطقة",icon:"◎",color:"#348dda",id:"region",group:2,tags:"locale dates time currency languages لغة منطقة تاريخ عملة"},
+  {key:"Date & Time",ar:"التاريخ والوقت",icon:"◷",color:"#388fca",id:"datetime",group:2,tags:"clock timezone automatic ntp ساعة تاريخ وقت"},
+  {key:"Default Applications",ar:"التطبيقات الافتراضية",icon:"▦",color:"#7383ce",id:"defaults",group:2,tags:"browser email pdf files default متصفح بريد افتراضي"},
+  {key:"Storage",ar:"التخزين",icon:"▤",color:"#838b98",id:"storage",group:2,tags:"disk drive space volume mount قرص مساحة تخزين"},
+  {key:"Gestures",ar:"الإيماءات",icon:"✥",color:"#488daa",id:"gestures",group:2,tags:"touchpad swipe gestures إيماءات سحب"},
+  {key:"Startup Applications",ar:"تطبيقات بدء التشغيل",icon:"▷",color:"#488daa",id:"startup",group:2,tags:"login apps startup دخول تشغيل"},
+  {key:"Privacy & Permissions",ar:"الخصوصية والأذونات",icon:"◈",color:"#658e78",id:"privacy",group:2,tags:"flatpak permissions privacy خصوصية صلاحيات"},
   {key:"Appearance",ar:"المظهر",icon:"◐",color:"#77777e",id:"appearance",group:2,tags:"light dark theme مظهر"},
   {key:"Accessibility",ar:"تسهيلات الاستخدام",icon:"◎",color:"#258de9",id:"accessibility",group:2,tags:"motion movement حركة"},
   {key:"Desktop & Dock",ar:"سطح المكتب وDock",icon:"▣",color:"#437ee9",id:"desktop",group:3,tags:"panel glass transparency شفافية"},
   {key:"Displays",ar:"الشاشات",icon:"▱",color:"#7274e5",id:"displays",group:3,tags:"resolution scale brightness دقة سطوع"},
   {key:"Keyboard",ar:"لوحة المفاتيح",icon:"⌨",color:"#85858d",id:"keyboard",group:3,tags:"input language arabic english shortcut كيبورد عربي انجليزي لغة"},
+  {key:"Mouse",ar:"الماوس",icon:"◉",color:"#8c8d97",id:"mouse",group:3,tags:"pointer speed natural scroll left handed فأرة مؤشر تمرير"},
+  {key:"Touchpad",ar:"لوحة اللمس",icon:"▱",color:"#8c8d97",id:"touchpad",group:3,tags:"trackpad tap click natural scroll touch لمس نقر تمرير"},
+  {key:"Printers",ar:"الطابعات",icon:"▣",color:"#678dac",id:"printers",group:3,tags:"printing cups queue طابعة طباعة"},
   {key:"Battery",ar:"الطاقة",icon:"▰",color:"#39a958",id:"battery",group:3,tags:"power performance energy طاقة"},
   {key:"Users & Groups",ar:"المستخدمون والمجموعات",icon:"♙",color:"#5a83ce",id:"users",group:4,tags:"account name حساب"}
  ]
+ property var nativePages:({"Gestures":"GesturesPage.qml","Wi-Fi":"NetworkPage.qml","Network":"NetworkPage.qml","Bluetooth":"BluetoothPage.qml","Users & Groups":"AccountsPage.qml","Software Update":"UpdatesPage.qml","Notifications & Focus":"NotificationsPage.qml","Startup Applications":"StartupPage.qml","Privacy & Permissions":"PrivacyPage.qml","Date & Time":"DateTimePage.qml","Storage":"StoragePage.qml","Default Applications":"DefaultAppsPage.qml","Mouse":"PointerPage.qml","Touchpad":"PointerPage.qml","Printers":"PrintersPage.qml"})
  property var results:pages.filter(p=>(p.key+" "+p.ar+" "+p.tags).toLowerCase().includes(search.text.toLowerCase()))
  property var currentAccount:Accounts.users.find(u=>u.UserName===System.state.userName)||null
  property var currentPage:pages.find(p=>p.key===section)||({key:section,ar:section==="About"?"حول":"تحديث البرامج",icon:"⚙",color:"#8a8b90"})
@@ -101,11 +112,18 @@ Rectangle {
    ScrollView{id:pageScroll;Layout.fillWidth:true;Layout.fillHeight:true;contentWidth:availableWidth;clip:true
     ColumnLayout{width:pageScroll.availableWidth;spacing:18
      ColumnLayout{Layout.fillWidth:true;Layout.leftMargin:24;Layout.rightMargin:24;Layout.bottomMargin:28;spacing:18
+      Loader{
+       id:nativePage;objectName:"native-settings-page";Layout.fillWidth:true;Layout.preferredHeight:item?item.implicitHeight:0
+       active:!!root.nativePages[root.section];visible:active;source:active?root.nativePages[root.section]:""
+       onLoaded:if(root.section==="Mouse"||root.section==="Touchpad")item.deviceType=root.section==="Mouse"?"mouse":"touchpad"
+       Connections{target:root;function onSectionChanged(){if(nativePage.item&&typeof nativePage.item.deviceType!=="undefined"&&(root.section==="Mouse"||root.section==="Touchpad"))nativePage.item.deviceType=root.section==="Mouse"?"mouse":"touchpad"}}
+      }
       ColumnLayout{visible:root.section==="General";Layout.fillWidth:true;spacing:18
        Rectangle{Layout.alignment:Qt.AlignHCenter;width:64;height:64;radius:15;color:"#888a93";Text{anchors.centerIn:parent;text:"⚙";font.pixelSize:49;color:"white"}}
        Label{text:root.t("General","عام");font.pixelSize:24;font.bold:true;horizontalAlignment:Text.AlignHCenter}
        Note{text:root.t("Manage your desktop, language and system information.","إدارة سطح المكتب واللغة ومعلومات النظام.");horizontalAlignment:Text.AlignHCenter}
        Group{LinkRow{destination:"About";text:root.t("About","حول")}Divider{}LinkRow{destination:"Software Update";text:root.t("Software Update","تحديث البرامج")}}
+       Group{LinkRow{destination:"Date & Time";text:root.t("Date & Time","التاريخ والوقت")}Divider{}LinkRow{destination:"Storage";text:root.t("Storage","التخزين")}Divider{}LinkRow{destination:"Default Applications";text:root.t("Default Applications","التطبيقات الافتراضية")}}
        Group{LinkRow{destination:"Language & Region";text:root.t("Language & Region","اللغة والمنطقة")}
         Divider{}LinkRow{destination:"Keyboard";text:root.t("Keyboard input sources","لغات الكتابة")}}
        Group{Label{text:root.t("Session","الجلسة");font.bold:true}SessionActions{}Note{text:root.t("Save your work before signing out or powering off.","احفظ عملك قبل تسجيل الخروج أو إيقاف التشغيل.")}}
@@ -119,27 +137,8 @@ Rectangle {
        Group{SettingRow{label:root.t("Accent colour","لون التمييز");Row{spacing:8;Repeater{model:["#1684f8","#168044","#7955c9","#b65b00","#c63f75"];delegate:Button{required property string modelData;width:28;height:28;Accessible.name:modelData;contentItem:Item{} background:Rectangle{radius:14;color:parent.modelData;border.width:Prefs.accent===parent.modelData?3:0;border.color:root.ink}onClicked:Prefs.accent=modelData}}}}}
        Note{text:root.t("Appearance applies to Harbor windows and desktop panels. Other apps use their own themes.","يطبّق المظهر على نوافذ Harbor والبانل. للتطبيقات الأخرى ثيماتها الخاصة.")}
       }
-      ColumnLayout{visible:root.section==="Wi-Fi"||root.section==="Network";Layout.fillWidth:true;spacing:18
-       Group{SettingRow{label:"Wi-Fi";hint:root.t("Wireless networking","الشبكات اللاسلكية");Switch{checked:System.state.wifi==="enabled";enabled:!!System.state.wifiAvailable&&!System.busy;onToggled:System.action("wifi",checked)}}}
-       Group{Label{text:root.t("Saved connections","الاتصالات المحفوظة");font.bold:true}
-        Repeater{model:System.state.savedConnections||[];delegate:SettingRow{required property var modelData;label:modelData.name;hint:modelData.active?root.t("Connected","متصل"):root.t("Not connected","غير متصل");HarborButton{text:modelData.active?root.t("Disconnect","قطع الاتصال"):root.t("Connect","اتصال");enabled:!System.busy;onClicked:System.action(modelData.active?"connection-down":"connection-up",modelData.uuid)}}}
-        Note{visible:!(System.state.savedConnections||[]).length;text:root.t("No saved connections reported.","لا توجد اتصالات محفوظة.")}
-       }
-       Group{visible:root.section==="Wi-Fi";Label{text:root.t("Nearby networks","الشبكات القريبة");font.bold:true}
-        Repeater{model:System.state.wifiNetworks||[];delegate:SettingRow{required property var modelData;label:modelData.name;hint:modelData.active?root.t("Connected","متصل"):(modelData.security==="--"?root.t("Open network","شبكة مفتوحة"):modelData.security);Label{text:modelData.signal+"%";Layout.preferredWidth:55}}}
-        Note{visible:!(System.state.wifiNetworks||[]).length;text:root.t("No networks available","لا توجد شبكات متاحة")}
-       }
-       Group{SettingRow{label:root.t("Connection settings","إعدادات الاتصال");hint:root.t("Add networks, enter passwords or configure advanced options in the connection editor.","إضافة الشبكات وكلمات المرور والخيارات المتقدمة في محرر الاتصالات.");HarborButton{text:root.t("Details…","التفاصيل…");onClicked:System.openTool("network")}}}
-      }
-      ColumnLayout{visible:root.section==="Bluetooth";Layout.fillWidth:true;spacing:18
-       Group{SettingRow{label:"Bluetooth";Switch{checked:(System.state.bluetooth||"").includes("Powered: yes");enabled:!!System.state.bluetoothAvailable&&!System.busy;onToggled:System.action("bluetooth",checked)}}}
-       Group{Label{text:root.t("Paired devices","الأجهزة المقترنة");font.bold:true}
-        Repeater{model:System.state.bluetoothDevices||[];delegate:SettingRow{required property var modelData;property bool connected:(System.state.bluetoothConnected||[]).includes(modelData.address);label:modelData.name;hint:connected?root.t("Connected","متصل"):root.t("Not connected","غير متصل");HarborButton{text:connected?root.t("Disconnect","قطع الاتصال"):root.t("Connect","اتصال");enabled:!System.busy&&(System.state.bluetooth||"").includes("Powered: yes");onClicked:System.action(connected?"bluetooth-disconnect":"bluetooth-connect",modelData.address)}}}
-        Note{visible:!(System.state.bluetoothDevices||[]).length;text:root.t("No paired devices reported","لا توجد أجهزة مقترنة")}
-       }
-       Group{SettingRow{label:root.t("Connect a device","توصيل جهاز");hint:root.t("Pairing opens the Bluetooth manager","الاقتران يفتح مدير Bluetooth");HarborButton{text:root.t("Pair…","اقتران…");onClicked:System.openTool("bluetooth")}}}
-      }
       ColumnLayout{visible:root.section==="Sound";Layout.fillWidth:true;spacing:18
+       Loader{active:root.section==="Sound";Layout.fillWidth:true;Layout.preferredHeight:item?item.implicitHeight:0;source:active?"AudioStreamsPage.qml":""}
        Group{Label{text:root.t("Output","الإخراج");font.bold:true}SettingRow{label:root.t("Output volume","مستوى الصوت");Label{Layout.preferredWidth:90;text:Math.round((parseFloat((System.state.volume||"Volume: 0").split(" ")[1])||0)*100)+"%"}}
         Slider{Layout.fillWidth:true;from:0;to:1;value:parseFloat((System.state.volume||"Volume: 0").split(" ")[1])||0;enabled:!!System.state.volumeAvailable;onMoved:{audioTimer.requestedValue=value;audioTimer.restart()}Timer{id:audioTimer;property real requestedValue:0;interval:180;onTriggered:System.action("volume",requestedValue)}}
         SettingRow{label:root.t("Mute","كتم الصوت");Switch{checked:(System.state.volume||"").includes("MUTED");enabled:!!System.state.volumeAvailable&&!System.busy;onToggled:System.action("mute")}}}
@@ -149,9 +148,9 @@ Rectangle {
         Slider{Layout.fillWidth:true;from:0;to:1;value:Number(System.state.inputVolume)||0;enabled:!!System.state.inputVolumeAvailable;onMoved:{inputTimer.requestedValue=value;inputTimer.restart()}Timer{id:inputTimer;property real requestedValue:0;interval:180;onTriggered:System.action("input-volume",requestedValue)}}
         SettingRow{label:root.t("Mute microphone","كتم الميكروفون");Switch{checked:!!System.state.inputMuted;enabled:!!System.state.inputVolumeAvailable&&!System.busy;onToggled:System.action("input-mute")}}
        }
-       Group{SettingRow{label:root.t("Advanced audio","إعدادات الصوت المتقدمة");hint:root.t("Per-application routing and hardware profiles","توجيه صوت التطبيقات وأوضاع الأجهزة");HarborButton{text:root.t("Mixer…","مدير الصوت…");onClicked:System.openTool("audio")}}}
       }
       ColumnLayout{visible:root.section==="Accessibility";Layout.fillWidth:true;spacing:18
+       Loader{active:root.section==="Accessibility";Layout.fillWidth:true;Layout.preferredHeight:item?item.implicitHeight:0;source:active?"AccessibilityPage.qml":""}
        Group{SettingRow{label:root.t("Reduce motion","تقليل الحركة");hint:root.t("Reduce animation in Harbor","تقليل الحركات في Harbor");Switch{checked:Prefs.reduceMotion;onToggled:Prefs.reduceMotion=checked}}}
        Group{SettingRow{label:root.t("Reduce transparency","تقليل الشفافية");Switch{checked:Prefs.opacity===1;onToggled:{if(checked){root.previousOpacity=Prefs.opacity;Prefs.opacity=1}else Prefs.opacity=root.previousOpacity}}}}
        Note{text:root.t("These controls apply to Harbor. Screen-reader, magnifier and assistive-input configuration is not included yet.","تخص هذه الخيارات Harbor. إعدادات قارئ الشاشة والمكبّر والإدخال المساعد غير مدمجة بعد.")}
@@ -164,15 +163,7 @@ Rectangle {
       }
       ColumnLayout{visible:root.section==="Displays";Layout.fillWidth:true;spacing:18
        Group{SettingRow{label:root.t("Brightness","السطوع");Slider{Layout.preferredWidth:200;from:5;to:100;enabled:!!System.state.brightnessAvailable;value:System.state.brightnessPercent||0;onMoved:{brightnessTimer.requestedValue=value;brightnessTimer.restart()}Timer{id:brightnessTimer;property real requestedValue:0;interval:180;onTriggered:System.action("brightness",Math.round(requestedValue))}}}}
-       Repeater{model:System.state.displayOutputs||[];delegate:Group{required property var modelData;visible:modelData.connected
-        Label{text:modelData.name;font.bold:true;font.pixelSize:17}
-        SettingRow{label:root.t("Scale","التحجيم");Select{id:scale;model:["100%","125%","150%","175%","200%"];currentIndex:Math.max(0,Math.round((modelData.scale-1)*4))}}
-        SettingRow{label:root.t("Resolution","الدقة");Select{id:mode;Layout.preferredWidth:230;model:modelData.modes||[];textRole:"name";currentIndex:(modelData.modes||[]).findIndex(m=>String(m.id)===String(modelData.currentModeId))}}
-        HarborButton{text:root.t("Apply","تطبيق");Layout.alignment:Qt.AlignRight;enabled:!System.state.displayChanging;onClicked:System.applyDisplay(modelData.id,1+scale.currentIndex*.25,mode.currentIndex>=0?String(modelData.modes[mode.currentIndex].id):"")}
-       }}
-       Note{visible:!(System.state.displayOutputs||[]).length;text:root.t("Display information is unavailable. Install kscreen to enable resolution controls.","معلومات الشاشات غير متاحة. ثبّت kscreen لتفعيل التحكم بالدقة.")}
-       Note{text:root.t("Display changes revert after 15 seconds unless confirmed.","تُستعاد إعدادات الشاشة بعد 15 ثانية ما لم تؤكد التغيير.")}
-       HarborButton{text:root.t("Keep changes","الاحتفاظ بالتغييرات");visible:!!System.state.displayPending;prominent:true;onClicked:System.confirmDisplay()}
+       Loader{active:root.section==="Displays";Layout.fillWidth:true;Layout.preferredHeight:item?item.implicitHeight:0;source:active?"DisplaysPage.qml":""}
       }
       ColumnLayout{id:keyboardPage;visible:root.section==="Keyboard";Layout.fillWidth:true;spacing:18
        property var selectedLayouts:[]
@@ -248,19 +239,11 @@ Rectangle {
        }
       }
       ColumnLayout{visible:root.section==="Battery";Layout.fillWidth:true;spacing:18
+       Loader{active:root.section==="Battery";Layout.fillWidth:true;Layout.preferredHeight:item?item.implicitHeight:0;source:active?"PowerPage.qml":""}
        Group{visible:!!System.state.batteryAvailable;SettingRow{label:root.t("Battery","البطارية");hint:System.state.batteryCharging?root.t("Charging","جارٍ الشحن"):root.t("On battery / fully charged","على البطارية / مكتملة الشحن");Label{text:Math.round(System.state.batteryPercent||0)+"%";Layout.preferredWidth:70}}}
        Group{Label{text:root.t("Energy mode","وضع الطاقة");font.bold:true}Note{text:root.t("Current mode: ","الوضع الحالي: ")+(System.state.power||root.t("Unavailable","غير متاح"))}
         Repeater{model:[{id:"power-saver",en:"Low Power",ar:"توفير الطاقة"},{id:"balanced",en:"Balanced",ar:"متوازن"},{id:"performance",en:"Performance",ar:"الأداء"}].filter(x=>(System.state.powerProfiles||[]).includes(x.id));delegate:RadioButton{required property var modelData;text:root.t(modelData.en,modelData.ar);checked:System.state.power===modelData.id;enabled:!!System.state.powerAvailable&&!System.busy;onClicked:System.action("power",modelData.id)}}}
        Note{text:root.t("Available modes depend on your hardware and power service.","تعتمد الأوضاع المتاحة على جهازك وخدمة إدارة الطاقة.")}
-      }
-      ColumnLayout{visible:root.section==="Users & Groups";Layout.fillWidth:true;spacing:18
-       Note{text:Accounts.error;visible:text.length>0}
-       Repeater{model:Accounts.users;delegate:Group{required property var modelData;Label{text:modelData.UserName;font.bold:true;font.pixelSize:16}Note{text:modelData.AccountType===1?root.t("Administrator","مسؤول"):root.t("Standard account","حساب عادي")}
-        SettingRow{label:root.t("Full name","الاسم الكامل");HarborField{id:realName;text:modelData.RealName;Layout.preferredWidth:200}HarborButton{text:root.t("Save","حفظ");enabled:!Accounts.busy;onClicked:Accounts.setRealName(modelData.path,realName.text)}}}}
-       Note{text:root.t("Changing a name uses system authentication. Account creation and password changes are not included yet.","تغيير الاسم يستخدم مصادقة النظام. إنشاء الحسابات وتغيير كلمات المرور غير مدمجين بعد.")}
-      }
-      ColumnLayout{visible:root.section==="Software Update";Layout.fillWidth:true;spacing:18
-       Group{Label{text:root.t("Debian software updates","تحديثات برامج Debian");font.bold:true}Note{text:root.t("Updates are managed by the system software manager, with its own authentication.","تُدار التحديثات عبر مدير برامج النظام ومصادقته.")}HarborButton{text:root.t("Open software manager…","فتح مدير البرامج…");onClicked:System.openTool("updates")}}
       }
       ColumnLayout{visible:root.section==="About";Layout.fillWidth:true;spacing:18
        Rectangle{width:80;height:80;radius:18;Layout.alignment:Qt.AlignHCenter;color:"#4888db";Text{anchors.centerIn:parent;text:"◈";color:"white";font.pixelSize:60}}

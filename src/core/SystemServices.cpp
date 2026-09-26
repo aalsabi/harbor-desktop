@@ -18,7 +18,13 @@
 #include <QDir>
 #include <QUuid>
 #include <memory>
-SystemServices::SystemServices(QObject* p,bool poll):QObject(p){values["userName"]=qEnvironmentVariable("USER");values["osName"]=QSysInfo::prettyProductName();values["architecture"]=QSysInfo::currentCpuArchitecture();values["kernel"]=QSysInfo::kernelVersion();values["displayOutputs"]=QVariantList{};values["displayPending"]=false;values["displayChanging"]=false;for(auto key:{"wifi","network","networks","volume","audio","bluetooth","devices","brightness","power","displays"})values[QString(key)+"Available"]=false;if(!poll)return;QTimer::singleShot(0,this,&SystemServices::refresh);auto t=new QTimer(this);connect(t,&QTimer::timeout,this,&SystemServices::refresh);t->start(15000);}
+#include <QXmlStreamReader>
+#include <QDesktopServices>
+#include <QUrl>
+#include <pwd.h>
+#include <unistd.h>
+#include <algorithm>
+SystemServices::SystemServices(QObject* p,bool poll):QObject(p){values["userName"]=qEnvironmentVariable("USER");values["osName"]=QSysInfo::prettyProductName();values["architecture"]=QSysInfo::currentCpuArchitecture();values["kernel"]=QSysInfo::kernelVersion();values["displayOutputs"]=QVariantList{};values["displayPending"]=false;values["displayChanging"]=false;for(auto key:{"wifi","network","networks","volume","audio","bluetooth","devices","brightness","power","displays"})values[QString(key)+"Available"]=false;auto user=getpwuid(getuid());values["userDisplayName"]=user?QString::fromLocal8Bit(user->pw_gecos).section(',',0,0):values["userName"];if(values["userDisplayName"].toString().isEmpty())values["userDisplayName"]=values["userName"];if(!poll)return;bluetooth=new Bluetooth(this);connect(bluetooth,&Bluetooth::changed,this,[this]{auto state=bluetooth->state();for(auto i=state.begin();i!=state.end();++i)values[i.key()]=i.value();emit changed();});QTimer::singleShot(0,this,&SystemServices::refresh);auto t=new QTimer(this);connect(t,&QTimer::timeout,this,&SystemServices::refresh);t->start(15000);}
 void SystemServices::query(QString key,QString program,QStringList args){
  const uint gen=++generations[key];
  auto update=[this,key](bool ok,QString out){values[key+"Available"]=ok;values[key]=ok?out:QString();const auto parsed=SystemState::parse(key,ok?out:QString());for(auto it=parsed.begin();it!=parsed.end();++it)values[it.key()]=it.value();if(key=="displays")values["displayOutputs"]=QJsonDocument::fromJson(out.toUtf8()).object()["outputs"].toArray().toVariantList();emit changed();};
@@ -32,7 +38,7 @@ void SystemServices::refresh(){
  query("connections","nmcli",{"-t","-f","NAME,UUID,TYPE,DEVICE","connection","show"});
  query("volume","wpctl",{"get-volume","@DEFAULT_AUDIO_SINK@"});query("inputVolume","wpctl",{"get-volume","@DEFAULT_AUDIO_SOURCE@"});
  query("defaultOutput","wpctl",{"inspect","@DEFAULT_AUDIO_SINK@"});query("defaultInput","wpctl",{"inspect","@DEFAULT_AUDIO_SOURCE@"});query("audioNodes","pw-dump",{});
- query("bluetooth","bluetoothctl",{"show"});query("devices","bluetoothctl",{"devices","Paired"});query("connectedDevices","bluetoothctl",{"devices","Connected"});
+ if(bluetooth)bluetooth->refresh();
  query("brightness","brightnessctl",{"-c","backlight","-m"});query("power","powerprofilesctl",{"get"});query("profiles","powerprofilesctl",{"list"});query("displays","kscreen-doctor",{"-j"});querySystem();
 }
 void SystemServices::execute(QString program,QStringList args,QString key){
@@ -47,7 +53,7 @@ void SystemServices::startNext(){
 }
 void SystemServices::querySystem(){
  auto bus=QDBusConnection::sessionBus();auto iface=bus.interface();values["lockAvailable"]=iface&&iface->isServiceRegistered("org.freedesktop.ScreenSaver").value();values["harborSession"]=iface&&iface->isServiceRegistered("org.harbor.Shell").value();
- for(const auto& operation:QStringList{"Reboot","PowerOff"}){
+ for(const auto& operation:QStringList{"Reboot","PowerOff","Suspend"}){
   auto msg=QDBusMessage::createMethodCall("org.freedesktop.login1","/org/freedesktop/login1","org.freedesktop.login1.Manager","Can"+operation);auto watcher=new QDBusPendingCallWatcher(QDBusConnection::systemBus().asyncCall(msg,2000),this);
   connect(watcher,&QDBusPendingCallWatcher::finished,this,[this,watcher,operation]{QDBusPendingReply<QString> r=*watcher;values["can"+operation]=!r.isError()&&(r.value()=="yes"||r.value()=="challenge");watcher->deleteLater();emit changed();});
  }
@@ -66,25 +72,28 @@ void SystemServices::action(QString name,QVariant v){
   bool valid=false;for(auto row:values["savedConnections"].toList())if(row.toMap()["uuid"].toString()==v.toString())valid=true;
   if(valid)execute("nmcli",{"--wait","15","connection",name=="connection-up"?"up":"down","uuid",v.toString()},"connection:"+v.toString());
  }
- else if(name=="bluetooth-connect"||name=="bluetooth-disconnect"){
-  bool valid=false;for(auto row:values["bluetoothDevices"].toList())if(row.toMap()["address"].toString()==v.toString())valid=true;if(valid)execute("bluetoothctl",{name=="bluetooth-connect"?"connect":"disconnect",v.toString()},"bluetooth:"+v.toString());
- }
- else if(name=="reboot"||name=="poweroff"){
-  const QString operation=name=="reboot"?"Reboot":"PowerOff";if(!values["can"+operation].toBool()){status=tr("This session cannot request that power action.");emit changed();return;}
+ else if(name.startsWith("bluetooth")){if(bluetooth)bluetooth->action(name,v);}
+ else if(name=="reboot"||name=="poweroff"||name=="sleep"){
+  const QString operation=name=="reboot"?"Reboot":name=="sleep"?"Suspend":"PowerOff";if(!values["can"+operation].toBool()){status=tr("This session cannot request that power action.");emit changed();return;}
   auto msg=QDBusMessage::createMethodCall("org.freedesktop.login1","/org/freedesktop/login1","org.freedesktop.login1.Manager",operation);msg<<true;auto watcher=new QDBusPendingCallWatcher(QDBusConnection::systemBus().asyncCall(msg,30000),this);
   connect(watcher,&QDBusPendingCallWatcher::finished,this,[this,watcher]{QDBusPendingReply<> r=*watcher;status=r.isError()?r.error().message():tr("Power action requested.");watcher->deleteLater();emit changed();});
  }
  else if(name=="mute")execute("wpctl",{"set-mute","@DEFAULT_AUDIO_SINK@","toggle"});
- else if(name=="bluetooth")execute("bluetoothctl",{"power",v.toBool()?"on":"off"});
+
  else if(name=="brightness"){int n=v.toInt();if(n>=5&&n<=100)execute("brightnessctl",{"-c","backlight","set",QString::number(n)+"%"},"brightness");}
  else if(name=="power"&&QStringList{"power-saver","balanced","performance"}.contains(v.toString()))execute("powerprofilesctl",{"set",v.toString()});
+ else if(name=="force-quit"){
+  auto m=QDBusMessage::createMethodCall("org.kde.KWin","/KWin","org.kde.KWin","killWindow");
+  auto w=new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(m,5000),this);
+  connect(w,&QDBusPendingCallWatcher::finished,this,[this,w]{QDBusPendingReply<> r=*w;status=r.isError()?r.error().message():tr("Select a window to force quit; Escape cancels.");w->deleteLater();emit changed();});
+ }
  else if(name=="lock"){
   auto msg=QDBusMessage::createMethodCall("org.freedesktop.ScreenSaver","/ScreenSaver","org.freedesktop.ScreenSaver","Lock");
   auto watcher=new QDBusPendingCallWatcher(QDBusConnection::sessionBus().asyncCall(msg,5000),this);
   connect(watcher,&QDBusPendingCallWatcher::finished,this,[this,watcher]{QDBusPendingReply<> r=*watcher;status=r.isError()?tr("Lock service unavailable: ")+r.error().message():tr("Lock requested");emit changed();watcher->deleteLater();});
  }else {status=tr("Unsupported action");emit changed();}
 }
-void SystemServices::openTool(QString name){QMap<QString,QStringList> tools{{"network",{"nm-connection-editor"}},{"bluetooth",{"blueman-manager"}},{"audio",{"pavucontrol"}},{"users",{"user-manager"}},{"updates",{"plasma-discover"}},{"terminal",{"x-terminal-emulator"}},{"files",{"harbor-files"}},{"settings",{"harbor-settings"}}};if(!tools.contains(name))return;auto args=tools[name];auto cmd=args.takeFirst();if(!QProcess::startDetached(cmd,args)){status=tr("Install the external tool: ")+cmd;emit changed();}}
+void SystemServices::openTool(QString name){QMap<QString,QStringList> tools{{"network",{"nm-connection-editor"}},{"bluetooth",{"harbor-settings","Bluetooth"}},{"audio",{"pavucontrol"}},{"users",{"user-manager"}},{"updates",{"plasma-discover"}},{"terminal",{"x-terminal-emulator"}},{"files",{"harbor-files"}},{"settings",{"harbor-settings"}}};if(!tools.contains(name))return;if(name=="updates"){for(auto candidate:{"gnome-software","plasma-discover","synaptic"})if(!QStandardPaths::findExecutable(candidate).isEmpty()){tools[name]={QString(candidate)};break;}}auto args=tools[name];auto cmd=args.takeFirst();if(!QProcess::startDetached(cmd,args)){status=tr("Install the external tool: ")+cmd;emit changed();}}
 
 void SystemServices::applyDisplay(int output,double scale,QString mode){
  if(!displayTransaction.isEmpty()||!std::isfinite(scale)||scale<.5||scale>4)return;
@@ -107,3 +116,10 @@ void SystemServices::applyDisplay(int output,double scale,QString mode){
  });displayPoll->start(250);emit changed();
 }
 void SystemServices::confirmDisplay(){if(displayTransaction.isEmpty()||!values["displayPending"].toBool())return;QFile f(displayTransaction+"/confirm");if(!f.open(QIODevice::WriteOnly)){status=tr("Could not confirm; display will revert");emit changed();}}
+
+void SystemServices::refreshRecent(){
+ QFile file(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)+"/recently-used.xbel");QVariantList rows;
+ if(file.open(QIODevice::ReadOnly)){QXmlStreamReader xml(&file);QVariantMap row;while(!xml.atEnd()){xml.readNext();if(xml.isStartElement()&&xml.name()==u"bookmark"){row={{"url",xml.attributes().value("href").toString()},{"modified",xml.attributes().value("modified").toString()}};}else if(xml.isStartElement()&&xml.name()==u"title")row["title"]=xml.readElementText();else if(xml.isEndElement()&&xml.name()==u"bookmark"){QUrl url(row["url"].toString());if(url.isLocalFile()&&QFile::exists(url.toLocalFile())){if(row["title"].toString().isEmpty())row["title"]=url.fileName();rows<<row;}}}}
+ std::sort(rows.begin(),rows.end(),[](QVariant a,QVariant b){return a.toMap()["modified"].toString()>b.toMap()["modified"].toString();});while(rows.size()>12)rows.removeLast();values["recentItems"]=rows;emit changed();
+}
+void SystemServices::openRecent(QString url){for(auto row:values["recentItems"].toList())if(row.toMap()["url"]==url){if(!QDesktopServices::openUrl(QUrl(url))){status=tr("Could not open the recent item.");emit changed();}return;}}

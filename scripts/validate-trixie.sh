@@ -2,22 +2,25 @@
 set -eu
 # Test harness only: intentionally operates inside a disposable Docker container.
 test -f /.dockerenv || { echo "Run only inside the documented Docker test container" >&2; exit 2; }
-apt-get install -y --no-install-recommends locales pkexec libkf6windowsystem-dev file libcap2-bin breeze-cursor-theme >/build/extra-deps.log 2>&1
+apt-get install -y --no-install-recommends locales pkexec libkf6windowsystem-dev file libcap2-bin breeze-cursor-theme python3-gi gir1.2-nm-1.0 network-manager-openvpn-gnome bubblewrap >/build/extra-deps.log 2>&1
 cmake -S /src -B /build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr
 cmake --build /build -j4
 ctest --test-dir /build --output-on-failure
 python3 -m unittest discover -s /src/tests -p 'test_*.py'
+python3 /src/tests/network_import_test.py
 cd /build
 cpack -G DEB
-apt-get install -y --no-install-recommends ./harbor-desktop-0.6.2-Linux.deb >/build/install.log 2>&1
+apt-get install -y --no-install-recommends ./harbor-desktop-0.9.0-Linux.deb >/build/install.log 2>&1
 python3 /src/tests/locale_generation_integration.py
 setcap -r /usr/bin/kwin_wayland || true
+HARBOR_SANDBOX_GUI_PROBE=/build/sandbox-gui-probe python3 /src/tests/sandbox_gui_integration.py || { result=$?; test "$result" -eq 77 || exit "$result"; }
 mkdir -p /tmp/runtime-harbor
 chmod 700 /tmp/runtime-harbor
 export LANG=C.UTF-8 XDG_MENU_PREFIX=harbor- XDG_RUNTIME_DIR=/tmp/runtime-harbor QT_QUICK_CONTROLS_STYLE=Basic KWIN_COMPOSE=Q HARBOR_BINARY=/usr/bin/harbor-shell
 unset DISPLAY WAYLAND_DISPLAY
 QT_QPA_PLATFORM=offscreen harbor-shell --preview --screenshot /build/trixie-preview.png
 python3 /src/tests/ui_smoke.py
+HARBOR_GESTURE_PROBE=/build/gesture-kwin-probe python3 /src/tests/gesture_kwin_integration.py
  timeout 40 dbus-run-session -- kwin_wayland --virtual --no-lockscreen --no-global-shortcuts --no-kactivities --exit-with-session /src/tests/kwin_integration.py
 timeout 40 dbus-run-session -- kwin_wayland --virtual --output-count 2 --no-lockscreen --no-global-shortcuts --no-kactivities --exit-with-session /src/tests/multiscreen_integration.py
 timeout 40 dbus-run-session -- python3 /src/tests/keyboard_integration.py
