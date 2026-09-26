@@ -60,86 +60,86 @@
     <name>AccessibilitySettings</name>
     <message>
         <source>Screen reader starts in your Harbor session.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">يبدأ قارئ الشاشة في جلسة Harbor.</translation>
     </message>
     <message>
         <source>This visual aid is not available from the compositor.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">هذه المساعدة البصرية غير متاحة من مدير العرض.</translation>
     </message>
     <message>
         <source>The compositor did not activate color inversion.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يفعّل مدير العرض عكس الألوان.</translation>
     </message>
     <message>
         <source>The compositor could not enable this visual aid.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر على مدير العرض تفعيل هذه المساعدة البصرية.</translation>
     </message>
     <message>
         <source>The compositor did not apply the requested visual aid state.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يطبّق مدير العرض الحالة المطلوبة للمساعدة البصرية.</translation>
     </message>
     <message>
         <source>The visual aid changed, but its preference could not be saved.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تغيّرت المساعدة البصرية، لكن تعذّر حفظ التفضيل.</translation>
     </message>
     <message>
         <source>The compositor did not apply the zoom shortcut.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يطبّق مدير العرض اختصار التكبير.</translation>
     </message>
     <message>
         <source>Install Orca to use the screen reader.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثبّت Orca لاستخدام قارئ الشاشة.</translation>
     </message>
     <message>
         <source>Could not save the screen reader preference.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر حفظ تفضيل قارئ الشاشة.</translation>
     </message>
 </context>
 <context>
     <name>Accounts</name>
     <message>
         <source>Choose an account from the refreshed list.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر حسابًا من القائمة المحدّثة.</translation>
     </message>
     <message>
         <source>System and remote accounts cannot be changed here.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا يمكن تعديل حسابات النظام والحسابات البعيدة من هنا.</translation>
     </message>
     <message>
         <source>You cannot delete or demote your own account.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا يمكنك حذف حسابك أو خفض صلاحياته.</translation>
     </message>
     <message>
         <source>Keep at least one unlocked administrator account.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أبقِ حساب مسؤول واحدًا غير مقفل على الأقل.</translation>
     </message>
     <message>
         <source>Enter a display name of 1–200 characters.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أدخل اسم عرض من 1 إلى 200 حرف.</translation>
     </message>
     <message>
         <source>Use a lowercase account name, a display name, and a valid account type.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">استخدم اسم حساب بحروف صغيرة واسم عرض ونوع حساب صالح.</translation>
     </message>
     <message>
         <source>Use a password of 8–1024 characters. Password hashing also requires libcrypt1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">استخدم كلمة مرور من 8 إلى 1024 حرفًا. يتطلب تشفير كلمة المرور أيضًا libcrypt1.</translation>
     </message>
     <message>
         <source>The account service returned an invalid account.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أعادت خدمة الحسابات حسابًا غير صالح.</translation>
     </message>
     <message>
         <source>Account created, but its password could not be set. Set a password before signing in: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أُنشئ الحساب لكن تعذّر تعيين كلمة المرور. عيّن كلمة مرور قبل تسجيل الدخول: %1</translation>
     </message>
     <message>
         <source>Confirm account deletion first.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أكّد حذف الحساب أولًا.</translation>
     </message>
     <message>
         <source>Confirm the account type change first.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أكّد تغيير نوع الحساب أولًا.</translation>
     </message>
 </context>
 <context>
@@ -273,27 +273,27 @@
     <name>ApplicationStorage</name>
     <message>
         <source>Finding installed applications…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ البحث عن التطبيقات المثبتة…</translation>
     </message>
     <message>
         <source>Reading installed file lists…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ قراءة قوائم الملفات المثبتة…</translation>
     </message>
     <message>
         <source>Measuring allocated space… %1 files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ قياس المساحة المستخدمة… %1 ملف</translation>
     </message>
     <message>
         <source>Choose a listed application and an app-specific folder inside your home, not a shared XDG root.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر تطبيقًا من القائمة ومجلدًا خاصًا به داخل مجلد المنزل، وليس مجلد XDG مشتركًا.</translation>
     </message>
     <message>
         <source>This folder overlaps an existing association. Remove that association first.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">هذا المجلد يتداخل مع ربط موجود. أزل ذلك الربط أولًا.</translation>
     </message>
     <message>
         <source>Flatpak data folders are associated automatically.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تُربط مجلدات بيانات Flatpak تلقائيًا.</translation>
     </message>
     <message>
         <source>Canceled. These are partial results.</source>
@@ -305,7 +305,7 @@
     </message>
     <message>
         <source>Measurement complete: %1 unique files.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اكتمل القياس: %1 ملف فريد.</translation>
     </message>
 </context>
 <context>
@@ -467,54 +467,54 @@
     <name>Applications</name>
     <message>
         <source>Invalid application identifier</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">معرّف تطبيق غير صالح</translation>
     </message>
     <message>
         <source>Application is not installed: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">التطبيق غير مثبت: </translation>
     </message>
     <message>
         <source>Application has no desktop file: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا يوجد ملف desktop للتطبيق: </translation>
     </message>
     <message>
         <source>Could not read isolation policy; refusing an unprotected launch.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّرت قراءة سياسة العزل؛ رُفض التشغيل دون حماية.</translation>
     </message>
     <message>
         <source>Invalid isolation policy; refusing an unprotected launch.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">سياسة العزل غير صالحة؛ رُفض التشغيل دون حماية.</translation>
     </message>
     <message>
         <source>The isolation launcher is missing. Install the updated Harbor package.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">مشغّل العزل غير موجود. ثبّت حزمة Harbor المحدّثة.</translation>
     </message>
     <message>
         <source>Close existing application windows before starting an isolated instance.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أغلق نوافذ التطبيق المفتوحة قبل تشغيل نسخة معزولة.</translation>
     </message>
     <message>
         <source>No application window appeared. You can try launching again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم تظهر نافذة للتطبيق. يمكنك محاولة التشغيل مجددًا.</translation>
     </message>
     <message>
         <source>Could not start application: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر تشغيل التطبيق: </translation>
     </message>
 </context>
 <context>
     <name>AudioStreams</name>
     <message>
         <source>The audio service did not return a valid device list.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم تُرجع خدمة الصوت قائمة أجهزة صالحة.</translation>
     </message>
     <message>
         <source>This application is no longer playing audio. Refresh the list.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يعد هذا التطبيق يشغّل الصوت. حدّث القائمة.</translation>
     </message>
     <message>
         <source>Choose an output from the current device list.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر مخرجًا من قائمة الأجهزة الحالية.</translation>
     </message>
 </context>
 <context>
@@ -556,37 +556,37 @@
     <name>Bluetooth</name>
     <message>
         <source>Select an available Bluetooth device.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر جهاز بلوتوث متاحًا.</translation>
     </message>
     <message>
         <source>Could not register the pairing agent.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر تسجيل وكيل الاقتران.</translation>
     </message>
 </context>
 <context>
     <name>BluetoothAgent</name>
     <message>
         <source>Enter a PIN of 1–16 characters.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أدخل رمز PIN من 1 إلى 16 حرفًا.</translation>
     </message>
     <message>
         <source>Enter a passkey of up to six digits.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أدخل رمز مرور من ستة أرقام كحد أقصى.</translation>
     </message>
 </context>
 <context>
     <name>BluetoothMenu</name>
     <message>
         <source>Bluetooth unavailable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">البلوتوث غير متاح</translation>
     </message>
     <message>
         <source>Connected devices</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">الأجهزة المتصلة</translation>
     </message>
     <message>
         <source>Available / saved devices</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">الأجهزة المتاحة / المحفوظة</translation>
     </message>
     <message>
         <source>Disconnect</source>
@@ -598,11 +598,11 @@
     </message>
     <message>
         <source>No devices found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يُعثر على أجهزة</translation>
     </message>
     <message>
         <source>Searching…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ البحث…</translation>
     </message>
     <message>
         <source>Search for devices</source>
@@ -610,7 +610,7 @@
     </message>
     <message>
         <source>Bluetooth Settings…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">إعدادات البلوتوث…</translation>
     </message>
     <message>
         <source>Close</source>
@@ -708,11 +708,11 @@
     <name>Command</name>
     <message>
         <source>Operation timed out</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">انتهت مهلة العملية</translation>
     </message>
     <message>
         <source>Operation failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">فشلت العملية</translation>
     </message>
 </context>
 <context>
@@ -885,46 +885,46 @@
     <name>DateTimeSettings</name>
     <message>
         <source>Choose a valid time zone.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر منطقة زمنية صالحة.</translation>
     </message>
     <message>
         <source>Automatic time is unavailable on this system.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">الوقت التلقائي غير متاح على هذا النظام.</translation>
     </message>
     <message>
         <source>Turn off automatic time before setting the clock.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أوقف الوقت التلقائي قبل ضبط الساعة.</translation>
     </message>
     <message>
         <source>Enter a valid date (YYYY-MM-DD) and time (HH:MM:SS).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أدخل تاريخًا صالحًا (YYYY-MM-DD) ووقتًا (HH:MM:SS).</translation>
     </message>
 </context>
 <context>
     <name>DefaultApps</name>
     <message>
         <source>Unknown application role.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">دور تطبيق غير معروف.</translation>
     </message>
     <message>
         <source>Choose an installed application that supports this file or link type.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر تطبيقًا مثبتًا يدعم هذا النوع من الملفات أو الروابط.</translation>
     </message>
     <message>
         <source>The application is no longer installed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يعد التطبيق مثبتًا.</translation>
     </message>
     <message>
         <source>Could not update %1: %2. Some associations may already have changed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر تحديث %1: %2. ربما تغيّرت بعض الارتباطات بالفعل.</translation>
     </message>
     <message>
         <source>Unknown error</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">خطأ غير معروف</translation>
     </message>
     <message>
         <source>Default application updated.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">حُدّث التطبيق الافتراضي.</translation>
     </message>
 </context>
 <context>
@@ -986,39 +986,39 @@
     <name>DisplaySettings</name>
     <message>
         <source>No monitor exposing DDC/CI brightness was found. Check monitor DDC/CI settings and I²C permissions.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يُعثر على شاشة تدعم التحكم بالسطوع عبر DDC/CI. تحقق من إعداد DDC/CI في الشاشة ومن أذونات I²C.</translation>
     </message>
     <message>
         <source>Display information is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">معلومات الشاشات غير متاحة.</translation>
     </message>
     <message>
         <source>Could not read monitor brightness: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّرت قراءة سطوع الشاشة: %1</translation>
     </message>
     <message>
         <source>Choose a connected display and one of its available modes.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر شاشة متصلة وأحد أوضاعها المتاحة.</translation>
     </message>
     <message>
         <source>Cannot protect display changes without a runtime directory.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا يمكن حماية تغييرات الشاشة دون مجلد التشغيل.</translation>
     </message>
     <message>
         <source>The display safety helper is not installed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أداة حماية إعدادات الشاشة غير مثبتة.</translation>
     </message>
     <message>
         <source>Display changes were reverted. </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">استُعيدت إعدادات الشاشة السابقة. </translation>
     </message>
     <message>
         <source>The display safety helper timed out. The final display state is unknown; check the displays before retrying.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">انتهت مهلة أداة حماية الشاشة. الحالة النهائية للشاشات غير معروفة؛ تحقق منها قبل إعادة المحاولة.</translation>
     </message>
     <message>
         <source>Could not contact the display safety helper.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر الاتصال بأداة حماية الشاشة.</translation>
     </message>
 </context>
 <context>
@@ -1100,31 +1100,31 @@
     <name>Files</name>
     <message>
         <source>Cannot read this folder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّرت قراءة هذا المجلد</translation>
     </message>
     <message>
         <source>Folder</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">مجلد</translation>
     </message>
     <message>
         <source>No application could open this file</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا يوجد تطبيق يستطيع فتح هذا الملف</translation>
     </message>
     <message>
         <source>Ready to move; choose destination and Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جاهز للنقل؛ اختر الوجهة ثم الصق</translation>
     </message>
     <message>
         <source>Ready to copy; choose destination and Paste</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جاهز للنسخ؛ اختر الوجهة ثم الصق</translation>
     </message>
     <message>
         <source>Install harbor-file-operation before changing files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثبّت harbor-file-operation قبل تعديل الملفات</translation>
     </message>
     <message>
         <source>Completed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اكتمل</translation>
     </message>
 </context>
 <context>
@@ -1234,39 +1234,39 @@
     <name>GestureSettings</name>
     <message>
         <source>KWin could not initialize the gesture handlers. Custom gestures remain disabled.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر على KWin تهيئة معالجات الإيماءات. تبقى الإيماءات المخصصة معطلة.</translation>
     </message>
     <message>
         <source>The display service restarted while applying gestures.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أُعيد تشغيل خدمة العرض أثناء تطبيق الإيماءات.</translation>
     </message>
     <message>
         <source>Choose one of the supported gesture actions.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر أحد إجراءات الإيماءات المدعومة.</translation>
     </message>
     <message>
         <source>Assign an action before enabling custom gestures.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">عيّن إجراءً قبل تفعيل الإيماءات المخصصة.</translation>
     </message>
     <message>
         <source>Another Harbor window is updating gestures.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">نافذة Harbor أخرى تحدّث الإيماءات.</translation>
     </message>
     <message>
         <source>Could not create the gesture script directory.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر إنشاء مجلد سكربت الإيماءات.</translation>
     </message>
     <message>
         <source>Could not write the gesture configuration.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّرت كتابة إعداد الإيماءات.</translation>
     </message>
     <message>
         <source>The gesture script could not be loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر تحميل سكربت الإيماءات.</translation>
     </message>
     <message>
         <source>Gestures changed for this session, but the startup preference could not be saved.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تغيّرت الإيماءات لهذه الجلسة، لكن تعذّر حفظ تفضيل بدء التشغيل.</translation>
     </message>
 </context>
 <context>
@@ -1360,7 +1360,7 @@
     <name>HarborMenu</name>
     <message>
         <source>About This Computer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">حول هذا الحاسوب</translation>
     </message>
     <message>
         <source>System Settings…</source>
@@ -1368,19 +1368,19 @@
     </message>
     <message>
         <source>Software Center</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">مركز البرامج</translation>
     </message>
     <message>
         <source>Recent Items</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">العناصر الأخيرة</translation>
     </message>
     <message>
         <source>Force Quit…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">إنهاء إجباري…</translation>
     </message>
     <message>
         <source>Sleep</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">إسبات</translation>
     </message>
     <message>
         <source>Restart…</source>
@@ -1396,11 +1396,11 @@
     </message>
     <message>
         <source>Log Out </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تسجيل الخروج </translation>
     </message>
     <message>
         <source>Select a window after confirming. Unsaved work in that application will be lost. Press Escape to cancel selection.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر نافذة بعد التأكيد. سيُفقد العمل غير المحفوظ في ذلك التطبيق. اضغط Escape لإلغاء الاختيار.</translation>
     </message>
     <message>
         <source>Save your work before continuing.</source>
@@ -1430,31 +1430,31 @@
     <name>Keyboard</name>
     <message>
         <source>Cannot read keyboard settings</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّرت قراءة إعدادات لوحة المفاتيح</translation>
     </message>
     <message>
         <source>Saved. Keyboard configuration reload requested.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">حُفظ. طُلبت إعادة تحميل إعداد لوحة المفاتيح.</translation>
     </message>
     <message>
         <source>Saved for your next Harbor session.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">حُفظ لجلسة Harbor القادمة.</translation>
     </message>
     <message>
         <source>Keyboard switching is available inside the Harbor session.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تبديل لغة الكتابة متاح داخل جلسة Harbor.</translation>
     </message>
     <message>
         <source>Switched input source.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">بُدّلت لغة الكتابة.</translation>
     </message>
     <message>
         <source>Input source is no longer available. Refresh the list.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم تعد لغة الكتابة متاحة. حدّث القائمة.</translation>
     </message>
     <message>
         <source>Could not select the input source. Refresh and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر اختيار لغة الكتابة. حدّث القائمة وحاول مجددًا.</translation>
     </message>
 </context>
 <context>
@@ -2180,78 +2180,78 @@
     <name>NetworkSecretAgent</name>
     <message>
         <source>Fill in each requested credential.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">املأ كل بيانات الاعتماد المطلوبة.</translation>
     </message>
 </context>
 <context>
     <name>NetworkSettings</name>
     <message>
         <source>No Wi-Fi adapter is available.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا يوجد محوّل واي فاي متاح.</translation>
     </message>
     <message>
         <source>This network is no longer available. Refresh the list.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم تعد هذه الشبكة متاحة. حدّث القائمة.</translation>
     </message>
     <message>
         <source>Enterprise Wi-Fi requires a preconfigured 802.1X profile. Select it under Saved connections.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">واي فاي المؤسسات يتطلب ملف 802.1X معدًّا مسبقًا. اختره من الاتصالات المحفوظة.</translation>
     </message>
     <message>
         <source>This Wi-Fi security type is unsupported. Use a configured connection profile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">نوع حماية الواي فاي هذا غير مدعوم. استخدم ملف اتصال معدًّا.</translation>
     </message>
     <message>
         <source>Enter a Wi-Fi password of 8–63 characters or a 64-digit hexadecimal key.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أدخل كلمة مرور واي فاي من 8 إلى 63 حرفًا أو مفتاحًا ست عشريًا من 64 خانة.</translation>
     </message>
     <message>
         <source>Could not determine the current user.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر تحديد المستخدم الحالي.</translation>
     </message>
     <message>
         <source>Select a saved connection.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر اتصالًا محفوظًا.</translation>
     </message>
     <message>
         <source>Select an available network device.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر جهاز شبكة متاحًا.</translation>
     </message>
     <message>
         <source>The selected profile is no longer available.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يعد الملف المحدد متاحًا.</translation>
     </message>
     <message>
         <source>Enter a connection name.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أدخل اسم الاتصال.</translation>
     </message>
     <message>
         <source>Enable IPv4 or IPv6.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">فعّل IPv4 أو IPv6.</translation>
     </message>
     <message>
         <source>Enter an enterprise Wi-Fi network name of 1–32 bytes.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أدخل اسم شبكة واي فاي مؤسسية من 1 إلى 32 بايت.</translation>
     </message>
     <message>
         <source>Choose a wired or Wi-Fi connection.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر اتصالًا سلكيًا أو واي فاي.</translation>
     </message>
     <message>
         <source>Select a readable local OpenVPN or WireGuard configuration file (up to 5 MB).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر ملف إعداد OpenVPN أو WireGuard محليًا قابلًا للقراءة (حتى 5 ميغابايت).</translation>
     </message>
     <message>
         <source>The Harbor VPN import helper is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أداة استيراد VPN في Harbor غير متاحة.</translation>
     </message>
     <message>
         <source>VPN import failed. Check the configuration, NetworkManager authorization, and installed VPN plugin (python3-gi and gir1.2-nm-1.0 are required).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">فشل استيراد VPN. تحقق من الإعداد ومن تفويض NetworkManager ومن إضافة VPN المثبتة (يلزم python3-gi و gir1.2-nm-1.0).</translation>
     </message>
     <message>
         <source>Could not register the network authentication agent.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر تسجيل وكيل مصادقة الشبكة.</translation>
     </message>
 </context>
 <context>
@@ -2277,50 +2277,50 @@
     <name>NotificationPreferences</name>
     <message>
         <source>Could not save Focus mode.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر حفظ وضع التركيز.</translation>
     </message>
     <message>
         <source>Enter a name and different valid start/end times (HH:mm).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أدخل اسمًا ووقتي بداية ونهاية صالحين ومختلفين (HH:mm).</translation>
     </message>
     <message>
         <source>Choose each weekday only once.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر كل يوم من أيام الأسبوع مرة واحدة فقط.</translation>
     </message>
     <message>
         <source>Choose at least one scheduled day.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر يومًا مجدولًا واحدًا على الأقل.</translation>
     </message>
     <message>
         <source>Too many allowed applications.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">عدد التطبيقات المسموح بها كبير جدًا.</translation>
     </message>
     <message>
         <source>Invalid application identifier.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">معرّف تطبيق غير صالح.</translation>
     </message>
     <message>
         <source>This Focus profile no longer exists.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يعد وضع التركيز هذا موجودًا.</translation>
     </message>
     <message>
         <source>A maximum of 16 Focus profiles is supported.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">الحد الأقصى المدعوم 16 وضع تركيز.</translation>
     </message>
     <message>
         <source>Could not save Focus profile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر حفظ وضع التركيز.</translation>
     </message>
     <message>
         <source>Could not remove Focus profile.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّرت إزالة وضع التركيز.</translation>
     </message>
 </context>
 <context>
     <name>Notifications</name>
     <message>
         <source>Notification</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">إشعار</translation>
     </message>
 </context>
 <context>
@@ -2433,19 +2433,19 @@
     <name>PointerSettings</name>
     <message>
         <source>This setting is not supported by this device.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">هذا الجهاز لا يدعم هذا الإعداد.</translation>
     </message>
     <message>
         <source>Tracking speed must be between -1 and 1.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">يجب أن تكون سرعة التتبع بين ‎-1 و 1.</translation>
     </message>
     <message>
         <source>Expected an on or off value.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">القيمة المتوقعة تشغيل أو إيقاف.</translation>
     </message>
     <message>
         <source>The device did not accept this change.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يقبل الجهاز هذا التغيير.</translation>
     </message>
 </context>
 <context>
@@ -2499,90 +2499,90 @@
     <name>PowerSettings</name>
     <message>
         <source>Charging stops at %1%. Values reflect the limits supported by the battery.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">يتوقف الشحن عند %1%. تعكس القيم الحدود التي تدعمها البطارية.</translation>
     </message>
     <message>
         <source>The helper returned an invalid charging result.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أعادت الأداة المساعدة نتيجة شحن غير صالحة.</translation>
     </message>
     <message>
         <source>The Harbor idle service is not running. Sign in to a Harbor session to configure automatic display sleep and suspend.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">خدمة الخمول في Harbor لا تعمل. سجّل الدخول إلى جلسة Harbor لضبط إطفاء الشاشة والإسبات تلقائيًا.</translation>
     </message>
     <message>
         <source>Install swayidle, kscreen and systemd to enable idle actions.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثبّت swayidle و kscreen و systemd لتفعيل إجراءات الخمول.</translation>
     </message>
     <message>
         <source>Applying idle preferences…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تطبيق تفضيلات الخمول…</translation>
     </message>
     <message>
         <source>Idle preferences are active for this Harbor session.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تفضيلات الخمول مفعّلة لجلسة Harbor هذه.</translation>
     </message>
     <message>
         <source>The Harbor idle service is unavailable in this session.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">خدمة الخمول في Harbor غير متاحة في هذه الجلسة.</translation>
     </message>
     <message>
         <source>Choose 0–240 minutes; suspend must follow display sleep.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر من 0 إلى 240 دقيقة؛ يجب أن يأتي الإسبات بعد إطفاء الشاشة.</translation>
     </message>
     <message>
         <source>Choose supported charging limits with start below stop.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر حدود شحن مدعومة تكون فيها البداية أقل من التوقف.</translation>
     </message>
 </context>
 <context>
     <name>PrinterDrivers</name>
     <message>
         <source>The package transaction is taking longer than expected. Its outcome is not yet known; do not start another package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">عملية الحزم تستغرق وقتًا أطول من المتوقع. نتيجتها غير معروفة بعد؛ لا تشغّل مدير حزم آخر.</translation>
     </message>
     <message>
         <source>The package service disconnected. The transaction outcome is unknown. Check again before retrying.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">انقطع الاتصال بخدمة الحزم. نتيجة العملية غير معروفة. تحقق مجددًا قبل إعادة المحاولة.</translation>
     </message>
     <message>
         <source>Driver installation failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">فشل تثبيت التعريفات</translation>
     </message>
     <message>
         <source>Choose a supported printer family.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر فئة طابعات مدعومة.</translation>
     </message>
     <message>
         <source>Choose printer drivers from the current list. Blocked packages cannot be installed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر تعريفات الطابعة من القائمة الحالية. لا يمكن تثبيت الحزم المحظورة.</translation>
     </message>
     <message>
         <source>Select at least one driver package to review.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر حزمة تعريف واحدة على الأقل للمراجعة.</translation>
     </message>
     <message>
         <source>Review the dependency preview and explicitly confirm installation first.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">راجع معاينة الاعتماديات وأكّد التثبيت صراحةً أولًا.</translation>
     </message>
     <message>
         <source>Finding repository printer drivers…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ البحث عن تعريفات الطابعات في المستودعات…</translation>
     </message>
     <message>
         <source>Preparing dependency preview…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تجهيز معاينة الاعتماديات…</translation>
     </message>
     <message>
         <source>Installing trusted printer drivers…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تثبيت تعريفات الطابعات الموثوقة…</translation>
     </message>
     <message>
         <source>PackageKit is unavailable or this operation is unsupported: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PackageKit غير متاح أو العملية غير مدعومة: %1</translation>
     </message>
     <message>
         <source>The package service returned an invalid transaction.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أعادت خدمة الحزم عملية غير صالحة.</translation>
     </message>
     <message>
         <source>Remove</source>
@@ -2606,174 +2606,174 @@
     </message>
     <message>
         <source>Installing %1…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تثبيت %1…</translation>
     </message>
     <message>
         <source>Package service error %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">خطأ في خدمة الحزم %1: %2</translation>
     </message>
     <message>
         <source>This installation requires a license agreement, repository trust decision, or installation media. Harbor has not accepted it. Resolve it in your distribution&apos;s package tools, then check again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">يتطلب هذا التثبيت الموافقة على ترخيص أو قرار ثقة بمستودع أو وسيط تثبيت. لم يقبله Harbor. عالج ذلك من أدوات الحزم في توزيعتك ثم تحقق مجددًا.</translation>
     </message>
     <message>
         <source>Restart the computer to finish applying printer drivers.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أعد تشغيل الحاسوب لإكمال تطبيق تعريفات الطابعات.</translation>
     </message>
     <message>
         <source>Sign out and back in to finish applying printer drivers.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">سجّل الخروج ثم الدخول لإكمال تطبيق تعريفات الطابعات.</translation>
     </message>
     <message>
         <source>Restart updated applications to use their new versions.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أعد تشغيل التطبيقات المحدّثة لاستخدام إصداراتها الجديدة.</translation>
     </message>
     <message>
         <source>Waiting for the package service…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">بانتظار خدمة الحزم…</translation>
     </message>
     <message>
         <source>Removing packages…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ إزالة الحزم…</translation>
     </message>
     <message>
         <source>Refreshing package information…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تحديث معلومات الحزم…</translation>
     </message>
     <message>
         <source>Downloading package data…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تنزيل بيانات الحزم…</translation>
     </message>
     <message>
         <source>Simulating package changes…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ محاكاة تغييرات الحزم…</translation>
     </message>
     <message>
         <source>Installing driver packages…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تثبيت حزم التعريفات…</translation>
     </message>
     <message>
         <source>Cleaning up…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ التنظيف…</translation>
     </message>
     <message>
         <source>Resolving dependencies…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ حل الاعتماديات…</translation>
     </message>
     <message>
         <source>Verifying package signatures…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ التحقق من توقيعات الحزم…</translation>
     </message>
     <message>
         <source>Waiting for another package manager to finish…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">بانتظار انتهاء مدير حزم آخر…</translation>
     </message>
     <message>
         <source>Waiting for system authorization…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">بانتظار تفويض النظام…</translation>
     </message>
     <message>
         <source>The package transaction did not complete (result %1).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم تكتمل عملية الحزم (النتيجة %1).</translation>
     </message>
     <message>
         <source>Driver installation did not complete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يكتمل تثبيت التعريفات</translation>
     </message>
     <message>
         <source>No missing driver packages were found in the enabled repositories. These drivers may already be installed, or your model may need a different package.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يُعثر على حزم تعريفات ناقصة في المستودعات المفعّلة. ربما تكون مثبتة بالفعل، أو يحتاج طرازك حزمة مختلفة.</translation>
     </message>
     <message>
         <source>Available printer driver packages loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">حُمّلت حزم تعريفات الطابعات المتاحة.</translation>
     </message>
     <message>
         <source>The backend did not provide a dependency preview. Installation has not started.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم توفّر الخدمة معاينة للاعتماديات. لم يبدأ التثبيت.</translation>
     </message>
     <message>
         <source>Review all package changes, then confirm installation.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">راجع كل تغييرات الحزم، ثم أكّد التثبيت.</translation>
     </message>
     <message>
         <source>Printer drivers installed. Select your printer again to load the new drivers.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثُبّتت تعريفات الطابعة. اختر طابعتك مجددًا لتحميل التعريفات الجديدة.</translation>
     </message>
 </context>
 <context>
     <name>Printers</name>
     <message>
         <source>Driverless (IPP Everywhere)</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">بدون تعريف (IPP Everywhere)</translation>
     </message>
     <message>
         <source>Printing tools are unavailable. Install cups-client to connect to the printing service.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أدوات الطباعة غير متاحة. ثبّت cups-client للاتصال بخدمة الطباعة.</translation>
     </message>
     <message>
         <source>Personal printer defaults cannot be changed while Harbor runs as root.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا يمكن تغيير إعدادات الطابعة الشخصية أثناء تشغيل Harbor بصلاحيات الجذر.</translation>
     </message>
     <message>
         <source>Choose a printer from the current list.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر طابعة من القائمة الحالية.</translation>
     </message>
     <message>
         <source>Install cups-client to set your default printer.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثبّت cups-client لتعيين الطابعة الافتراضية.</translation>
     </message>
     <message>
         <source>No printers found. Check power and network connection, then search again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يُعثر على طابعات. تحقق من التشغيل واتصال الشبكة، ثم ابحث مجددًا.</translation>
     </message>
     <message>
         <source>The printing service is unavailable.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">خدمة الطباعة غير متاحة.</translation>
     </message>
     <message>
         <source>Printers loaded, but the queue could not be read: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">حُمّلت الطابعات، لكن تعذّرت قراءة قائمة الانتظار: %1</translation>
     </message>
     <message>
         <source>Install cups-client to list installed drivers.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثبّت cups-client لعرض التعريفات المثبتة.</translation>
     </message>
     <message>
         <source>Install cups-client to read printing options.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثبّت cups-client لقراءة خيارات الطباعة.</translation>
     </message>
     <message>
         <source>Personal printing options cannot be changed as root.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا يمكن تغيير خيارات الطباعة الشخصية بصلاحيات الجذر.</translation>
     </message>
     <message>
         <source>Choose a currently available printing option.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر خيار طباعة متاحًا حاليًا.</translation>
     </message>
     <message>
         <source>Printer administration failed. Ensure cups-pk-helper is installed: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">فشلت إدارة الطابعة. تأكد من تثبيت cups-pk-helper: %1</translation>
     </message>
     <message>
         <source>Use a new printer name, an ipp:// or ipps:// address without credentials, and an available driver.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">استخدم اسم طابعة جديدًا وعنوان ipp:// أو ipps:// دون بيانات اعتماد وتعريفًا متاحًا.</translation>
     </message>
     <message>
         <source>Confirm removal of a printer from the current list.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أكّد إزالة طابعة من القائمة الحالية.</translation>
     </message>
     <message>
         <source>Confirm cancellation of a job from the current queue.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أكّد إلغاء مهمة من قائمة الانتظار الحالية.</translation>
     </message>
     <message>
         <source>Install cups-client and start the CUPS printing service to discover printers.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثبّت cups-client وشغّل خدمة الطباعة CUPS لاكتشاف الطابعات.</translation>
     </message>
     <message>
         <source>Choose a printer from the latest discovery results.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر طابعة من أحدث نتائج البحث.</translation>
     </message>
 </context>
 <context>
@@ -2970,38 +2970,38 @@
     <name>QObject</name>
     <message>
         <source>Choose a readable folder without symbolic links in its path.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر مجلدًا قابلًا للقراءة لا يحتوي مساره على روابط رمزية.</translation>
     </message>
     <message>
         <source>The folder associations could not be saved.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر حفظ ارتباطات المجلد.</translation>
     </message>
     <message>
         <source>Choose a readable local folder, not a system device directory or symbolic link.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر مجلدًا محليًا قابلًا للقراءة، وليس مجلد أجهزة النظام أو رابطًا رمزيًا.</translation>
     </message>
     <message>
         <source>The folder could not be read.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّرت قراءة المجلد.</translation>
     </message>
     <message>
         <source>Application launch</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تشغيل التطبيق</translation>
     </message>
 </context>
 <context>
     <name>RecentItems</name>
     <message>
         <source>Recent Items</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">العناصر الأخيرة</translation>
     </message>
     <message>
         <source>No recent files</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا توجد ملفات حديثة</translation>
     </message>
     <message>
         <source>Back</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">رجوع</translation>
     </message>
 </context>
 <context>
@@ -3407,51 +3407,51 @@
     <name>SoftwareUpdate</name>
     <message>
         <source>The package transaction is taking longer than expected. Its outcome is not yet known; do not start another package manager.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">عملية الحزم تستغرق وقتًا أطول من المتوقع. نتيجتها غير معروفة بعد؛ لا تشغّل مدير حزم آخر.</translation>
     </message>
     <message>
         <source>The package service disconnected. The transaction outcome is unknown. Check again before retrying.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">انقطع الاتصال بخدمة الحزم. نتيجة العملية غير معروفة. تحقق مجددًا قبل إعادة المحاولة.</translation>
     </message>
     <message>
         <source>Update operation failed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">فشلت عملية التحديث</translation>
     </message>
     <message>
         <source>Choose updates from the current list. Blocked packages cannot be installed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر التحديثات من القائمة الحالية. لا يمكن تثبيت الحزم المحظورة.</translation>
     </message>
     <message>
         <source>Select at least one update to review.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر تحديثًا واحدًا على الأقل للمراجعة.</translation>
     </message>
     <message>
         <source>Review the dependency preview and explicitly confirm installation first.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">راجع معاينة الاعتماديات وأكّد التثبيت صراحةً أولًا.</translation>
     </message>
     <message>
         <source>Refreshing package information…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تحديث معلومات الحزم…</translation>
     </message>
     <message>
         <source>Checking available updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ التحقق من التحديثات المتاحة…</translation>
     </message>
     <message>
         <source>Preparing dependency preview…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تجهيز معاينة الاعتماديات…</translation>
     </message>
     <message>
         <source>Installing trusted updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تثبيت التحديثات الموثوقة…</translation>
     </message>
     <message>
         <source>PackageKit is unavailable or this operation is unsupported: %1</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">PackageKit غير متاح أو العملية غير مدعومة: %1</translation>
     </message>
     <message>
         <source>The package service returned an invalid transaction.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أعادت خدمة الحزم عملية غير صالحة.</translation>
     </message>
     <message>
         <source>Remove</source>
@@ -3475,95 +3475,95 @@
     </message>
     <message>
         <source>Updating %1…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تحديث %1…</translation>
     </message>
     <message>
         <source>Package service error %1: %2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">خطأ في خدمة الحزم %1: %2</translation>
     </message>
     <message>
         <source>This update requires a license agreement, repository trust decision, or installation media. Harbor has not accepted it. Resolve it in your distribution&apos;s package tools, then check again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">يتطلب هذا التحديث الموافقة على ترخيص أو قرار ثقة بمستودع أو وسيط تثبيت. لم يقبله Harbor. عالج ذلك من أدوات الحزم في توزيعتك ثم تحقق مجددًا.</translation>
     </message>
     <message>
         <source>Restart the computer to finish applying updates.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أعد تشغيل الحاسوب لإكمال تطبيق التحديثات.</translation>
     </message>
     <message>
         <source>Sign out and back in to finish applying updates.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">سجّل الخروج ثم الدخول لإكمال تطبيق التحديثات.</translation>
     </message>
     <message>
         <source>Restart updated applications to use their new versions.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أعد تشغيل التطبيقات المحدّثة لاستخدام إصداراتها الجديدة.</translation>
     </message>
     <message>
         <source>Waiting for the package service…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">بانتظار خدمة الحزم…</translation>
     </message>
     <message>
         <source>Removing packages…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ إزالة الحزم…</translation>
     </message>
     <message>
         <source>Downloading package data…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تنزيل بيانات الحزم…</translation>
     </message>
     <message>
         <source>Simulating package changes…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ محاكاة تغييرات الحزم…</translation>
     </message>
     <message>
         <source>Applying package updates…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ تطبيق تحديثات الحزم…</translation>
     </message>
     <message>
         <source>Cleaning up…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ التنظيف…</translation>
     </message>
     <message>
         <source>Resolving dependencies…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ حل الاعتماديات…</translation>
     </message>
     <message>
         <source>Verifying package signatures…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ التحقق من توقيعات الحزم…</translation>
     </message>
     <message>
         <source>Waiting for another package manager to finish…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">بانتظار انتهاء مدير حزم آخر…</translation>
     </message>
     <message>
         <source>Waiting for system authorization…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">بانتظار تفويض النظام…</translation>
     </message>
     <message>
         <source>The package transaction did not complete (result %1).</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم تكتمل عملية الحزم (النتيجة %1).</translation>
     </message>
     <message>
         <source>Update operation did not complete</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم تكتمل عملية التحديث</translation>
     </message>
     <message>
         <source>No updates are currently available.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا توجد تحديثات متاحة حاليًا.</translation>
     </message>
     <message>
         <source>Available updates loaded.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">حُمّلت التحديثات المتاحة.</translation>
     </message>
     <message>
         <source>The backend did not provide a dependency preview. Installation has not started.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم توفّر الخدمة معاينة للاعتماديات. لم يبدأ التثبيت.</translation>
     </message>
     <message>
         <source>Review all package changes, then confirm installation.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">راجع كل تغييرات الحزم، ثم أكّد التثبيت.</translation>
     </message>
     <message>
         <source>Updates installed. Check again for remaining updates.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثُبّتت التحديثات. تحقق مجددًا من التحديثات المتبقية.</translation>
     </message>
 </context>
 <context>
@@ -3680,98 +3680,98 @@
     <name>StorageSettings</name>
     <message>
         <source>This volume is no longer available. Refresh and try again.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم تعد وحدة التخزين هذه متاحة. حدّث القائمة وحاول مجددًا.</translation>
     </message>
     <message>
         <source>The file manager could not be opened.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر فتح مدير الملفات.</translation>
     </message>
     <message>
         <source>Choose an absolute folder path.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر مسار مجلد كاملًا.</translation>
     </message>
     <message>
         <source>Analyzing…</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">جارٍ التحليل…</translation>
     </message>
     <message>
         <source>Canceled. Partial results: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">أُلغي. نتائج جزئية: </translation>
     </message>
     <message>
         <source>Scan limit reached. Partial results: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">بُلغ حد الفحص. نتائج جزئية: </translation>
     </message>
     <message>
         <source>Finished: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">انتهى: </translation>
     </message>
     <message>
         <source>%1 files; %2 unreadable entries.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">%1 ملف؛ %2 عنصر تعذّرت قراءته.</translation>
     </message>
 </context>
 <context>
     <name>SystemServices</name>
     <message>
         <source>Please wait for pending changes.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">يُرجى انتظار التغييرات المعلّقة.</translation>
     </message>
     <message>
         <source>Applied; refreshing device state</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">طُبّق؛ جارٍ تحديث حالة الجهاز</translation>
     </message>
     <message>
         <source>This session cannot request that power action.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا تستطيع هذه الجلسة طلب إجراء الطاقة هذا.</translation>
     </message>
     <message>
         <source>Power action requested.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">طُلب إجراء الطاقة.</translation>
     </message>
     <message>
         <source>Select a window to force quit; Escape cancels.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">اختر نافذة لإنهائها إجباريًا؛ Escape للإلغاء.</translation>
     </message>
     <message>
         <source>Lock service unavailable: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">خدمة القفل غير متاحة: </translation>
     </message>
     <message>
         <source>Lock requested</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">طُلب القفل</translation>
     </message>
     <message>
         <source>Unsupported action</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">إجراء غير مدعوم</translation>
     </message>
     <message>
         <source>Install the external tool: </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثبّت الأداة الخارجية: </translation>
     </message>
     <message>
         <source>No runtime directory; cannot guard display change</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لا يوجد مجلد تشغيل؛ لا يمكن حماية تغيير الشاشة</translation>
     </message>
     <message>
         <source>Display guard is not installed</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">حارس الشاشة غير مثبت</translation>
     </message>
     <message>
         <source>Keep these settings? Automatic rollback after 15 seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">الإبقاء على هذه الإعدادات؟ ستُستعاد السابقة تلقائيًا بعد 15 ثانية.</translation>
     </message>
     <message>
         <source>Display guard did not report; check the display manually</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">لم يرسل حارس الشاشة تقريرًا؛ تحقق من الشاشة يدويًا</translation>
     </message>
     <message>
         <source>Could not confirm; display will revert</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر التأكيد؛ ستُستعاد إعدادات الشاشة السابقة</translation>
     </message>
     <message>
         <source>Could not open the recent item.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">تعذّر فتح العنصر الأخير.</translation>
     </message>
 </context>
 <context>
@@ -3853,11 +3853,11 @@
     <name>UserSettings</name>
     <message>
         <source>Wait for the current operation to finish.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">انتظر انتهاء العملية الحالية.</translation>
     </message>
     <message>
         <source>Install the updated Harbor package to enable these settings.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">ثبّت حزمة Harbor المحدّثة لتفعيل هذه الإعدادات.</translation>
     </message>
 </context>
 <context>
@@ -3883,7 +3883,7 @@
     <name>WindowModel</name>
     <message>
         <source>Workspace </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">مساحة العمل </translation>
     </message>
 </context>
 </TS>
