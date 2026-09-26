@@ -1,0 +1,19 @@
+---
+BasedOnStyle: LLVM
+Language: Cpp
+Standard: c++20
+IndentWidth: 4
+ColumnLimit: 110
+AccessModifierOffset: -4
+PointerAlignment: Left
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: Never
+AllowShortLoopsOnASingleLine: false
+AllowShortLambdasOnASingleLine: Empty
+BreakBeforeBraces: Attach
+# Order matters: Applications.cpp undefines Qt's `signals` before including GIO.
+SortIncludes: Never
+IncludeBlocks: Preserve
+# Keep user-visible strings and comments exactly as written.
+BreakStringLiterals: false
+ReflowComments: false

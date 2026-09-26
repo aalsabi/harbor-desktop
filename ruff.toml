@@ -1,0 +1,24 @@
+line-length = 110
+target-version = "py311"
+# Session and helper scripts are installed without a .py extension.
+extend-include = [
+    "scripts/harbor-accessibility-agent",
+    "scripts/harbor-autostart",
+    "scripts/harbor-charge-limit",
+    "scripts/harbor-display-guard",
+    "scripts/harbor-display-layout-guard",
+    "scripts/harbor-doctor",
+    "scripts/harbor-file-operation",
+    "scripts/harbor-generate-locales",
+    "scripts/harbor-keyboard",
+    "scripts/harbor-locale-environment",
+    "scripts/harbor-network-import",
+    "scripts/harbor-power-agent",
+    "scripts/harbor-sandbox",
+    "scripts/harbor-session",
+    "scripts/harbor-session-client",
+    "scripts/harbor-user-settings",
+]
+
+[format]
+quote-style = "preserve"
