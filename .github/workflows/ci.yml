@@ -48,7 +48,7 @@ jobs:
         run: |
           mkdir -p "$RUNNER_TEMP/build"
           docker run --rm -v "$PWD:/src:ro" -v "$RUNNER_TEMP/build:/build" harbor-build:trixie \
-            sh -c 'sh /src/scripts/validate-trixie.sh && sh /src/scripts/check-translations.sh'
+            sh -c 'sh /src/scripts/format.sh --check-qml && sh /src/scripts/validate-trixie.sh && sh /src/scripts/check-translations.sh'
       - name: Keep build logs and screenshots
         if: failure()
         uses: actions/upload-artifact@v7

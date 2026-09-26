@@ -45,7 +45,7 @@
 
 ### تنسيق الكود
 
-يُنسَّق C++ بـclang-format حسب ملف .clang-format، ويُنسَّق Python بـruff حسب ملف ruff.toml، بما فيه السكربتات التي بلا امتداد. ثبّت الأداتين ثم شغّل التنسيق قبل كل commit:
+يُنسَّق C++ بـclang-format حسب ملف .clang-format، ويُنسَّق Python بـruff حسب ملف ruff.toml، بما فيه السكربتات التي بلا امتداد، وتُنسَّق ملفات QML بـqmlformat من Qt (حزمة qt6-declarative-dev). إذا لم يوجد qmlformat يتخطى السكربت ملفات QML، ويفحصها CI داخل صورة Debian. ثبّت الأداتين ثم شغّل التنسيق قبل كل commit:
 
     pipx install ruff==0.16.9 clang-format==23.1.1
     ./scripts/format.sh
