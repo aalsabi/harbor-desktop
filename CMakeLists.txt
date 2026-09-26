@@ -84,6 +84,10 @@ qt_add_resources(harbor-core harbor_translations PREFIX /i18n BASE ${CMAKE_CURRE
 add_executable(harbor-shell
     src/shell/main.cpp
     src/shell/Controller.h
+    src/shell/Palette.cpp
+    src/shell/SettingsServices.cpp
+    src/shell/ShellOptions.cpp
+    src/shell/Surfaces.cpp
     src/core/Icons.cpp
     src/kwin/WindowMenu.cpp
     resources.qrc

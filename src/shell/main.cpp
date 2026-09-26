@@ -1,57 +1,39 @@
-#include "core/Icons.h"
-#include <QGuiApplication>
-#include <QQuickView>
-#include <QQuickStyle>
-#include <QQuickItem>
-#include <QQmlContext>
-#include <QQmlEngine>
-#include <QQuickImageProvider>
-#include <QScreen>
-#include <QIcon>
-#include <QPalette>
-#include <QFile>
-#include <QTimer>
-#include <QJsonDocument>
-#include <QJsonObject>
-#include <QJsonArray>
-#include <QDBusConnection>
-#include <QTextStream>
-#include <LayerShellQt/Window>
-#include <KWindowEffects>
-#include "core/Applications.h"
-#include "core/Notifications.h"
-#include "core/GlobalMenu.h"
-#include "core/Tray.h"
+#include "Controller.h"
+#include "Palette.h"
+#include "SettingsServices.h"
+#include "ShellOptions.h"
+#include "Surfaces.h"
 #include "core/Accounts.h"
+#include "core/Applications.h"
 #include "core/Files.h"
-#include "core/Translation.h"
+#include "core/FilesMenu.h"
+#include "core/GlobalMenu.h"
+#include "core/Icons.h"
+#include "core/Keyboard.h"
+#include "core/Notifications.h"
 #include "core/Preferences.h"
 #include "core/Region.h"
-#include "core/DateTimeSettings.h"
-#include "core/StorageSettings.h"
-#include "core/PointerSettings.h"
-#include "core/DefaultApps.h"
-#include "core/Printers.h"
-#include "core/NotificationPreferences.h"
-#include "core/UserSettings.h"
-#include "core/AccessibilitySettings.h"
-#include "core/NetworkSettings.h"
-#include "core/DisplaySettings.h"
-#include "core/AudioStreams.h"
-#include "core/PowerSettings.h"
-#include "core/SoftwareUpdate.h"
-#include "core/PrinterDrivers.h"
-#include "core/ApplicationStorage.h"
-#include "core/GestureSettings.h"
 #include "core/SystemServices.h"
+#include "core/Translation.h"
+#include "core/Tray.h"
+#include "kwin/WindowMenu.h"
 #include "kwin/WindowModel.h"
-#include "Controller.h"
+#include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusPendingCall>
-#include "core/FilesMenu.h"
-#include "core/Keyboard.h"
-#include "kwin/WindowMenu.h"
+#include <QGuiApplication>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QQmlContext>
+#include <QQmlEngine>
 #include <QQuickItem>
+#include <QQuickStyle>
+#include <QQuickView>
+#include <QScreen>
+#include <QTextStream>
+#include <QTimer>
+
 int main(int argc, char** argv) {
     QQuickStyle::setStyle("Basic");
     QQuickWindow::setDefaultAlphaBuffer(true);
@@ -62,62 +44,28 @@ int main(int argc, char** argv) {
     app.setFont(QFont("Noto Sans", 10));
     app.setDesktopFileName("org.harbor.Shell");
     app.setQuitOnLastWindowClosed(false);
-    const auto args = app.arguments();
-    bool preview = args.contains("--preview"), settings = args.contains("--settings"),
-         filesMode = args.contains("--files"), controlMode = args.contains("--control");
-    QString controlPage = "ControlCenter";
-    if (controlMode) {
-        auto requested = args.value(args.indexOf("--control") + 1);
-        if (QStringList{"HarborMenu", "BluetoothMenu", "RecentItems"}.contains(requested))
-            controlPage = requested;
-    }
+    const auto options = ShellOptions::parse(app.arguments());
+
+    // Services shared by every surface. Construction order is also the reverse destruction order.
     Files browser;
-    if (filesMode)
+    if (options.files)
         app.setDesktopFileName("org.harbor.Files");
-    if (filesMode || preview) {
-        int n = args.indexOf(filesMode ? "--files" : "--preview");
-        if (n + 1 < args.size() && !args[n + 1].startsWith("--"))
-            browser.navigate(args[n + 1]);
-    }
+    if (!options.initialPath.isEmpty())
+        browser.navigate(options.initialPath);
     Preferences preferences;
     Keyboard keyboard;
     Region region;
-    DateTimeSettings dateTimeSettings;
-    StorageSettings storageSettings;
-    PointerSettings pointerSettings;
-    DefaultApps defaultApps;
-    Printers printers;
-    NotificationPreferences notificationPreferences;
-    UserSettings userSettings;
-    AccessibilitySettings accessibilitySettings;
-    NetworkSettings networkSettings;
-    DisplaySettings displaySettings;
-    AudioStreams audioStreams;
-    PowerSettings powerSettings;
-    SoftwareUpdate softwareUpdate;
-    PrinterDrivers printerDrivers;
-    ApplicationStorage applicationStorage;
-    GestureSettings gestureSettings;
-    auto updatePalette = [&] {
-        QPalette p;
-        bool d = preferences.dark();
-        p.setColor(QPalette::Window, d ? QColor("#252528") : QColor("#f6f6f8"));
-        p.setColor(QPalette::WindowText, d ? QColor("#eeeeef") : QColor("#26262a"));
-        p.setColor(QPalette::Text, p.color(QPalette::WindowText));
-        p.setColor(QPalette::ButtonText, p.color(QPalette::WindowText));
-        p.setColor(QPalette::Base, d ? QColor("#333337") : Qt::white);
-        p.setColor(QPalette::Button, d ? QColor("#3d3d43") : QColor("#ededf1"));
-        p.setColor(QPalette::Highlight, QColor(preferences.accent()));
-        app.setPalette(p);
-    };
-    updatePalette();
-    QObject::connect(&preferences, &Preferences::changed, &app, updatePalette);
+    SettingsServices settingsServices;
+    applyPalette(preferences);
+    QObject::connect(&preferences, &Preferences::changed, &app, [&] {
+        applyPalette(preferences);
+    });
     Applications applications;
     SystemServices services;
     WindowModel windows;
     Controller controller;
-    Notifications notifications(!preview && !settings && !filesMode && !controlMode);
-    Tray tray(!preview && !settings && !filesMode && !controlMode);
+    Notifications notifications(options.session());
+    Tray tray(options.session());
     Accounts accounts;
     QTimer::singleShot(0, &accounts, &Accounts::refresh);
     QObject::connect(&windows, &WindowModel::changed, &applications, [&] {
@@ -131,9 +79,11 @@ int main(int argc, char** argv) {
     GlobalMenu menu;
     QObject::connect(&menu, &GlobalMenu::activated, &controller, &Controller::dismiss);
     QObject::connect(&windows, &WindowModel::changed, &menu, [&] {
-        if (!preview)
+        if (!options.preview)
             menu.setSource(windows.menuService(), windows.menuPath());
     });
+
+    // QML engine, translations and the objects QML reaches by name.
     Translation translation(preferences);
     app.setLayoutDirection(translation.rightToLeft() ? Qt::RightToLeft : Qt::LeftToRight);
     QQmlEngine engine;
@@ -143,22 +93,7 @@ int main(int argc, char** argv) {
     });
     engine.addImageProvider("icons", new Icons);
     auto ctx = engine.rootContext();
-    ctx->setContextProperty("ApplicationStorage", &applicationStorage);
-    ctx->setContextProperty("PrinterDrivers", &printerDrivers);
-    ctx->setContextProperty("GestureSettings", &gestureSettings);
-    ctx->setContextProperty("NotificationPrefs", &notificationPreferences);
-    ctx->setContextProperty("UserSettings", &userSettings);
-    ctx->setContextProperty("AccessibilitySettings", &accessibilitySettings);
-    ctx->setContextProperty("NetworkSettings", &networkSettings);
-    ctx->setContextProperty("DisplaySettings", &displaySettings);
-    ctx->setContextProperty("AudioStreams", &audioStreams);
-    ctx->setContextProperty("PowerSettings", &powerSettings);
-    ctx->setContextProperty("SoftwareUpdate", &softwareUpdate);
-    ctx->setContextProperty("DateTimeSettings", &dateTimeSettings);
-    ctx->setContextProperty("StorageSettings", &storageSettings);
-    ctx->setContextProperty("PointerSettings", &pointerSettings);
-    ctx->setContextProperty("DefaultApps", &defaultApps);
-    ctx->setContextProperty("Printers", &printers);
+    settingsServices.expose(ctx);
     ctx->setContextProperty("Region", &region);
     ctx->setContextProperty("Keyboard", &keyboard);
     ctx->setContextProperty("HarborVersion", QStringLiteral(HARBOR_VERSION));
@@ -172,6 +107,8 @@ int main(int argc, char** argv) {
     ctx->setContextProperty("System", &services);
     ctx->setContextProperty("Windows", &windows);
     ctx->setContextProperty("UI", &controller);
+
+    // org.harbor.Shell D-Bus interface, served only by the session instance.
     controller.onList = [&] {
         return QString::fromUtf8(
             QJsonDocument(QJsonArray::fromVariantList(windows.windows())).toJson(QJsonDocument::Compact));
@@ -182,81 +119,25 @@ int main(int argc, char** argv) {
     controller.onWindowClose = [&](QString id) {
         windows.close(id);
     };
-    if (!preview && !settings && !filesMode && !controlMode) {
+    if (options.session()) {
         auto bus = QDBusConnection::sessionBus();
         if (!bus.registerService("org.harbor.Shell"))
             return 4;
         bus.registerObject("/Shell", &controller, QDBusConnection::ExportAllSlots);
+        QTimer::singleShot(800, &settingsServices.accessibility, &AccessibilitySettings::restore);
+        QTimer::singleShot(1200, &settingsServices.gestures, &GestureSettings::restore);
     }
-    if (!preview && !settings && !filesMode && !controlMode) {
-        QTimer::singleShot(800, &accessibilitySettings, &AccessibilitySettings::restore);
-        QTimer::singleShot(1200, &gestureSettings, &GestureSettings::restore);
-    }
+
+    // Surfaces: panels per screen in the session, or a single window in the other modes.
     QList<QQuickView*> surfaces;
     QQuickView* popup = nullptr;
-    auto make = [&](QString name, QScreen* screen, int width, int height, int role) -> QQuickView* {
-        auto view = new QQuickView(&engine, nullptr);
-        view->setResizeMode(QQuickView::SizeRootObjectToView);
-        view->setColor(Qt::transparent);
-        view->setScreen(screen);
-        view->resize(width, height);
-        if (name == "Settings" || name == "Files") {
-            view->setFlags(Qt::FramelessWindowHint);
-            view->setMinimumSize(QSize(740, 560));
-        }
-        if (name == "Files")
-            view->setMinimumSize(QSize(1000, 600));
-        // Keep the initial geometry on the target output: Qt may otherwise
-        // select the primary output when creating the native Wayland surface.
-        view->setPosition(screen->geometry().topLeft());
-        view->setTitle("Harbor — " + name);
-        view->setProperty("harborScreen", QVariant::fromValue(screen));
-        if (role >= 0 && !preview && app.platformName() == "wayland") {
-            view->setFlags(Qt::FramelessWindowHint);
-            auto layer = LayerShellQt::Window::get(view);
-            layer->setScope("harbor-" + name.toLower());
-            using W = LayerShellQt::Window;
-            if (role == 0) {
-                layer->setLayer(W::LayerBackground);
-                layer->setAnchors(W::Anchors(W::AnchorTop) | W::AnchorBottom | W::AnchorLeft |
-                                  W::AnchorRight);
-                layer->setExclusiveZone(-1);
-            }
-            if (role == 1) {
-                layer->setLayer(W::LayerTop);
-                layer->setAnchors(W::Anchors(W::AnchorTop) | W::AnchorLeft | W::AnchorRight);
-                layer->setExclusiveZone(height);
-            }
-            if (role == 2) {
-                layer->setLayer(W::LayerTop);
-                layer->setAnchors(W::AnchorBottom);
-                layer->setMargins(QMargins(0, 0, 0, 10));
-                layer->setExclusiveZone(height + 10);
-            }
-            if (role == 3) {
-                layer->setLayer(W::LayerOverlay);
-                layer->setAnchors(
-                    W::Anchors(W::AnchorTop) |
-                    (name == "HarborMenu" || name == "RecentItems" ? W::AnchorLeft : W::AnchorRight));
-                layer->setMargins(QMargins(18, 42, 18, 0));
-                layer->setExclusiveZone(0);
-            }
-            layer->setKeyboardInteractivity(role == 3 ? W::KeyboardInteractivityOnDemand
-                                                      : W::KeyboardInteractivityNone);
-        }
-        view->setSource(QUrl("qrc:/qml/" + name + ".qml"));
-        if (view->status() == QQuickView::Error) {
-            delete view;
-            return nullptr;
-        }
-        view->show();
-        if (role > 0 && !preview && app.platformName() == "wayland")
-            KWindowEffects::enableBlurBehind(view, true);
-        return view;
+    auto make = [&](const QString& name, QScreen* screen, QSize size, SurfaceRole role) {
+        return createSurface(engine, name, screen, size, role, options.preview);
     };
     controller.onWindowAction = [&](QString name) {
         QQuickView* v =
-            popup ? popup : ((settings || filesMode) && !surfaces.isEmpty() ? surfaces[0] : nullptr);
+            popup ? popup
+                  : ((options.settings || options.files) && !surfaces.isEmpty() ? surfaces[0] : nullptr);
         if (!v)
             return;
         if (name == "move")
@@ -275,7 +156,7 @@ int main(int argc, char** argv) {
         }
     };
     controller.onLogout = [&] {
-        if (!preview && !settings && !filesMode && !controlMode)
+        if (options.session())
             QTimer::singleShot(100, &app, &QCoreApplication::quit);
         else {
             auto message =
@@ -288,96 +169,33 @@ int main(int argc, char** argv) {
             popup->hide();
             popup->deleteLater();
             popup = nullptr;
-        } else if (controlMode)
+        } else if (options.control)
             app.quit();
     };
     controller.onOpen = [&](QString page) {
         controller.dismiss();
-        const bool settingsPage = page == "settings" || page.startsWith("settings:");
-        QString name = page == "harbor"          ? "HarborMenu"
-                       : page == "bluetooth"     ? "BluetoothMenu"
-                       : page == "recent"        ? "RecentItems"
-                       : page == "input"         ? "InputMenu"
-                       : page == "menu"          ? "AppMenu"
-                       : page == "notifications" ? "NotificationCenter"
-                       : page == "launcher"      ? "Launcher"
-                       : settingsPage            ? "Settings"
-                       : page == "windows"       ? "WindowList"
-                                                 : "ControlCenter";
-        popup = make(name, app.primaryScreen(),
-                     name == "Settings"    ? 960
-                     : name == "Launcher"  ? 680
-                     : name == "InputMenu" ? 320
-                                           : 390,
-                     name == "Settings"     ? 680
-                     : name == "Launcher"   ? 560
-                     : name == "InputMenu"  ? 320
-                     : name == "HarborMenu" ? 450
-                                            : 560,
-                     name == "Settings" ? -1 : 3);
+        const auto spec = popupFor(page);
+        popup = make(spec.name, app.primaryScreen(), spec.size, spec.role);
         if (popup) {
-            if (settingsPage && page.startsWith("settings:"))
+            if (spec.settings && page.startsWith("settings:"))
                 popup->rootObject()->setProperty("section", page.mid(9));
             popup->requestActivate();
         }
     };
-    if (preview || settings || filesMode || controlMode) {
-        auto v = make(filesMode     ? "Files"
-                      : settings    ? "Settings"
-                      : controlMode ? controlPage
-                                    : "Preview",
-                      app.primaryScreen(),
-                      filesMode     ? 1200
-                      : settings    ? 960
-                      : controlMode ? 410
-                                    : 1440,
-                      filesMode     ? 760
-                      : settings    ? 680
-                      : controlMode ? (controlPage == "HarborMenu" ? 450 : 600)
-                                    : 900,
-                      -1);
+    if (!options.session()) {
+        auto v = make(options.windowName(), app.primaryScreen(), options.windowSize(), SurfaceRole::Window);
         if (!v)
             return 2;
         surfaces << v;
-        if (settings) {
-            int pageIndex = args.indexOf("--settings") + 1;
-            if (pageIndex < args.size() && !args[pageIndex].startsWith("--")) {
-                const QStringList pages{"Gestures",
-                                        "Notifications & Focus",
-                                        "Startup Applications",
-                                        "Privacy & Permissions",
-                                        "Date & Time",
-                                        "Storage",
-                                        "Default Applications",
-                                        "Mouse",
-                                        "Touchpad",
-                                        "Printers",
-                                        "Language & Region",
-                                        "General",
-                                        "Wi-Fi",
-                                        "Bluetooth",
-                                        "Network",
-                                        "Sound",
-                                        "Appearance",
-                                        "Accessibility",
-                                        "Desktop & Dock",
-                                        "Displays",
-                                        "Keyboard",
-                                        "Battery",
-                                        "Users & Groups",
-                                        "About",
-                                        "Software Update"};
-                if (pages.contains(args[pageIndex]))
-                    v->rootObject()->setProperty("section", args[pageIndex]);
-            }
-        }
-        if (filesMode || preview) {
+        if (!options.settingsPage.isEmpty())
+            v->rootObject()->setProperty("section", options.settingsPage);
+        if (options.files || options.preview) {
             auto fileRoot =
-                filesMode ? v->rootObject() : v->rootObject()->findChild<QQuickItem*>("filesView");
+                options.files ? v->rootObject() : v->rootObject()->findChild<QQuickItem*>("filesView");
             if (fileRoot) {
                 auto exporter = new FilesMenu(v);
                 fileRoot->setProperty("menuExporter", QVariant::fromValue(static_cast<QObject*>(exporter)));
-                if (filesMode)
+                if (options.files)
                     attachWindowMenu(v, exporter->objectPath());
                 else
                     menu.setSource(QDBusConnection::sessionBus().baseService(), exporter->objectPath());
@@ -387,19 +205,10 @@ int main(int argc, char** argv) {
             if (!v->isVisible())
                 app.quit();
         });
-        int i = args.indexOf("--screenshot");
-        if (i >= 0 && i + 1 < args.size()) {
-            auto path = args[i + 1];
-            int sizeArg = args.indexOf("--screenshot-size");
-            if (sizeArg >= 0 && sizeArg + 1 < args.size()) {
-                auto parts = args[sizeArg + 1].split('x');
-                if (parts.size() == 2) {
-                    int w = parts[0].toInt(), h = parts[1].toInt();
-                    if (w >= 740 && w <= 3840 && h >= 560 && h <= 2160)
-                        v->resize(w, h);
-                }
-            }
-            QTimer::singleShot(1800, &app, [&app, v, path] {
+        if (options.screenshot) {
+            if (options.screenshotSize.isValid())
+                v->resize(options.screenshotSize);
+            QTimer::singleShot(1800, &app, [&app, v, path = options.screenshotPath] {
                 bool ok = v->grabWindow().save(path);
                 app.exit(ok ? 0 : 3);
             });
@@ -407,18 +216,21 @@ int main(int argc, char** argv) {
     } else {
         auto addScreen = [&](QScreen* screen) {
             auto geo = screen->geometry();
-            for (auto spec : QList<QPair<QString, int>>{{"Desktop", 0}, {"MenuBar", 1}, {"Dock", 2}}) {
-                auto v = make(spec.first, screen, spec.second == 2 ? 720 : geo.width(),
-                              spec.second == 0   ? geo.height()
-                              : spec.second == 1 ? 38
-                                                 : 78,
-                              spec.second);
+            const QList<std::pair<QString, SurfaceRole>> panels{{"Desktop", SurfaceRole::Background},
+                                                                {"MenuBar", SurfaceRole::Panel},
+                                                                {"Dock", SurfaceRole::Dock}};
+            for (const auto& [name, role] : panels) {
+                QSize size(role == SurfaceRole::Dock ? 720 : geo.width(), role == SurfaceRole::Background
+                                                                              ? geo.height()
+                                                                          : role == SurfaceRole::Panel ? 38
+                                                                                                       : 78);
+                auto v = make(name, screen, size, role);
                 if (v) {
                     surfaces << v;
-                    QObject::connect(screen, &QScreen::geometryChanged, v, [v, spec](QRect r) {
-                        if (spec.second != 2)
+                    QObject::connect(screen, &QScreen::geometryChanged, v, [v, role](QRect r) {
+                        if (role != SurfaceRole::Dock)
                             v->setWidth(r.width());
-                        if (spec.second == 0)
+                        if (role == SurfaceRole::Background)
                             v->setHeight(r.height());
                     });
                 }
@@ -434,7 +246,7 @@ int main(int argc, char** argv) {
                 }
         });
     }
-    if (args.contains("--diagnose"))
+    if (options.diagnose)
         QTimer::singleShot(1200, &app, [&] {
             QJsonObject j{
                 {"windowManagement", windows.available()},
