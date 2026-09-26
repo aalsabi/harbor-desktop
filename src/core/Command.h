@@ -8,7 +8,9 @@ class Command : public QObject {
 public:
     explicit Command(QObject* parent = nullptr);
     bool busy() const { return active; }
-    void run(const QString& program, const QStringList& args, int timeout = 5000);
+    // Starts `program` unless a previous run is still active. Returns false and logs a warning when
+    // busy; `finished` is then emitted only for the command already running.
+    bool run(const QString& program, const QStringList& args, int timeout = 5000);
 signals:
     void finished(bool ok, QString output);
     void busyChanged();

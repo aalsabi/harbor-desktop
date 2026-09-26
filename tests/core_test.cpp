@@ -74,6 +74,31 @@ private slots:
         QCOMPARE(done[0][0].toBool(), true);
         QCOMPARE(done[0][1].toString(), QString("$(touch /tmp/harbor-should-not-exist)"));
     }
+    void runWhileBusyIsRejectedWithoutDisturbingTheActiveCommand() {
+        Command c;
+        QSignalSpy done(&c, &Command::finished);
+        QVERIFY(c.run("/usr/bin/sh", {"-c", "sleep 0.2; printf first"}));
+        QTest::ignoreMessage(QtWarningMsg, QRegularExpression("still running"));
+        QVERIFY(!c.run("/usr/bin/printf", {"second"}));
+        QVERIFY(c.busy());
+        QVERIFY(done.wait(3000));
+        QTest::qWait(100);
+        QCOMPARE(done.count(), 1);
+        QCOMPARE(done[0][0].toBool(), true);
+        QCOMPARE(done[0][1].toString(), QString("first"));
+        QVERIFY(!c.busy());
+        QVERIFY(c.run("/usr/bin/printf", {"third"}));
+        QVERIFY(done.wait(3000));
+        QCOMPARE(done[1][1].toString(), QString("third"));
+    }
+    void crashReportsFailureInsteadOfOutput() {
+        Command c;
+        QSignalSpy done(&c, &Command::finished);
+        QVERIFY(c.run("/usr/bin/sh", {"-c", "printf partial-output; kill -SEGV $$"}));
+        QVERIFY(done.wait(3000));
+        QCOMPARE(done[0][0].toBool(), false);
+        QCOMPARE(done[0][1].toString(), QString("Operation failed"));
+    }
     void failedProgramEndsBusy() {
         Command c;
         QSignalSpy done(&c, &Command::finished);

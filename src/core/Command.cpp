@@ -14,16 +14,19 @@ Command::Command(QObject* parent) : QObject(parent) {
             [this](int code, QProcess::ExitStatus status) {
                 QString out = QString::fromUtf8(process.readAllStandardOutput());
                 QString err = QString::fromUtf8(process.readAllStandardError());
-                finish(!timedOut && code == 0 && status == QProcess::NormalExit,
-                       timedOut        ? tr("Operation timed out")
-                       : code == 0     ? out
-                       : err.isEmpty() ? tr("Operation failed")
-                                       : err);
+                const bool ok = !timedOut && code == 0 && status == QProcess::NormalExit;
+                finish(ok, ok              ? out
+                           : timedOut      ? tr("Operation timed out")
+                           : err.isEmpty() ? tr("Operation failed")
+                                           : err);
             });
 }
-void Command::run(const QString& program, const QStringList& args, int timeout) {
-    if (active)
-        return;
+bool Command::run(const QString& program, const QStringList& args, int timeout) {
+    if (active) {
+        qWarning("Command: not starting %s; %s is still running", qPrintable(program),
+                 qPrintable(process.program()));
+        return false;
+    }
     active = true;
     timedOut = false;
     emit busyChanged();
@@ -32,6 +35,7 @@ void Command::run(const QString& program, const QStringList& args, int timeout) 
     process.setProcessEnvironment(env);
     process.start(program, args);
     timer.start(timeout);
+    return true;
 }
 void Command::finish(bool ok, QString text) {
     if (!active)
