@@ -79,7 +79,7 @@ if name == 'dbus-update-activation-environment':
         self.assertEqual(update['bus'], env['DBUS_SESSION_BUS_ADDRESS'])
         self.assertEqual(set(update['args']), {'--systemd', 'LC_CTYPE', 'WAYLAND_DISPLAY', 'DISPLAY',
             'XAUTHORITY', 'XDG_CURRENT_DESKTOP', 'XDG_SESSION_DESKTOP', 'XDG_SESSION_TYPE',
-            'XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME', 'XDG_STATE_HOME', 'XDG_MENU_PREFIX'})
+            'XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME', 'XDG_STATE_HOME', 'XDG_MENU_PREFIX', 'QT_ACCESSIBILITY'})
 
     def test_private_bus_never_updates_systemd_and_omits_absent_keys(self):
         result, events, env = self.run_client(private=True, omit=('DISPLAY', 'XAUTHORITY'))

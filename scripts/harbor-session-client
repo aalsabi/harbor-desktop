@@ -3,6 +3,7 @@
 import os,pathlib,runpy,shutil,signal,subprocess,sys,time
 if os.getenv('HARBOR_USER_CONFIG'): os.environ['XDG_CONFIG_HOME']=os.environ['HARBOR_USER_CONFIG']
 locale_applied = runpy.run_path(str(pathlib.Path(__file__).with_name('harbor-locale-environment')))['apply_locale_environment'](os.environ)
+os.environ.setdefault('QT_ACCESSIBILITY','1')
 children=[]; stopping=False
 def stop(signum,frame):
  global stopping
@@ -17,7 +18,7 @@ activation_keys = (
  'WAYLAND_DISPLAY', 'DISPLAY', 'XAUTHORITY', 'XDG_CURRENT_DESKTOP',
  'XDG_SESSION_DESKTOP', 'XDG_SESSION_TYPE', 'XDG_MENU_PREFIX',
  'XDG_CONFIG_HOME', 'XDG_DATA_HOME', 'XDG_CACHE_HOME', 'XDG_STATE_HOME',
- 'LANG', 'LANGUAGE', 'LC_ALL', 'LC_CTYPE', 'LC_COLLATE', 'LC_MESSAGES',
+ 'QT_ACCESSIBILITY', 'LANG', 'LANGUAGE', 'LC_ALL', 'LC_CTYPE', 'LC_COLLATE', 'LC_MESSAGES',
  'LC_TIME', 'LC_NUMERIC', 'LC_MONETARY', 'LC_MEASUREMENT', 'LC_PAPER',
  'LC_NAME', 'LC_ADDRESS', 'LC_TELEPHONE', 'LC_IDENTIFICATION',
 )
@@ -37,16 +38,21 @@ except (OSError, subprocess.SubprocessError) as error:
 for candidate in ['/usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1','/usr/lib/polkit-kde-authentication-agent-1','/usr/libexec/polkit-gnome-authentication-agent-1']:
  if os.path.isfile(candidate):
   children.append(subprocess.Popen([candidate]));break
+# Session services own their spawned children and stop with this session.
+for service in ('harbor-power-agent','harbor-accessibility-agent'):
+ if shutil.which(service):children.append(subprocess.Popen([service]))
 code=1
 try:
  for attempt in range(3):
   if stopping:break
-  shell=subprocess.Popen(['harbor-shell']);children.append(shell);code=shell.wait()
+  shell=subprocess.Popen(['harbor-shell']);children.append(shell)
+  if attempt==0 and shutil.which('harbor-autostart'):children.append(subprocess.Popen(['harbor-autostart']))
+  code=shell.wait()
   if code==0 or stopping:break
   time.sleep(1)
 finally:
  stop(None,None)
  for child in children:
-  try:child.wait(timeout=4)
+  try:child.wait(timeout={"harbor-accessibility-agent":20,"harbor-power-agent":10}.get(child.args[0],4))
   except subprocess.TimeoutExpired:child.kill();child.wait()
 sys.exit(code)

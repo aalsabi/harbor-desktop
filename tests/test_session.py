@@ -28,6 +28,22 @@ class SessionTests(unittest.TestCase):
    r=subprocess.run(['/usr/bin/python3',str(ROOT/'scripts/harbor-session'),'--nested'],env={**os.environ,'PATH':d,'DBUS_SESSION_BUS_ADDRESS':'test','HARBOR_PRIVATE_BUS':'1','XDG_CONFIG_HOME':d},capture_output=True,text=True,timeout=8)
    time.sleep(1.2)
    self.assertFalse((folder/'leaked').exists(),'session child survived compositor exit')
+ def test_term_allows_owned_service_to_finish_cleanup(self):
+  import time
+  with tempfile.TemporaryDirectory() as d:
+   folder=pathlib.Path(d);ready=folder/'ready';finished=folder/'cleaned'
+   fake=folder/'kwin_wayland'
+   fake.write_text('#!/usr/bin/python3\nimport os,time,pathlib,signal\npid=os.fork()\nif pid==0:\n def cleanup(*args):\n  signal.signal(signal.SIGTERM,signal.SIG_IGN)\n  time.sleep(6)\n  pathlib.Path('+repr(str(finished))+').touch()\n  os._exit(0)\n signal.signal(signal.SIGTERM,cleanup)\n pathlib.Path('+repr(str(ready))+').touch()\nwhile True:time.sleep(.1)\n');fake.chmod(0o755)
+   shell=folder/'harbor-shell';shell.write_text('#!/bin/sh\nexit 0\n');shell.chmod(0o755)
+   p=subprocess.Popen(['/usr/bin/python3',str(ROOT/'scripts/harbor-session'),'--nested'],env={**os.environ,'PATH':d,'DBUS_SESSION_BUS_ADDRESS':'test','HARBOR_PRIVATE_BUS':'1','XDG_CONFIG_HOME':d},stdout=subprocess.PIPE,stderr=subprocess.PIPE)
+   try:
+    deadline=time.monotonic()+4
+    while not ready.exists() and time.monotonic()<deadline:time.sleep(.05)
+    self.assertTrue(ready.exists());started=time.monotonic();p.terminate();p.communicate(timeout=12)
+    self.assertTrue(finished.exists(),'cleanup was killed by the old outer timeout')
+    self.assertLess(time.monotonic()-started,10,'zombie-only process group delayed logout')
+   finally:
+    if p.poll() is None:p.kill();p.communicate(timeout=2)
  def test_doctor_machine_readable(self):
   script=ROOT/'scripts/harbor-doctor'
   self.assertTrue(script.exists(), 'doctor is not implemented')
