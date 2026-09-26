@@ -17,8 +17,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.13"
       # Keep in step with docs/INSTALL.md; other versions may format differently.
@@ -30,10 +30,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-      - uses: docker/setup-buildx-action@v3
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
       - name: Build the Debian 13 image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
+        env:
+          # The build summary stays; only the per-run build record artifact is skipped.
+          DOCKER_BUILD_RECORD_UPLOAD: false
         with:
           context: .
           file: scripts/Dockerfile.trixie
@@ -48,7 +51,7 @@ jobs:
             sh -c 'sh /src/scripts/validate-trixie.sh && sh /src/scripts/check-translations.sh'
       - name: Keep build logs and screenshots
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: debian-build
           path: |
