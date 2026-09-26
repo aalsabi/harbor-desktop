@@ -43,6 +43,17 @@
 
 مصدر Debian trixie يستمر بتلقي تحديثات؛ سجل أرقام الاعتماديات مع كل بناء. هذا وصف لإعادة البناء، وليس ادعاء تطابق الأرشيف بتاً ببت.
 
+### تنسيق الكود
+
+يُنسَّق C++ بـclang-format حسب ملف .clang-format، ويُنسَّق Python بـruff حسب ملف ruff.toml، بما فيه السكربتات التي بلا امتداد. ثبّت الأداتين ثم شغّل التنسيق قبل كل commit:
+
+    pipx install ruff clang-format
+    ./scripts/format.sh
+
+للتحقق دون تعديل الملفات، كما في CI:
+
+    ./scripts/format.sh --check
+
 ## الإعدادات والخدمات
 
 - تفضيلات Harbor: ~/.config/harbor/settings.ini أو المسار المكافئ تحت XDG_CONFIG_HOME.
