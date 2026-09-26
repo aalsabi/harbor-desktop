@@ -79,12 +79,19 @@ try:
     assert all(label in result.stdout for label in ['File', 'Edit', 'View', 'Go', 'Window']), result.stdout
     ids = [r['id'] for r in rows]
     call('Activate', ids[0])
-    for _ in range(80):
+    # Both windows were launched together, and the later one can still take focus when it maps.
+    # Require the activation to hold for five consecutive checks, not just the first reading.
+    held = 0
+    for _ in range(100):
         if next(r for r in windows() if r['id'] == ids[0])['active']:
-            break
-        # Enumeration can precede mapping/focus readiness on KWin 6.3.
+            held += 1
+            if held == 5:
+                break
+        else:
+            held = 0
+            # Enumeration can precede mapping/focus readiness on KWin 6.3.
+            call('Activate', ids[0])
         time.sleep(0.1)
-        call('Activate', ids[0])
     assert next(r for r in windows() if r['id'] == ids[0])['active'], {
         'windows': windows(),
         'processes': [p.poll() for p in children],
