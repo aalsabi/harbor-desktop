@@ -171,6 +171,7 @@ harbor_test(focus-ui QML SOURCES tests/focus_ui_test.cpp LIBS harbor-desktop-cor
 harbor_test(icons QML SOURCES tests/icons_test.cpp src/core/Icons.cpp LIBS Qt6::Quick Qt6::Svg)
 target_include_directories(icons-test PRIVATE src)
 harbor_test(input-menu QML SOURCES tests/input_menu_test.cpp LIBS harbor-core ${HARBOR_QML_LIBS})
+harbor_test(network-ui QML SOURCES tests/network_ui_test.cpp LIBS harbor-core ${HARBOR_QML_LIBS})
 harbor_test(panel-menus QML SOURCES tests/panel_menus_test.cpp LIBS harbor-core ${HARBOR_QML_LIBS})
 harbor_test(region-ui QML SOURCES tests/region_ui_test.cpp LIBS harbor-core ${HARBOR_QML_LIBS})
 harbor_test(settings-expansion-ui QML SOURCES tests/settings_expansion_ui_test.cpp LIBS harbor-core ${HARBOR_QML_LIBS})

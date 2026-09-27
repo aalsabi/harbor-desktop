@@ -5,12 +5,14 @@ import QtQuick.Layouts
 
 NetworkCard {
     id: editor
+    objectName: "connectionEditor"
     required property Item page
     HarborLabel {
         text: qsTr("Connection settings")
         font.bold: true
     }
     HarborField {
+        objectName: "connectionName"
         Layout.fillWidth: true
         text: editor.page.draft.name || ""
         placeholderText: qsTr("Connection name")
@@ -57,6 +59,7 @@ NetworkCard {
             visible: editor.page.draft.enterpriseEditable !== false
             Layout.fillWidth: true
             ComboBox {
+                objectName: "eapMethod"
                 Layout.fillWidth: true
                 model: ["PEAP", "TTLS", "TLS"]
                 currentIndex: ["peap", "ttls", "tls"].indexOf(editor.page.draft.eap || "peap")
@@ -158,6 +161,7 @@ NetworkCard {
                 font.bold: true
             }
             ComboBox {
+                objectName: ip.modelData + "Method"
                 Layout.fillWidth: true
                 model: [qsTr("Automatic"), qsTr("Manual"), qsTr("Disabled")]
                 currentIndex: ["auto", "manual", "disabled"].indexOf(editor.page.draft[ip.modelData + "Method"] || "auto")
@@ -165,6 +169,7 @@ NetworkCard {
                 onActivated: editor.page.stage(ip.modelData + "Method", ["auto", "manual", "disabled"][currentIndex])
             }
             HarborField {
+                objectName: ip.modelData + "Addresses"
                 Layout.fillWidth: true
                 visible: editor.page.draft[ip.modelData + "Method"] === "manual"
                 text: editor.page.draft[ip.modelData + "Addresses"] || ""
@@ -227,6 +232,7 @@ NetworkCard {
     }
     RowLayout {
         HarborButton {
+            objectName: "saveConnection"
             text: qsTr("Save profile")
             enabled: !NetworkSettings.busy
             onClicked: {
@@ -238,6 +244,7 @@ NetworkCard {
             }
         }
         HarborButton {
+            objectName: "closeConnection"
             text: qsTr("Close")
             onClicked: {
                 editor.page.editing = false;
