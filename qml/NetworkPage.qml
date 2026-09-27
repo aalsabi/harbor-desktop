@@ -48,30 +48,7 @@ ColumnLayout {
     }
     Component.onCompleted: NetworkSettings.setActive(true)
     Component.onDestruction: NetworkSettings.setActive(false)
-    component Note: HarborLabel {
-        Layout.fillWidth: true
-        wrapMode: Text.WordWrap
-        color: Prefs.dark ? "#aaaab2" : "#696971"
-    }
-    component Card: Rectangle {
-        default property alias contents: layout.data
-        Layout.fillWidth: true
-        implicitHeight: layout.implicitHeight + 28
-        radius: 12
-        color: Prefs.dark ? "#29292f" : "#ffffff"
-        border.color: Prefs.dark ? "#45454d" : "#dedee4"
-        ColumnLayout {
-            id: layout
-            anchors {
-                left: parent.left
-                right: parent.right
-                top: parent.top
-                margins: 14
-            }
-            spacing: 10
-        }
-    }
-    Card {
+    NetworkCard {
         RowLayout {
             Layout.fillWidth: true
             HarborLabel {
@@ -105,12 +82,12 @@ ColumnLayout {
                 onClicked: NetworkSettings.refresh()
             }
         }
-        Note {
+        NetworkNote {
             visible: !NetworkSettings.available
             text: qsTr("NetworkManager is unavailable.")
         }
     }
-    Card {
+    NetworkCard {
         visible: !!NetworkSettings.secretPrompt.name
         HarborLabel {
             Layout.fillWidth: true
@@ -118,7 +95,7 @@ ColumnLayout {
             text: qsTr("Authentication: ") + (NetworkSettings.secretPrompt.name || "")
             font.bold: true
         }
-        Note {
+        NetworkNote {
             text: qsTr("Enter the credentials requested for this connection attempt.")
         }
         Repeater {
@@ -156,14 +133,14 @@ ColumnLayout {
     }
     Repeater {
         model: NetworkSettings.devices
-        delegate: Card {
+        delegate: NetworkCard {
             id: device
             required property var modelData
             HarborLabel {
                 text: device.modelData.interface + " · " + (device.modelData.type === "wifi" ? qsTr("Wi-Fi") : qsTr("Wired"))
                 font.bold: true
             }
-            Note {
+            NetworkNote {
                 text: Number(device.modelData.state) === 100 ? qsTr("Connected") : Number(device.modelData.state) >= 40 && Number(device.modelData.state) < 100 ? qsTr("Connecting…") : qsTr("Disconnected")
             }
             HarborButton {
@@ -179,7 +156,7 @@ ColumnLayout {
     }
     Repeater {
         model: NetworkSettings.networks
-        delegate: Card {
+        delegate: NetworkCard {
             id: ap
             required property var modelData
             HarborLabel {
@@ -188,7 +165,7 @@ ColumnLayout {
                 text: ap.modelData.name || qsTr("Hidden network")
                 font.bold: true
             }
-            Note {
+            NetworkNote {
                 text: Number(ap.modelData.strength) + "% · " + (ap.modelData.enterprise ? qsTr("Enterprise") : ap.modelData.secured ? qsTr("Secured") : qsTr("Open"))
             }
             HarborButton {
@@ -206,7 +183,7 @@ ColumnLayout {
             ColumnLayout {
                 Layout.fillWidth: true
                 visible: root.selectedAp === ap.modelData.path
-                Note {
+                NetworkNote {
                     visible: ap.modelData.enterprise
                     text: qsTr("Use an existing 802.1X profile from Saved connections for enterprise Wi-Fi.")
                 }
@@ -245,7 +222,7 @@ ColumnLayout {
     }
     Repeater {
         model: NetworkSettings.profiles
-        delegate: Card {
+        delegate: NetworkCard {
             id: connection
             required property var modelData
             HarborLabel {
@@ -254,7 +231,7 @@ ColumnLayout {
                 text: connection.modelData.name
                 font.bold: true
             }
-            Note {
+            NetworkNote {
                 text: connection.modelData.type
             }
             Flow {
@@ -283,254 +260,16 @@ ColumnLayout {
         enabled: NetworkSettings.available && !NetworkSettings.busy
         onClicked: root.edit("")
     }
-    Card {
+    ConnectionEditor {
         visible: root.editing
-        HarborLabel {
-            text: qsTr("Connection settings")
-            font.bold: true
-        }
-        HarborField {
-            Layout.fillWidth: true
-            text: root.draft.name || ""
-            placeholderText: qsTr("Connection name")
-            Accessible.name: placeholderText
-            onTextEdited: root.stage("name", text)
-        }
-        HarborField {
-            Layout.fillWidth: true
-            visible: root.editingPath === ""
-            text: root.draft.interface || ""
-            placeholderText: qsTr("Interface (optional, e.g. eth0)")
-            Accessible.name: placeholderText
-            onTextEdited: root.stage("interface", text)
-        }
-        HarborField {
-            Layout.fillWidth: true
-            visible: root.editingPath === "" && root.draft.type === "802-11-wireless"
-            text: root.draft.ssid || ""
-            placeholderText: qsTr("Wi-Fi network name (SSID)")
-            Accessible.name: placeholderText
-            onTextEdited: root.stage("ssid", text)
-        }
-        CheckBox {
-            visible: root.draft.type === "802-3-ethernet" && !root.draft.enterprise
-            text: qsTr("Configure 802.1X authentication")
-            onClicked: {
-                root.stage("enterprise", true);
-                root.stage("eap", "peap");
-                root.stage("phase2Auth", "mschapv2");
-            }
-        }
-        ColumnLayout {
-            visible: !!root.draft.enterprise
-            Layout.fillWidth: true
-            HarborLabel {
-                text: qsTr("Enterprise authentication · 802.1X")
-                font.bold: true
-            }
-            Note {
-                visible: root.draft.enterpriseEditable === false
-                text: qsTr("This profile uses advanced authentication managed outside Harbor. Its authentication settings are preserved.")
-            }
-            ColumnLayout {
-                visible: root.draft.enterpriseEditable !== false
-                Layout.fillWidth: true
-                ComboBox {
-                    Layout.fillWidth: true
-                    model: ["PEAP", "TTLS", "TLS"]
-                    currentIndex: ["peap", "ttls", "tls"].indexOf(root.draft.eap || "peap")
-                    Accessible.name: qsTr("EAP authentication")
-                    onActivated: {
-                        root.stage("eap", ["peap", "ttls", "tls"][currentIndex]);
-                        root.stage("phase2Auth", "mschapv2");
-                    }
-                }
-                Repeater {
-                    model: [
-                        {
-                            key: "identity",
-                            en: QT_TR_NOOP("Identity")
-                        },
-                        {
-                            key: "anonymousIdentity",
-                            en: QT_TR_NOOP("Anonymous identity (optional)")
-                        },
-                        {
-                            key: "domainSuffixMatch",
-                            en: QT_TR_NOOP("Authentication server domain")
-                        },
-                        {
-                            key: "caCert",
-                            en: QT_TR_NOOP("CA certificate file path")
-                        }
-                    ]
-                    delegate: HarborField {
-                        required property var modelData
-                        Layout.fillWidth: true
-                        text: root.draft[modelData.key] || ""
-                        placeholderText: qsTr(modelData.en)
-                        Accessible.name: placeholderText
-                        onTextEdited: root.stage(modelData.key, text)
-                    }
-                }
-                ComboBox {
-                    visible: root.draft.eap !== "tls"
-                    Layout.fillWidth: true
-                    model: root.draft.eap === "ttls" ? ["mschapv2", "pap", "chap", "mschap"] : ["mschapv2", "gtc"]
-                    currentIndex: Math.max(0, model.indexOf(root.draft.phase2Auth || "mschapv2"))
-                    Accessible.name: qsTr("Inner authentication")
-                    onActivated: root.stage("phase2Auth", model[currentIndex])
-                }
-                HarborField {
-                    visible: root.draft.eap !== "tls"
-                    Layout.fillWidth: true
-                    text: root.draft.eapPassword || ""
-                    placeholderText: qsTr("Password (blank keeps saved password or asks on connect)")
-                    Accessible.name: placeholderText
-                    echoMode: TextInput.Password
-                    onTextEdited: root.stage("eapPassword", text)
-                }
-                Repeater {
-                    model: [
-                        {
-                            key: "clientCert",
-                            en: QT_TR_NOOP("Client certificate file path")
-                        },
-                        {
-                            key: "privateKey",
-                            en: QT_TR_NOOP("Private key file path")
-                        }
-                    ]
-                    delegate: HarborField {
-                        required property var modelData
-                        visible: root.draft.eap === "tls"
-                        Layout.fillWidth: true
-                        text: root.draft[modelData.key] || ""
-                        placeholderText: qsTr(modelData.en)
-                        Accessible.name: placeholderText
-                        onTextEdited: root.stage(modelData.key, text)
-                    }
-                }
-                HarborField {
-                    visible: root.draft.eap === "tls"
-                    Layout.fillWidth: true
-                    text: root.draft.privateKeyPassword || ""
-                    placeholderText: qsTr("Private key password (blank to keep)")
-                    Accessible.name: placeholderText
-                    echoMode: TextInput.Password
-                    onTextEdited: root.stage("privateKeyPassword", text)
-                }
-                Note {
-                    text: qsTr("Use the CA certificate and server domain provided by your administrator. Certificate verification is required. Keep certificate files in a permanent location. New credentials are saved by NetworkManager; new profiles are restricted to your user.")
-                }
-            }
-        }
-        Repeater {
-            model: ["ipv4", "ipv6"]
-            delegate: ColumnLayout {
-                id: ip
-                required property string modelData
-                Layout.fillWidth: true
-                spacing: 8
-                HarborLabel {
-                    text: ip.modelData.toUpperCase()
-                    font.bold: true
-                }
-                ComboBox {
-                    Layout.fillWidth: true
-                    model: [qsTr("Automatic"), qsTr("Manual"), qsTr("Disabled")]
-                    currentIndex: ["auto", "manual", "disabled"].indexOf(root.draft[ip.modelData + "Method"] || "auto")
-                    Accessible.name: ip.modelData + qsTr(" addressing")
-                    onActivated: root.stage(ip.modelData + "Method", ["auto", "manual", "disabled"][currentIndex])
-                }
-                HarborField {
-                    Layout.fillWidth: true
-                    visible: root.draft[ip.modelData + "Method"] === "manual"
-                    text: root.draft[ip.modelData + "Addresses"] || ""
-                    placeholderText: ip.modelData === "ipv4" ? "192.168.1.10/24" : "2001:db8::10/64"
-                    Accessible.name: ip.modelData + qsTr(" addresses and prefixes")
-                    onTextEdited: root.stage(ip.modelData + "Addresses", text)
-                }
-                HarborField {
-                    Layout.fillWidth: true
-                    visible: root.draft[ip.modelData + "Method"] === "manual"
-                    text: root.draft[ip.modelData + "Gateway"] || ""
-                    placeholderText: qsTr("Gateway (optional)")
-                    Accessible.name: ip.modelData + placeholderText
-                    onTextEdited: root.stage(ip.modelData + "Gateway", text)
-                }
-                CheckBox {
-                    text: qsTr("Use automatic DNS")
-                    checked: !root.draft[ip.modelData + "ManualDns"]
-                    enabled: root.draft[ip.modelData + "Method"] !== "disabled"
-                    onClicked: root.stage(ip.modelData + "ManualDns", !checked)
-                }
-                HarborField {
-                    Layout.fillWidth: true
-                    enabled: root.draft[ip.modelData + "Method"] !== "disabled"
-                    text: root.draft[ip.modelData + "Dns"] || ""
-                    placeholderText: qsTr("DNS servers, separated by commas")
-                    Accessible.name: ip.modelData + placeholderText
-                    onTextEdited: root.stage(ip.modelData + "Dns", text)
-                }
-            }
-        }
-        ColumnLayout {
-            visible: !!root.draft.vpnOpenvpn
-            Layout.fillWidth: true
-            HarborLabel {
-                text: qsTr("VPN sign-in")
-                font.bold: true
-            }
-            HarborField {
-                Layout.fillWidth: true
-                text: root.draft.vpnUsername || ""
-                placeholderText: qsTr("VPN username")
-                Accessible.name: placeholderText
-                onTextEdited: root.stage("vpnUsername", text)
-            }
-            HarborField {
-                id: vpnPassword
-                Layout.fillWidth: true
-                placeholderText: qsTr("New password (leave blank to keep)")
-                Accessible.name: placeholderText
-                echoMode: TextInput.Password
-                onTextEdited: root.stage("vpnPassword", text)
-            }
-            Note {
-                text: qsTr("A new password is saved by NetworkManager with this connection. Imported VPNs are restricted to your user.")
-            }
-        }
-        Note {
-            text: qsTr("Saving changes the profile. Connect again to apply it to the active network.")
-        }
-        RowLayout {
-            HarborButton {
-                text: qsTr("Save profile")
-                enabled: !NetworkSettings.busy
-                onClicked: {
-                    NetworkSettings.saveProfile(root.editingPath, root.draft);
-                    root.stage("vpnPassword", "");
-                    root.stage("eapPassword", "");
-                    root.stage("privateKeyPassword", "");
-                    vpnPassword.text = "";
-                }
-            }
-            HarborButton {
-                text: qsTr("Close")
-                onClicked: {
-                    root.editing = false;
-                    root.draft = {};
-                }
-            }
-        }
+        page: root
     }
-    Card {
+    NetworkCard {
         HarborLabel {
             text: qsTr("Import VPN")
             font.bold: true
         }
-        Note {
+        NetworkNote {
             text: qsTr("Import a local OpenVPN or WireGuard configuration. The matching NetworkManager plugin must be installed. Imported profiles are restricted to your user.")
         }
         ComboBox {
@@ -551,11 +290,11 @@ ColumnLayout {
             onClicked: NetworkSettings.importVpn(vpnFile.text, vpnType.currentIndex === 0 ? "openvpn" : "wireguard")
         }
     }
-    Note {
+    NetworkNote {
         visible: NetworkSettings.busy
         text: qsTr("Updating network settings…")
     }
-    Note {
+    NetworkNote {
         visible: NetworkSettings.error.length > 0
         text: NetworkSettings.error
         color: Prefs.dark ? "#ffaaa4" : "#b22b24"

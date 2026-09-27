@@ -1047,6 +1047,141 @@
     </message>
 </context>
 <context>
+    <name>ConnectionEditor</name>
+    <message>
+        <source>Connection settings</source>
+        <translation>إعدادات الاتصال</translation>
+    </message>
+    <message>
+        <source>Connection name</source>
+        <translation>اسم الاتصال</translation>
+    </message>
+    <message>
+        <source>Interface (optional, e.g. eth0)</source>
+        <translation>واجهة الشبكة (اختياري، مثل eth0)</translation>
+    </message>
+    <message>
+        <source>Wi-Fi network name (SSID)</source>
+        <translation>اسم شبكة واي فاي (SSID)</translation>
+    </message>
+    <message>
+        <source>Configure 802.1X authentication</source>
+        <translation>إعداد مصادقة 802.1X</translation>
+    </message>
+    <message>
+        <source>Enterprise authentication · 802.1X</source>
+        <translation>مصادقة المؤسسات · 802.1X</translation>
+    </message>
+    <message>
+        <source>This profile uses advanced authentication managed outside Harbor. Its authentication settings are preserved.</source>
+        <translation>يستخدم هذا الملف مصادقة متقدمة تُدار خارج هاربور. يتم الاحتفاظ بإعداداتها.</translation>
+    </message>
+    <message>
+        <source>EAP authentication</source>
+        <translation>مصادقة EAP</translation>
+    </message>
+    <message>
+        <source>Identity</source>
+        <translation>الهوية</translation>
+    </message>
+    <message>
+        <source>Anonymous identity (optional)</source>
+        <translation>الهوية المجهولة (اختياري)</translation>
+    </message>
+    <message>
+        <source>Authentication server domain</source>
+        <translation>نطاق خادم المصادقة</translation>
+    </message>
+    <message>
+        <source>CA certificate file path</source>
+        <translation>مسار ملف شهادة جهة التصديق</translation>
+    </message>
+    <message>
+        <source>Inner authentication</source>
+        <translation>المصادقة الداخلية</translation>
+    </message>
+    <message>
+        <source>Password (blank keeps saved password or asks on connect)</source>
+        <translation>كلمة المرور (فارغة للاحتفاظ بالحالية أو طلبها عند الاتصال)</translation>
+    </message>
+    <message>
+        <source>Client certificate file path</source>
+        <translation>مسار شهادة العميل</translation>
+    </message>
+    <message>
+        <source>Private key file path</source>
+        <translation>مسار المفتاح الخاص</translation>
+    </message>
+    <message>
+        <source>Private key password (blank to keep)</source>
+        <translation>كلمة مرور المفتاح الخاص (فارغة للاحتفاظ بالحالية)</translation>
+    </message>
+    <message>
+        <source>Use the CA certificate and server domain provided by your administrator. Certificate verification is required. Keep certificate files in a permanent location. New credentials are saved by NetworkManager; new profiles are restricted to your user.</source>
+        <translation>استخدم شهادة جهة التصديق ونطاق الخادم من مسؤول الشبكة. التحقق من الشهادة مطلوب. احتفظ بالملفات في موقع دائم. يحفظ NetworkManager بيانات الاعتماد وتقتصر الملفات الجديدة على المستخدم الحالي.</translation>
+    </message>
+    <message>
+        <source>Automatic</source>
+        <translation>تلقائي</translation>
+    </message>
+    <message>
+        <source>Manual</source>
+        <translation>يدوي</translation>
+    </message>
+    <message>
+        <source>Disabled</source>
+        <translation>معطل</translation>
+    </message>
+    <message>
+        <source> addressing</source>
+        <translation> العنونة</translation>
+    </message>
+    <message>
+        <source> addresses and prefixes</source>
+        <translation> العناوين والبادئات</translation>
+    </message>
+    <message>
+        <source>Gateway (optional)</source>
+        <translation>البوابة (اختياري)</translation>
+    </message>
+    <message>
+        <source>Use automatic DNS</source>
+        <translation>استخدام DNS التلقائي</translation>
+    </message>
+    <message>
+        <source>DNS servers, separated by commas</source>
+        <translation>خوادم DNS مفصولة بفواصل</translation>
+    </message>
+    <message>
+        <source>VPN sign-in</source>
+        <translation>تسجيل الدخول إلى VPN</translation>
+    </message>
+    <message>
+        <source>VPN username</source>
+        <translation>اسم مستخدم VPN</translation>
+    </message>
+    <message>
+        <source>New password (leave blank to keep)</source>
+        <translation>كلمة مرور جديدة (اتركها فارغة للاحتفاظ بالحالية)</translation>
+    </message>
+    <message>
+        <source>A new password is saved by NetworkManager with this connection. Imported VPNs are restricted to your user.</source>
+        <translation>يحفظ NetworkManager كلمة المرور الجديدة مع هذا الاتصال. ملفات VPN المستوردة مقيدة بالمستخدم الحالي.</translation>
+    </message>
+    <message>
+        <source>Saving changes the profile. Connect again to apply it to the active network.</source>
+        <translation>الحفظ يغيّر ملف الاتصال. أعد الاتصال لتطبيقه على الشبكة النشطة.</translation>
+    </message>
+    <message>
+        <source>Save profile</source>
+        <translation>حفظ ملف الاتصال</translation>
+    </message>
+    <message>
+        <source>Close</source>
+        <translation>إغلاق</translation>
+    </message>
+</context>
+<context>
     <name>ControlCenter</name>
     <message>
         <source>Control Center</source>
@@ -2336,138 +2471,6 @@
     <message>
         <source>New wired connection</source>
         <translation>اتصال سلكي جديد</translation>
-    </message>
-    <message>
-        <source>Connection settings</source>
-        <translation>إعدادات الاتصال</translation>
-    </message>
-    <message>
-        <source>Connection name</source>
-        <translation>اسم الاتصال</translation>
-    </message>
-    <message>
-        <source>Interface (optional, e.g. eth0)</source>
-        <translation>واجهة الشبكة (اختياري، مثل eth0)</translation>
-    </message>
-    <message>
-        <source>Wi-Fi network name (SSID)</source>
-        <translation>اسم شبكة واي فاي (SSID)</translation>
-    </message>
-    <message>
-        <source>Configure 802.1X authentication</source>
-        <translation>إعداد مصادقة 802.1X</translation>
-    </message>
-    <message>
-        <source>Enterprise authentication · 802.1X</source>
-        <translation>مصادقة المؤسسات · 802.1X</translation>
-    </message>
-    <message>
-        <source>This profile uses advanced authentication managed outside Harbor. Its authentication settings are preserved.</source>
-        <translation>يستخدم هذا الملف مصادقة متقدمة تُدار خارج هاربور. يتم الاحتفاظ بإعداداتها.</translation>
-    </message>
-    <message>
-        <source>EAP authentication</source>
-        <translation>مصادقة EAP</translation>
-    </message>
-    <message>
-        <source>Identity</source>
-        <translation>الهوية</translation>
-    </message>
-    <message>
-        <source>Anonymous identity (optional)</source>
-        <translation>الهوية المجهولة (اختياري)</translation>
-    </message>
-    <message>
-        <source>Authentication server domain</source>
-        <translation>نطاق خادم المصادقة</translation>
-    </message>
-    <message>
-        <source>CA certificate file path</source>
-        <translation>مسار ملف شهادة جهة التصديق</translation>
-    </message>
-    <message>
-        <source>Inner authentication</source>
-        <translation>المصادقة الداخلية</translation>
-    </message>
-    <message>
-        <source>Password (blank keeps saved password or asks on connect)</source>
-        <translation>كلمة المرور (فارغة للاحتفاظ بالحالية أو طلبها عند الاتصال)</translation>
-    </message>
-    <message>
-        <source>Client certificate file path</source>
-        <translation>مسار شهادة العميل</translation>
-    </message>
-    <message>
-        <source>Private key file path</source>
-        <translation>مسار المفتاح الخاص</translation>
-    </message>
-    <message>
-        <source>Private key password (blank to keep)</source>
-        <translation>كلمة مرور المفتاح الخاص (فارغة للاحتفاظ بالحالية)</translation>
-    </message>
-    <message>
-        <source>Use the CA certificate and server domain provided by your administrator. Certificate verification is required. Keep certificate files in a permanent location. New credentials are saved by NetworkManager; new profiles are restricted to your user.</source>
-        <translation>استخدم شهادة جهة التصديق ونطاق الخادم من مسؤول الشبكة. التحقق من الشهادة مطلوب. احتفظ بالملفات في موقع دائم. يحفظ NetworkManager بيانات الاعتماد وتقتصر الملفات الجديدة على المستخدم الحالي.</translation>
-    </message>
-    <message>
-        <source>Automatic</source>
-        <translation>تلقائي</translation>
-    </message>
-    <message>
-        <source>Manual</source>
-        <translation>يدوي</translation>
-    </message>
-    <message>
-        <source>Disabled</source>
-        <translation>معطل</translation>
-    </message>
-    <message>
-        <source> addressing</source>
-        <translation> العنونة</translation>
-    </message>
-    <message>
-        <source> addresses and prefixes</source>
-        <translation> العناوين والبادئات</translation>
-    </message>
-    <message>
-        <source>Gateway (optional)</source>
-        <translation>البوابة (اختياري)</translation>
-    </message>
-    <message>
-        <source>Use automatic DNS</source>
-        <translation>استخدام DNS التلقائي</translation>
-    </message>
-    <message>
-        <source>DNS servers, separated by commas</source>
-        <translation>خوادم DNS مفصولة بفواصل</translation>
-    </message>
-    <message>
-        <source>VPN sign-in</source>
-        <translation>تسجيل الدخول إلى VPN</translation>
-    </message>
-    <message>
-        <source>VPN username</source>
-        <translation>اسم مستخدم VPN</translation>
-    </message>
-    <message>
-        <source>New password (leave blank to keep)</source>
-        <translation>كلمة مرور جديدة (اتركها فارغة للاحتفاظ بالحالية)</translation>
-    </message>
-    <message>
-        <source>A new password is saved by NetworkManager with this connection. Imported VPNs are restricted to your user.</source>
-        <translation>يحفظ NetworkManager كلمة المرور الجديدة مع هذا الاتصال. ملفات VPN المستوردة مقيدة بالمستخدم الحالي.</translation>
-    </message>
-    <message>
-        <source>Saving changes the profile. Connect again to apply it to the active network.</source>
-        <translation>الحفظ يغيّر ملف الاتصال. أعد الاتصال لتطبيقه على الشبكة النشطة.</translation>
-    </message>
-    <message>
-        <source>Save profile</source>
-        <translation>حفظ ملف الاتصال</translation>
-    </message>
-    <message>
-        <source>Close</source>
-        <translation>إغلاق</translation>
     </message>
     <message>
         <source>Import VPN</source>
